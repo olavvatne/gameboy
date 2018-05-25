@@ -1,0 +1,41 @@
+{
+  "name": "gameboy",
+  "version": "0.0.1",
+  "description": "Gameboy Javascript Emulator Experiment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olavvatne/gameboy.git"
+  },
+  "author": "Olav Vatne",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/olavvatne/gameboy/issues"
+  },
+  "homepage": "https://github.com/olavvatne/gameboy#readme",
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "^8.0.0",
+    "browser-sync": "^2.24.4",
+    "browserify": "^16.2.2",
+    "colors": "^1.3.0",
+    "del": "^3.0.0",
+    "envify": "^4.1.0",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-buffer": "0.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "mocha": "^5.2.0",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0"
+  }
+}
