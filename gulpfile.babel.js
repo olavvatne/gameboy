@@ -1,6 +1,7 @@
 'use strict';
 
 import gulp from 'gulp';
+import mocha from 'gulp-mocha';
 import browserSync from 'browser-sync';
 import browserify from 'browserify';
 import babelify from 'babelify';
@@ -28,6 +29,7 @@ function setupWatch(done) {
   isWatchify = true;
   done();
 }
+
 function watchAssets() {
   gulp.watch(dirs.src + globs.html, views)
 
@@ -38,11 +40,20 @@ function watchAssets() {
   })
 }
 
-export function views() {
-
+function views() {
   return gulp.src(dirs.src + globs.html)
     .pipe(gulp.dest(dirs.dest))
     .on('end', browserSync.reload)
+    .on('error', (err) => {console.log(err); this.emit('end')});
+
+}
+
+function runTests() {
+  return gulp.src(['test/*/**.js'], { read: false })
+     .pipe(mocha({
+       reporter: 'spec',
+       require: ['babel-core/register']
+      }))
 }
 
 export function scripts(done) {
@@ -68,6 +79,7 @@ export function scripts(done) {
 
   if (isWatchify) {
     b.plugin(watchify);
+    b.on('update', runTests);
     b.on('update', rebundle);
     b.on('log', (msg) => console.log(`Bundle created: ${msg}`));
   }
@@ -78,7 +90,7 @@ export function scripts(done) {
 const clean = () => del([dirs.dest])
 export { clean }
 
-const build = gulp.series(clean, scripts, views)
+const build = gulp.series(runTests, clean, scripts, views)
 export { build }
 
 const watch = gulp.series(setupWatch, build, watchAssets)
