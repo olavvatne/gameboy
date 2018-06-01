@@ -1,3 +1,5 @@
+import { Core } from './processor';
+
 class Gameboy {
   constructor() {
     //TODO: supply canvas elements

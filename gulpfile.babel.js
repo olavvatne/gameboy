@@ -49,7 +49,7 @@ function views() {
 }
 
 function runTests() {
-  return gulp.src(['test/*/**.js'], { read: false })
+  return gulp.src(['test/**/*.js'], { read: false })
      .pipe(mocha({
        reporter: 'spec',
        require: ['babel-core/register']
@@ -87,11 +87,7 @@ export function scripts(done) {
   return rebundle();
 }
 
-const clean = () => del([dirs.dest])
-export { clean }
-
-const build = gulp.series(runTests, clean, scripts, views)
-export { build }
-
-const watch = gulp.series(setupWatch, build, watchAssets)
-export { watch }
+export const clean = () => del([dirs.dest])
+export const build = gulp.series(runTests, clean, scripts, views)
+export const  watch = gulp.series(setupWatch, build, watchAssets)
+export const test = () => runTests();

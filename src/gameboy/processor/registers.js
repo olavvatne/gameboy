@@ -1,17 +1,95 @@
+const numRegs = 7;
+const numFlagInByte = 1;
 
-class Registers {
-  constructor() {
-    this.a = 0x00;
-    this.b = 0x00;
-    this.c = 0x00;
-    this.d = 0x00;
-    this.e = 0x00;
-    this.h = 0x00;
-    this.l = 0x00;
-    this.flags = 0x0000;
-    this.stackPointer = 0x0000;
-    this.programCounter =0x0000;
-  }
+export const Reg = {
+  a : 0,
+  f : 1,
+  b : 2,
+  c : 3,
+  d : 4,
+  e : 5,
+  h : 6,
+  l : 7,
+  af : 8,
+  bc : 9,
+  de : 10,
+  hl : 11,
+
 }
 
-export default Registers;
+export class RegisterCore {
+
+  constructor() {
+    _initGeneralPurposeRegisters();
+    _initProgramCounter();
+    _initStackPointer();
+  }
+
+  _initGeneralPurposeRegisters() {
+    this._gpr_buffer = new ArrayBuffer(numRegs)
+    this._gpr = new Uint8Array(buffer);
+  }
+
+  _initProgramCounter() {
+    this._pc = 0x000;
+  }
+
+  _initStackPointer() {
+    this._sp = 0x000;
+  }
+
+  _is16BitAccessAddress(num) {
+    return num > Reg.l;
+  }
+
+  reg(num, val = null) {
+
+    if (num < 0 || num >= Reg.hl) {
+      throw "Trying to access unknown register";
+    }
+
+    if (_is16BitAccessAddress) {
+      return reg16(num, val);
+    }
+    else {
+      return reg8(num, val);
+    }
+
+  }
+
+  _reg8(num, value = null) {
+    if (value !== null) {
+      this._gpr[num].set([value], 0);
+    }
+
+    return this._gpr[num];
+  }
+
+  _reg16(num, value = null) {
+    var regOffset = (num - Reg.af) * 2
+    var view = new DataView(this._gpr_buffer, regOffset, 2);
+    if (value !== null) {
+      view.setUint16(value);
+    }
+
+    return view.getUint16(value);
+  }
+
+  pc(value = null) {
+    if (value !== null) {
+      this._pc = value;
+    }
+    return this._pc;
+  }
+
+  sp(value = null) {
+    if (value !== null) {
+      this._sp = value;
+    }
+    return this._sp;
+  }
+
+  flags() {
+    return get(Reg.f);
+  }
+}

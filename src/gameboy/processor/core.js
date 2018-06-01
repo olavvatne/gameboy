@@ -1,10 +1,8 @@
-import memoryController from ''
+import Registers from './';
 
-class Core {
+export default class ProcessorCore {
   constructor(memoryController) {
     this.memCon = memoryController
     this.reg = new Registers();
   }
 }
-
-export default Core;
