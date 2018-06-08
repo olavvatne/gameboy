@@ -20,22 +20,22 @@ export const Reg = {
 export class RegisterCore {
 
   constructor() {
-    _initGeneralPurposeRegisters();
-    _initProgramCounter();
-    _initStackPointer();
+    this._initGeneralPurposeRegisters();
+    this._initProgramCounter();
+    this._initStackPointer();
   }
 
   _initGeneralPurposeRegisters() {
     this._gpr_buffer = new ArrayBuffer(numRegs)
-    this._gpr = new Uint8Array(buffer);
+    this._gpr = new Uint8Array(this._gpr_buffer);
   }
 
   _initProgramCounter() {
-    this._pc = 0x000;
+    this._pc = 0x0000;
   }
 
   _initStackPointer() {
-    this._sp = 0x000;
+    this._sp = 0x0000;
   }
 
   _is16BitAccessAddress(num) {
@@ -48,11 +48,11 @@ export class RegisterCore {
       throw "Trying to access unknown register";
     }
 
-    if (_is16BitAccessAddress) {
-      return reg16(num, val);
+    if (this._is16BitAccessAddress) {
+      return this._reg16(num, val);
     }
     else {
-      return reg8(num, val);
+      return this._reg8(num, val);
     }
 
   }
