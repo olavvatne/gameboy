@@ -1,9 +1,10 @@
-import { Core } from './processor';
+import { CPU } from './processor';
+import { Memory } from './memory';
 
-class Gameboy {
+export default class Gameboy {
   constructor() {
-    //TODO: supply canvas elements
-    this.memoryController = new memoryController();
-    this.core = new Core(memoryController)
+    // TODO: supply canvas elements
+    this.memory = new Memory();
+    this.core = new CPU(this.memory);
   }
 }

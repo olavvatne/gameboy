@@ -15,7 +15,10 @@
               "${workspaceFolder}/test/**/*.test.js"
           ],
           "console": "integratedTerminal",
-          "internalConsoleOptions": "neverOpen"
+          "internalConsoleOptions": "neverOpen",
+          "skipFiles": [
+            "${workspaceFolder}/node_modules/**/*.js",
+          ]
       },
       {
           "type": "node",
@@ -31,7 +34,10 @@
               "${file}"
           ],
           "console": "integratedTerminal",
-          "internalConsoleOptions": "neverOpen"
+          "internalConsoleOptions": "neverOpen",
+          "skipFiles": [
+            "${workspaceFolder}/node_modules/**/*.js",
+          ]
       }
     ]
   }

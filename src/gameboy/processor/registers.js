@@ -1,24 +1,21 @@
-const numRegs = 7;
-const numFlagInByte = 1;
+const numRegs = 8;
 
 export const Reg = {
-  a : 0,
-  f : 1,
-  b : 2,
-  c : 3,
-  d : 4,
-  e : 5,
-  h : 6,
-  l : 7,
-  af : 8,
-  bc : 9,
-  de : 10,
-  hl : 11,
+  a: 0,
+  f: 1,
+  b: 2,
+  c: 3,
+  d: 4,
+  e: 5,
+  h: 6,
+  l: 7,
+  af: 8,
+  bc: 9,
+  de: 10,
+  hl: 11,
+};
 
-}
-
-export class RegisterCore {
-
+export class Registers {
   constructor() {
     this._initGeneralPurposeRegisters();
     this._initProgramCounter();
@@ -26,7 +23,7 @@ export class RegisterCore {
   }
 
   _initGeneralPurposeRegisters() {
-    this._gpr_buffer = new ArrayBuffer(numRegs)
+    this._gpr_buffer = new ArrayBuffer(numRegs);
     this._gpr = new Uint8Array(this._gpr_buffer);
   }
 
@@ -38,41 +35,38 @@ export class RegisterCore {
     this._sp = 0x0000;
   }
 
-  _is16BitAccessAddress(num) {
+  static is16BitAccessAddress(num) {
     return num > Reg.l;
   }
 
   reg(num, val = null) {
-
-    if (num < 0 || num >= Reg.hl) {
-      throw "Trying to access unknown register";
+    if (num < 0 || num > Reg.hl) {
+      throw Error('Trying to access unknown register');
     }
 
-    if (this._is16BitAccessAddress) {
+    if (Registers.is16BitAccessAddress(num)) {
       return this._reg16(num, val);
     }
-    else {
-      return this._reg8(num, val);
-    }
 
+    return this._reg8(num, val);
   }
 
   _reg8(num, value = null) {
     if (value !== null) {
-      this._gpr[num].set([value], 0);
+      this._gpr.set([value], num);
     }
 
     return this._gpr[num];
   }
 
   _reg16(num, value = null) {
-    var regOffset = (num - Reg.af) * 2
-    var view = new DataView(this._gpr_buffer, regOffset, 2);
+    const regOffset = (num - Reg.af) * 2;
+    const view = new DataView(this._gpr_buffer, regOffset, 2);
     if (value !== null) {
-      view.setUint16(value);
+      view.setUint16(0, value, true);
     }
 
-    return view.getUint16(value);
+    return view.getUint16(0, true);
   }
 
   pc(value = null) {
@@ -90,6 +84,6 @@ export class RegisterCore {
   }
 
   flags() {
-    return get(Reg.f);
+    return this.get(Reg.f);
   }
 }
