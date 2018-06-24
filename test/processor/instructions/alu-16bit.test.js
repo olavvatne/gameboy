@@ -1,10 +1,9 @@
 import { assert } from 'chai';
-import { Z80, Registers, RegMap } from '../../../src/gameboy/processor';
+import { Z80, RegMap } from '../../../src/gameboy/processor';
+import getEmptyState from '../../helper/state-helper';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
-const getEmptyState = () => ({ reg: new Registers() });
-
 describe('Processor', () => {
   describe('Alu 16 bit - instruction set tests', () => {
     it('can increment a register', () => {

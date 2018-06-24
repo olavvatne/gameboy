@@ -1,5 +1,5 @@
 import { RegMap } from '../';
-import { default as alu16 } from './alu-16bit';
+import { alu16 } from './alu-16bit';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -33,9 +33,10 @@ export default {
     return createOpTime(1, 4);
   },
 
-  LDHLr: ({ reg }, addr) => {
-    // TODO: 8 bit value into 16 bit? How should this work?
-    reg.reg(RegMap.hl, reg.reg(addr));
+  LDHLr: ({ reg, mmu }, regAddr) => {
+    const val = reg.reg(regAddr);
+    const memAddr = reg.reg(RegMap.hl);
+    mmu.writeByte(memAddr, val);
     return createOpTime(2, 8);
   },
 
@@ -43,7 +44,8 @@ export default {
   LDHLn: ({ reg, mmu }) => {
     const val = mmu.readByte(reg.pc());
     reg.pc(reg.pc() + 1);
-    reg.reg(RegMap.hl, val);
+    const memAddr = reg.reg(RegMap.hl);
+    memAddr.writeByte(memAddr, val);
     return createOpTime(3, 12);
   },
 

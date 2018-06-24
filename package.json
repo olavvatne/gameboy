@@ -4,7 +4,7 @@
   "description": "Gameboy Javascript Emulator Experiment",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test",
+    "test": "mocha --require babel-core/register ./test/processor/flag-check.test.js",
     "build": "gulp build",
     "watch": "gulp watch"
   },
@@ -45,6 +45,7 @@
     "gulp-mocha": "^6.0.0",
     "gulp-sourcemaps": "^2.6.4",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.11.0"
   }

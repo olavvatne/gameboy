@@ -6,5 +6,5 @@ const createOpTime = (m, t) => ({ m, t });
 
 export default {
   // No-opration (NOP)
-  NOP: ({ reg }) => createOpTime(1, 4),
+  NOP: cpu => createOpTime(1, 4),
 };
