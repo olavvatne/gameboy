@@ -23,6 +23,11 @@ export default class CheckFlagFor {
     if (!(reg & 255)) this.flag |= 0x80;
     return this;
   }
+  // If carry occured from lower nibble (4 bit of reg) 3.2.2 GBCPUman
+  halfCarry(reg) {
+    if (reg > 15) this.flag |= 0x20;
+    return this;
+  }
 
   get() { return this.flag; }
 }

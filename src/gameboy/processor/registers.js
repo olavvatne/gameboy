@@ -1,6 +1,6 @@
 const numRegs = 8;
 
-export const Reg = {
+export const RegMap = {
   a: 0,
   f: 1,
   b: 2,
@@ -13,6 +13,7 @@ export const Reg = {
   bc: 9,
   de: 10,
   hl: 11,
+  sp: 12,
 };
 
 export class Registers {
@@ -24,11 +25,11 @@ export class Registers {
 
   _initGeneralPurposeRegisters() {
     this._gpr_buffer = new ArrayBuffer(numRegs);
-    this._gpr = new Uint8Array(this._gpr_buffer);
+    this._gpr = new DataView(this._gpr_buffer);
   }
 
   _initProgramCounter() {
-    this._pc = 0x0000;
+    this._pc = 0x0100; // 3.2.3 GBCPUman
   }
 
   _initStackPointer() {
@@ -36,14 +37,16 @@ export class Registers {
   }
 
   static is16BitAccessAddress(num) {
-    return num > Reg.l;
+    return num > RegMap.l;
   }
 
   reg(num, val = null) {
-    if (num < 0 || num > Reg.hl) {
+    if (num < 0 || num > RegMap.sp) {
       throw Error('Trying to access unknown register');
     }
-
+    if (num === RegMap.sp) {
+      return this.sp(val);
+    }
     if (Registers.is16BitAccessAddress(num)) {
       return this._reg16(num, val);
     }
@@ -53,20 +56,19 @@ export class Registers {
 
   _reg8(num, value = null) {
     if (value !== null) {
-      this._gpr.set([value], num);
+      this._gpr.setUint8(num, value);
     }
 
-    return this._gpr[num];
+    return this._gpr.getUint8(num);
   }
 
   _reg16(num, value = null) {
-    const regOffset = (num - Reg.af) * 2;
-    const view = new DataView(this._gpr_buffer, regOffset, 2);
+    const regOffset = (num - RegMap.af) * 2;
     if (value !== null) {
-      view.setUint16(0, value, true);
+      this._gpr.setUint16(regOffset, value, true);
     }
 
-    return view.getUint16(0, true);
+    return this._gpr.getUint16(regOffset, true);
   }
 
   pc(value = null) {
@@ -84,6 +86,14 @@ export class Registers {
   }
 
   flags() {
-    return this.get(Reg.f);
+    return this.reg(RegMap.f);
+  }
+
+  getState() {
+    const state = {};
+    Object.entries(RegMap).forEach(([name, addr]) => {
+      state[name] = this.reg(addr);
+    });
+    return state;
   }
 }
