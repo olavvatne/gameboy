@@ -29,11 +29,11 @@ export class Registers {
   }
 
   _initProgramCounter() {
-    this._pc = 0x0100; // 3.2.3 GBCPUman
+    this._pc = 0x0100; // Default on start up - 3.2.3 GBCPUman
   }
 
   _initStackPointer() {
-    this._sp = 0x0000;
+    this._sp = 0xFFFE; // Default on start up
   }
 
   static is16BitAccessAddress(num) {
