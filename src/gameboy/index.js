@@ -1,4 +1,2 @@
-import Gameboy from './gameboy';
-
-const g = new Gameboy();
-console.log(g);
+/* eslint-disable import/prefer-default-export */
+export { default as Gameboy } from './gameboy';

@@ -7,4 +7,14 @@ export default class Gameboy {
     this.memory = new Memory();
     this.core = new CPU(this.memory);
   }
+
+  start() {
+    this.core.start();
+  }
+
+  stop() {
+    this.core.stop();
+  }
+
+  // TODO: Create a load method.
 }

@@ -27,12 +27,18 @@ describe('Processor', () => {
       assert.equal(s.reg.reg(RegMap.a), 10);
     });
 
+    it('contains only defined functions', () => {
+      Object.keys(opcodes).forEach((op) => {
+        assert.isFunction(opcodes[op]);
+      });
+    });
+
     it('all return information about operation\'s time expenditure', () => {
       const s = getEmptyState();
       Object.keys(opcodes).forEach((op) => {
         const res = opcodes[op](s);
         assert.isDefined(res, `${op} does not return anything`);
-        assert.containsAllKeys(res, ['m', 't']);
+        assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);
         assert.isAbove(res.m, 0);
         assert.isAbove(res.t, 0);
       });

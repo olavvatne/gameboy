@@ -14,16 +14,16 @@ const opcodes = {
   0x39: cpu => Z80.alu8.ADDHLn(cpu, RegMap.sp),
 
   // Push
-  0xF5: cpu => Z80.load8.PUSHnn(cpu, RegMap.af),
-  0xC5: cpu => Z80.load8.PUSHnn(cpu, RegMap.bc),
-  0xD5: cpu => Z80.load8.PUSHnn(cpu, RegMap.de),
-  0xE5: cpu => Z80.load8.PUSHnn(cpu, RegMap.hl),
+  // 0xF5: cpu => Z80.load8.PUSHnn(cpu, RegMap.af),
+  // 0xC5: cpu => Z80.load8.PUSHnn(cpu, RegMap.bc),
+  // 0xD5: cpu => Z80.load8.PUSHnn(cpu, RegMap.de),
+  // 0xE5: cpu => Z80.load8.PUSHnn(cpu, RegMap.hl),
 
   // Pop
-  0xF1: cpu => Z80.load8.POPnn(cpu, RegMap.af),
-  0xC1: cpu => Z80.load8.POPnn(cpu, RegMap.bc),
-  0xD1: cpu => Z80.load8.POPnn(cpu, RegMap.de),
-  0xE1: cpu => Z80.load8.POPnn(cpu, RegMap.hl),
+  // 0xF1: cpu => Z80.load8.POPnn(cpu, RegMap.af),
+  // 0xC1: cpu => Z80.load8.POPnn(cpu, RegMap.bc),
+  // 0xD1: cpu => Z80.load8.POPnn(cpu, RegMap.de),
+  // 0xE1: cpu => Z80.load8.POPnn(cpu, RegMap.hl),
 
   // 1. LD nn n
   0x06: cpu => Z80.load8.LDnnn(cpu, RegMap.b),
@@ -40,7 +40,7 @@ const opcodes = {
   0x7A: cpu => Z80.load8.LDrr(cpu, RegMap.a, RegMap.d),
   0x7B: cpu => Z80.load8.LDrr(cpu, RegMap.a, RegMap.e),
   0x7C: cpu => Z80.load8.LDrr(cpu, RegMap.a, RegMap.h),
-  0x7D: cpu => Z80.load8.LDrr(cpu, RegMap.a, RegMap.L),
+  0x7D: cpu => Z80.load8.LDrr(cpu, RegMap.a, RegMap.l),
   0x40: cpu => Z80.load8.LDrr(cpu, RegMap.b, RegMap.b),
   0x41: cpu => Z80.load8.LDrr(cpu, RegMap.b, RegMap.c),
   0x42: cpu => Z80.load8.LDrr(cpu, RegMap.b, RegMap.d),
@@ -92,11 +92,11 @@ const opcodes = {
   0x36: cpu => Z80.load8.LDHLn(cpu),
 
   // 3. LD A, n
-  0x0A: cpu => Z80.load8.LDArr(cpu, RegMap.bc),
-  0x1A: cpu => Z80.load8.LDArr(cpu, RegMap.de),
-  0x7E: cpu => Z80.load8.LDArr(cpu, RegMap.hl),
-  0xFA: cpu => new Error(),
-  0x3E: cpu => new Error(),
+  0x0A: cpu => Z80.load8.LDAm(cpu, RegMap.bc),
+  0x1A: cpu => Z80.load8.LDAm(cpu, RegMap.de),
+  0x7E: cpu => Z80.load8.LDAm(cpu, RegMap.hl),
+  0xFA: cpu => Z80.load8.LDAMemoryFromImmediate(cpu),
+  0x3E: cpu => Z80.load8.LDAImmediate(cpu),
 
   // 4. LD n, A
   0x47: cpu => Z80.load8.LDrr(cpu, RegMap.b, RegMap.a),
@@ -108,7 +108,7 @@ const opcodes = {
   0x02: cpu => Z80.load8.LDrmr(cpu, RegMap.bc, RegMap.a),
   0x12: cpu => Z80.load8.LDrmr(cpu, RegMap.de, RegMap.a),
   0x77: cpu => Z80.load8.LDrmr(cpu, RegMap.hl, RegMap.a),
-  0xEA: cpu => new Error(),
+  0xEA: cpu => Z80.load8.LDMemoryFromImmediateA(cpu),
 
   // 5/6. LD A, (C) value at address FF00 + reg c into a and opposite
   0xF2: cpu => Z80.load8.LDACPlusConst(cpu),
@@ -125,6 +125,9 @@ const opcodes = {
 
   // 16/17/18 LDI (HL), A
   0x22: cpu => Z80.load8.LDIHLA(cpu),
+
+  // 19 LDH (N), A
+  0xE0: cpu => Z80.load8.LDHImmediateMemA(cpu),
 
   // 3 INC nn (16 bit reg)
   0x03: cpu => Z80.alu16.INCnn(cpu, RegMap.bc),

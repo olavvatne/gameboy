@@ -10,6 +10,8 @@ import buffer from 'gulp-buffer';
 import sourcemaps from 'gulp-sourcemaps';
 import watchify from 'watchify';
 
+/* eslint no-console: 0 */
+
 const dirs = {
   src: 'src',
   dest: 'build',

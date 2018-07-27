@@ -1,5 +1,5 @@
 import { RegMap } from '../';
-import { alu16 } from './alu-16bit';
+import { alu16 } from './';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -11,6 +11,22 @@ import { alu16 } from './alu-16bit';
 // Implementation based on explanations given by GBCPUman
 // Mention of immediate values treated as using program counter as value
 const createOpTime = (m, t) => ({ m, t });
+
+const LDrHL = ({ reg, mmu }, regAddr) => {
+  const hl = reg.reg(RegMap.hl);
+  const val = mmu.readByte(hl);
+  reg.reg(regAddr, val);
+
+  return createOpTime(2, 8);
+};
+
+const LDrmr = ({ reg, mmu }, regMemAddr, regAddr) => {
+  const memAddr = reg.reg(regMemAddr);
+  const val = reg.reg(regAddr);
+  mmu.writeByte(memAddr, val);
+
+  return createOpTime(2, 8);
+};
 
 export default {
   // Push register pair to the stack (PUSH HL)
@@ -45,81 +61,92 @@ export default {
     const val = mmu.readByte(reg.pc());
     reg.pc(reg.pc() + 1);
     const memAddr = reg.reg(RegMap.hl);
-    memAddr.writeByte(memAddr, val);
+    mmu.writeByte(memAddr, val);
     return createOpTime(3, 12);
   },
 
   LDnnn: ({ reg, mmu }, addr) => {
-    throw Error('Not implemented');
-    // return createOpTime(2, 8);
+    mmu.writeByte(reg.pc(), reg.reg(addr));
+    return createOpTime(2, 8);
   },
-  LDArr: ({ reg, mmu }, addr) => {
-    throw Error('Not implemented');
-    // return createOpTime(2, 8);
+  // Put byte at memory location found in 16 bit registers into A
+  LDAm: ({ reg, mmu }, regAddr) => {
+    const memAddr = mmu.readWord(reg.reg(regAddr));
+    const val = mmu.readByte(memAddr);
+    reg.reg(RegMap.a, val);
+    return createOpTime(2, 8);
   },
 
   LDACPlusConst: ({ reg, mmu }) => {
-    const addr = mmu.readByte(0xFF00) + reg.reg(RegMap.c);
-    const val = mmu.readByte(addr);
+    const val = mmu.readByte(0xFF00 + reg.reg(RegMap.c));
     reg.reg(RegMap.a, val);
 
     return createOpTime(2, 8);
   },
 
   LDCPlusConstA: ({ reg, mmu }) => {
-    const addr = mmu.readByte(0xFF00) + reg.reg(RegMap.c);
+    const addr = 0xFF00 + reg.reg(RegMap.c);
     const val = reg.reg(RegMap.a);
     mmu.writeByte(addr, val);
 
     return createOpTime(2, 8);
   },
 
-  LDrHL: ({ reg, mmu }, regAddr) => {
-    const hl = reg.reg(RegMap.hl);
-    const val = mmu.readByte(hl);
-    reg.reg(regAddr, val);
-
-    return createOpTime(2, 8);
-  },
-
-  LDrmr: ({ reg, mmu }, regMemAddr, regAddr) => {
-    const memAddr = reg.reg(regMemAddr);
-    const val = reg.reg(regAddr);
-    mmu.writeByte(memAddr, val);
-
-    return createOpTime(2, 8);
-  },
+  LDrHL,
+  LDrmr,
 
   LDDAHL: (cpu) => {
-    this.LDrHL(cpu, RegMap.a);
+    LDrHL(cpu, RegMap.a);
     alu16.DECnn(cpu, RegMap.hl);
     return createOpTime(2, 8);
   },
 
   LDDHLA: (cpu) => {
-    this.LDrmr(cpu, RegMap.hl, RegMap.a);
+    LDrmr(cpu, RegMap.hl, RegMap.a);
     alu16.DECnn(cpu, RegMap.hl);
     return createOpTime(2, 8);
   },
 
   LDIAHL: (cpu) => {
-    this.LDrHL(cpu, RegMap.a);
+    LDrHL(cpu, RegMap.a);
     alu16.INCnn(cpu, RegMap.hl);
     return createOpTime(2, 8);
   },
 
   LDIHLA: (cpu) => {
-    this.LDrmr(cpu, RegMap.hl, RegMap.a);
+    LDrmr(cpu, RegMap.hl, RegMap.a);
     alu16.INCnn(cpu, RegMap.hl);
     return createOpTime(2, 8);
   },
 
   // Read a byte from absolute location into A (LD A, addr)
-  LDAmm: ({ reg, mmu }) => {
+  LDAMemoryFromImmediate: ({ reg, mmu }) => {
     const addr = mmu.readWord(reg.pc());
     reg.pc(reg.pc() + 2);
     const val = mmu.readByte(addr);
     reg.reg(RegMap.a, val);
     return createOpTime(4, 16);
+  },
+
+  LDAImmediate: ({ reg, mmu }) => {
+    const val = mmu.readByte(reg.pc());
+    reg.pc(reg.pc() + 1);
+    reg.reg(RegMap.a, val);
+    return createOpTime(2, 8);
+  },
+
+  LDMemoryFromImmediateA: ({ reg, mmu }) => {
+    const valInA = reg.reg(RegMap.a);
+    const addr = mmu.readWord(reg.pc());
+    mmu.writeByte(addr, valInA);
+    return createOpTime(4, 16);
+  },
+
+  LDHImmediateMemA: ({ reg, mmu }) => {
+    const valInA = reg.reg(RegMap.a);
+    const offset = mmu.readByte(reg.pc());
+    reg.pc(reg.pc + 1);
+    mmu.writeByte(0xFF00 + offset, valInA);
+    return createOpTime(3, 12);
   },
 };
