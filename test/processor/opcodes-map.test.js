@@ -34,8 +34,8 @@ describe('Processor', () => {
     });
 
     it('all return information about operation\'s time expenditure', () => {
-      const s = getEmptyState();
       Object.keys(opcodes).forEach((op) => {
+        const s = getEmptyState();
         const res = opcodes[op](s);
         assert.isDefined(res, `${op} does not return anything`);
         assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);

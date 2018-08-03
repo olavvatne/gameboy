@@ -7,24 +7,7 @@ import { Z80, RegMap } from './';
 const opcodes = {
   0x00: cpu => Z80.other.NOP(),
 
-  // Add HL
-  0x09: cpu => Z80.alu8.ADDHLn(cpu, RegMap.bc),
-  0x19: cpu => Z80.alu8.ADDHLn(cpu, RegMap.de),
-  0x29: cpu => Z80.alu8.ADDHLn(cpu, RegMap.hl),
-  0x39: cpu => Z80.alu8.ADDHLn(cpu, RegMap.sp),
-
-  // Push
-  // 0xF5: cpu => Z80.load8.PUSHnn(cpu, RegMap.af),
-  // 0xC5: cpu => Z80.load8.PUSHnn(cpu, RegMap.bc),
-  // 0xD5: cpu => Z80.load8.PUSHnn(cpu, RegMap.de),
-  // 0xE5: cpu => Z80.load8.PUSHnn(cpu, RegMap.hl),
-
-  // Pop
-  // 0xF1: cpu => Z80.load8.POPnn(cpu, RegMap.af),
-  // 0xC1: cpu => Z80.load8.POPnn(cpu, RegMap.bc),
-  // 0xD1: cpu => Z80.load8.POPnn(cpu, RegMap.de),
-  // 0xE1: cpu => Z80.load8.POPnn(cpu, RegMap.hl),
-
+  // -------- 8 bit load --------
   // 1. LD nn n
   0x06: cpu => Z80.load8.LDnnn(cpu, RegMap.b),
   0x0E: cpu => Z80.load8.LDnnn(cpu, RegMap.c),
@@ -126,8 +109,62 @@ const opcodes = {
   // 16/17/18 LDI (HL), A
   0x22: cpu => Z80.load8.LDIHLA(cpu),
 
-  // 19 LDH (N), A
+  // 19 LDH (n), A
   0xE0: cpu => Z80.load8.LDHImmediateMemA(cpu),
+
+  // 20 LDH A, (n)
+  0xF0: cpu => Z80.load8.LDHImmediateMemA(cpu),
+
+  // -------- 16 bit load --------
+  // 1. LD n,nn
+  0x01: cpu => Z80.load16.LDImmediateIntoReg(cpu, RegMap.BC),
+  0x11: cpu => Z80.load16.LDImmediateIntoReg(cpu, RegMap.DE),
+  0x21: cpu => Z80.load16.LDImmediateIntoReg(cpu, RegMap.HL),
+  0x31: cpu => Z80.load16.LDImmediateIntoReg(cpu, RegMap.SP),
+
+  // 2. LD SP,HL
+  0xF9: cpu => Z80.load16.LDRegToReg(cpu, RegMap.hl, RegMap.sp),
+
+  // 3/4. LD HL,SP+n
+  0xF8: cpu => Z80.load16.LDHLFromSPPlusImmediate(cpu),
+
+  // 5. LD (nn), SP
+  0x08: cpu => Z80.load16.LDSPIntoImmediate(cpu),
+
+  // 6. Push nn
+  0xF5: cpu => Z80.load16.PUSHnn(cpu, RegMap.af),
+  0xC5: cpu => Z80.load16.PUSHnn(cpu, RegMap.bc),
+  0xD5: cpu => Z80.load16.PUSHnn(cpu, RegMap.de),
+  0xE5: cpu => Z80.load16.PUSHnn(cpu, RegMap.hl),
+
+  // 7. Popnn
+  0xF1: cpu => Z80.load16.POPnn(cpu, RegMap.af),
+  0xC1: cpu => Z80.load16.POPnn(cpu, RegMap.bc),
+  0xD1: cpu => Z80.load16.POPnn(cpu, RegMap.de),
+  0xE1: cpu => Z80.load16.POPnn(cpu, RegMap.hl),
+
+  // -------- 8 bit ALU --------
+  // 1. Add A, n
+  0x87: cpu => Z80.alu8.ADDAn(cpu, RegMap.a),
+  0x80: cpu => Z80.alu8.ADDAn(cpu, RegMap.b),
+  0x81: cpu => Z80.alu8.ADDAn(cpu, RegMap.c),
+  0x82: cpu => Z80.alu8.ADDAn(cpu, RegMap.d),
+  0x83: cpu => Z80.alu8.ADDAn(cpu, RegMap.e),
+  0x84: cpu => Z80.alu8.ADDAn(cpu, RegMap.h),
+  0x85: cpu => Z80.alu8.ADDAn(cpu, RegMap.l),
+  0x86: cpu => Z80.alu8.ADDAMemHL(cpu),
+  0xC6: cpu => Z80.alu8.ADDAImmediate(cpu),
+
+  // 2. ADC A,n
+  0x8F: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.a),
+  0x88: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.b),
+  0x89: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.c),
+  0x8A: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.d),
+  0x8B: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.e),
+  0x8C: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.h),
+  0x8D: cpu => Z80.alu8.ADCAnPlusC(cpu, RegMap.l),
+  0x8E: cpu => Z80.alu8.ADDAMemHLPlusCarry(cpu),
+  0xCE: cpu => Z80.alu8.ADDAImmediatePlusCarry(cpu),
 
   // 3 INC nn (16 bit reg)
   0x03: cpu => Z80.alu16.INCnn(cpu, RegMap.bc),
@@ -140,6 +177,12 @@ const opcodes = {
   0x1B: cpu => Z80.alu16.DECnn(cpu, RegMap.de),
   0x2B: cpu => Z80.alu16.DECnn(cpu, RegMap.hl),
   0x3B: cpu => Z80.alu16.DECnn(cpu, RegMap.sp),
+
+  // Add HL
+  0x09: cpu => Z80.alu8.ADDHLn(cpu, RegMap.bc),
+  0x19: cpu => Z80.alu8.ADDHLn(cpu, RegMap.de),
+  0x29: cpu => Z80.alu8.ADDHLn(cpu, RegMap.hl),
+  0x39: cpu => Z80.alu8.ADDHLn(cpu, RegMap.sp),
 };
 
 export default opcodes;

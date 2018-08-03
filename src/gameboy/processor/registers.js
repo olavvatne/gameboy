@@ -1,5 +1,5 @@
+/* eslint no-bitwise: 0 */
 const numRegs = 8;
-
 export const RegMap = {
   a: 0,
   f: 1,
@@ -76,6 +76,10 @@ export class Registers {
       this._pc = value;
     }
     return this._pc;
+  }
+
+  incrementPC() {
+    this._pc = (this._pc + 1) & 0xFFFF;
   }
 
   sp(value = null) {

@@ -6,6 +6,48 @@ import { CheckFlagFor, RegMap } from '../';
 const createOpTime = (m, t) => ({ m, t });
 
 export default {
+
+  ADDAn: ({ reg }, regAddr) => {
+    const val = reg.reg(RegMap.a) + reg.reg(regAddr);
+    const flag = new CheckFlagFor().zero(val).carry(val).halfCarry(val).get();
+    reg.reg(RegMap.f, flag);
+    reg.reg(RegMap.a, val);
+    return createOpTime(1, 4);
+  },
+
+  ADDAMemHL: ({ reg, mmu }) => {
+    const memAddr = reg.reg(RegMap.hl);
+    const valFromMem = mmu.readByte(memAddr);
+    const sum = valFromMem + reg.reg(RegMap.a);
+    reg.reg(RegMap.a, sum);
+
+    const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
+    reg.reg(RegMap.f, flag);
+
+    return createOpTime(2, 8);
+  },
+
+  ADDAImmediate: ({ reg, mmu }) => {
+    const imVal = mmu.readByte(reg.pc());
+    reg.incrementPC();
+
+    const sum = imVal + reg.reg(RegMap.a);
+    reg.reg(RegMap.a, sum);
+
+    const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
+    reg.reg(RegMap.f, flag);
+
+    return createOpTime(2, 8);
+  },
+
+  ADCAnPlusC: ({ reg, mmu }, regAddr) => {
+    const val = reg.reg(RegMap.a) + reg.reg(regAddr);
+    const flag = new CheckFlagFor().zero(val).carry(val).halfCarry(val).get();
+    reg.reg(RegMap.f, flag);
+    reg.reg(RegMap.a, val);
+    return createOpTime(1, 4);
+  },
+
   // Add E to A. Leave result in A (ADD A, E)
   ADDr_e: ({ reg }) => {
     let val = reg.reg(RegMap.a) + reg.reg(RegMap.e);
@@ -19,7 +61,6 @@ export default {
 
   ADDHLn: ({ reg }, addr) => {
     const val = reg.reg(RegMap.hl) + reg.reg(addr);
-    // TODO: set flags
     reg.reg(RegMap.hl, val);
     return createOpTime(2, 8);
   },

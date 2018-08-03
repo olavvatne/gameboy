@@ -29,21 +29,6 @@ const LDrmr = ({ reg, mmu }, regMemAddr, regAddr) => {
 };
 
 export default {
-  // Push register pair to the stack (PUSH HL)
-  PUSHnn: ({ reg, mmu }, addr) => {
-    mmu.writeWord(reg.reg(RegMap.sp), reg.reg(addr));
-    reg.sp(reg.sp() - 2);
-    return createOpTime(4, 16);
-  },
-
-  // Pop register pair off the stack (POP HL)
-  POPnn: ({ reg, mmu }, addr) => {
-    const regVal = mmu.readWord(reg.reg(RegMap.sp));
-    reg.reg(addr, regVal);
-    reg.sp(reg.sp() + 2);
-    return createOpTime(3, 12);
-  },
-
   LDrr: ({ reg }, addr1, addr2) => {
     reg.reg(addr1, reg.reg(addr2));
     return createOpTime(1, 4);
@@ -59,7 +44,7 @@ export default {
 
   LDHLn: ({ reg, mmu }) => {
     const val = mmu.readByte(reg.pc());
-    reg.pc(reg.pc() + 1);
+    reg.incrementPC();
     const memAddr = reg.reg(RegMap.hl);
     mmu.writeByte(memAddr, val);
     return createOpTime(3, 12);
@@ -122,7 +107,8 @@ export default {
   // Read a byte from absolute location into A (LD A, addr)
   LDAMemoryFromImmediate: ({ reg, mmu }) => {
     const addr = mmu.readWord(reg.pc());
-    reg.pc(reg.pc() + 2);
+    reg.incrementPC();
+    reg.incrementPC();
     const val = mmu.readByte(addr);
     reg.reg(RegMap.a, val);
     return createOpTime(4, 16);
@@ -130,7 +116,7 @@ export default {
 
   LDAImmediate: ({ reg, mmu }) => {
     const val = mmu.readByte(reg.pc());
-    reg.pc(reg.pc() + 1);
+    reg.incrementPC();
     reg.reg(RegMap.a, val);
     return createOpTime(2, 8);
   },
@@ -145,8 +131,16 @@ export default {
   LDHImmediateMemA: ({ reg, mmu }) => {
     const valInA = reg.reg(RegMap.a);
     const offset = mmu.readByte(reg.pc());
-    reg.pc(reg.pc + 1);
+    reg.incrementPC();
     mmu.writeByte(0xFF00 + offset, valInA);
+    return createOpTime(3, 12);
+  },
+
+  LDHMemFF00PlusImmediateIntoA: ({ reg, mmu }) => {
+    const offset = mmu.readByte(reg.pc());
+    reg.incrementPC();
+    const value = mmu.readByte(0xFF00 + offset);
+    reg.reg(RegMap.a, value);
     return createOpTime(3, 12);
   },
 };

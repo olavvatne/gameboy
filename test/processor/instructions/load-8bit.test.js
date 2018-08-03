@@ -1,8 +1,8 @@
 import { assert } from 'chai';
+import { it } from 'mocha';
 import { Z80, RegMap } from '../../../src/gameboy/processor';
 import getEmptyState from '../../helper/state-helper';
 import { reg8bitList } from '../../helper/register-helper';
-import { it } from 'mocha';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
@@ -141,8 +141,21 @@ describe('Processor', () => {
       assert.equal(state.mmu.readWord(0x6000), 0x05);
     });
 
-    it('can put A into memory offset decided by constant and immediate value offset', () => {
+    it('put value in mem addr FF00 plus immediate into register A', () => {
       const state = getEmptyState();
+      state.reg.pc(0x1234);
+      const immediateAddr = 0x1234;
+      const immediateValue = 0x12;
+      const corrValue = 0x89;
+      state.mmu.writeByte(immediateAddr, 0x12);
+      state.mmu.writeByte(immediateValue + 0xFF00, corrValue);
+      state.reg.reg(RegMap.a, 0x12);
+
+      Z80.load8.LDHMemFF00PlusImmediateIntoA(state);
+
+      assert.equal(state.reg.reg(RegMap.a), corrValue);
+      const newCounter = state.reg.pc();
+      assert.equal(newCounter, 0x1235);
     });
   });
 });
