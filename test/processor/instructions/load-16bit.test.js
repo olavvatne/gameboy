@@ -13,7 +13,7 @@ describe('Processor', () => {
       state.mmu.writeWord(0x4444, 0x1000);
       state.reg.reg(RegMap.de, 0x9999);
 
-      Z80.load16.LDImmediateIntoReg(state, RegMap.de);
+      Z80.load16.ldImmediateIntoReg(state, RegMap.de);
 
       assert.equal(state.reg.reg(RegMap.de), 0x1000);
     });
@@ -21,7 +21,7 @@ describe('Processor', () => {
     it('can put HL into stack pointer', () => {
       const state = getEmptyState();
       state.reg.reg(RegMap.hl, 0x3214);
-      Z80.load16.LDRegToReg(state, RegMap.hl, RegMap.sp);
+      Z80.load16.ldRegToReg(state, RegMap.hl, RegMap.sp);
       assert.equal(state.reg.reg(RegMap.sp), 0x3214);
     });
 
@@ -35,7 +35,7 @@ describe('Processor', () => {
       const correct = 0x3333 + 0x11;
       state.reg.pc(imAddr);
       state.mmu.writeWord(imAddr, imVal);
-      Z80.load16.LDHLFromSPPlusImmediate(state);
+      Z80.load16.ldHLFromSPPlusImmediate(state);
       assert.equal(state.reg.reg(RegMap.hl), correct);
       assert.equal(state.reg.flags(), 0b00110000);
     });
@@ -48,7 +48,7 @@ describe('Processor', () => {
       state.reg.pc(0x4545);
       state.mmu.writeWord(0x4545, 0x1222);
 
-      Z80.load16.LDSPIntoImmediate(state);
+      Z80.load16.ldSPIntoImmediate(state);
 
       assert.isAbove(state.reg.pc(), 0x4545);
       assert.equal(state.mmu.readWord(correctAddr), correct);
@@ -60,7 +60,7 @@ describe('Processor', () => {
       const correct = 0x8888;
       state.reg.reg(RegMap.af, correct);
 
-      Z80.load16.PUSHnn(state, RegMap.af);
+      Z80.load16.push(state, RegMap.af);
 
       assert.equal(state.reg.sp(), oldPointer - 2);
       assert.equal(state.mmu.readWord(state.reg.sp()), correct);
@@ -72,8 +72,8 @@ describe('Processor', () => {
       const correct = 0x7777;
       state.reg.reg(RegMap.bc, correct);
 
-      Z80.load16.PUSHnn(state, RegMap.bc);
-      Z80.load16.POPnn(state, RegMap.de);
+      Z80.load16.push(state, RegMap.bc);
+      Z80.load16.pop(state, RegMap.de);
 
       assert.equal(state.reg.reg(RegMap.de), correct);
       assert.equal(state.reg.sp(), oldPointer);

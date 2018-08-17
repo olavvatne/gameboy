@@ -7,13 +7,13 @@ const createOpTime = (m, t) => ({ m, t });
 
 export default {
 
-  INCnn: ({ reg }, regAddr) => {
+  inc: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
     reg.reg(regAddr, val + 1);
     return createOpTime(2, 8);
   },
 
-  DECnn: ({ reg }, regAddr) => {
+  dec: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
     reg.reg(regAddr, val - 1);
     return createOpTime(2, 8);

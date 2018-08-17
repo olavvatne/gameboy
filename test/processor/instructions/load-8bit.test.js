@@ -15,9 +15,9 @@ describe('Processor', () => {
       state.reg.reg(RegMap.b, 230);
       state.reg.reg(RegMap.c, 105);
 
-      Z80.load8.LDHLr(state, RegMap.b);
+      Z80.load8.ldMemHLReg(state, RegMap.b);
       assert.equal(state.mmu.readByte(2005), 230);
-      Z80.load8.LDHLr(state, RegMap.c);
+      Z80.load8.ldMemHLReg(state, RegMap.c);
       assert.equal(state.mmu.readByte(2005), 105);
     });
 
@@ -26,7 +26,7 @@ describe('Processor', () => {
       state.reg.pc(0x1220);
       state.mmu.writeByte(0x1220, 0xAA);
 
-      Z80.load8.LDAImmediate(state);
+      Z80.load8.ldAImmediate(state);
 
       assert.equal(state.reg.pc(), 0x1221);
       assert.equal(state.reg.reg(RegMap.a), 0xAA);
@@ -39,7 +39,7 @@ describe('Processor', () => {
       state.mmu.writeWord(0x0AB, 0x1234);
       state.mmu.writeByte(0x1234, 0xEF);
 
-      Z80.load8.LDAMemoryFromImmediate(state);
+      Z80.load8.ldRegAImmediateWord(state);
 
       assert.equal(state.reg.pc(), pcVal + 2);
       assert.equal(state.reg.reg(RegMap.a), 0xEF);
@@ -54,7 +54,7 @@ describe('Processor', () => {
       reg8bitList.forEach((reg, idx) => {
         state.reg.reg(RegMap.b, 0x12 + idx);
 
-        Z80.load8.LDnnn(state, reg);
+        Z80.load8.ldImmediate(state, reg);
 
         const immediate = state.mmu.readByte(pcVal);
         assert.equal(state.reg.reg(reg), immediate);
@@ -69,7 +69,7 @@ describe('Processor', () => {
       assert.equal(state.reg.reg(RegMap.a), 0x00);
       reg8bitList.forEach((reg) => {
         state.reg.reg(RegMap.hl, memAddr);
-        Z80.load8.LDrHL(state, reg);
+        Z80.load8.ldMemHL(state, reg);
         assert.equal(state.reg.reg(reg), 0x59);
       });
     });
@@ -79,7 +79,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.c, 30);
       state.mmu.writeByte(0xFF00 + 30, 0x92);
 
-      Z80.load8.LDACPlusConst(state);
+      Z80.load8.ldRegARegCPlusConst(state);
 
       assert.equal(state.reg.reg(RegMap.a), 0x92);
     });
@@ -90,7 +90,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, 0x43);
       state.reg.reg(RegMap.c, 0x11);
 
-      Z80.load8.LDCPlusConstA(state);
+      Z80.load8.ldRegCPlusConstRegA(state);
 
       assert.equal(state.mmu.readByte(0xFF00 + 0x11), correct);
     });
@@ -101,7 +101,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.hl, addr);
       state.mmu.writeByte(addr, 0x99);
 
-      Z80.load8.LDDAHL(state);
+      Z80.load8.lddRegAMemHL(state);
 
       assert.equal(state.reg.reg(RegMap.a), 0x99);
       assert.equal(state.reg.reg(RegMap.hl), addr - 1);
@@ -113,7 +113,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, 0x75);
       state.reg.reg(RegMap.hl, addr);
 
-      Z80.load8.LDDHLA(state);
+      Z80.load8.lddMemHLRegA(state);
 
       assert.equal(state.mmu.readByte(addr), 0x75);
       assert.equal(state.reg.reg(RegMap.hl), addr - 1);
@@ -125,7 +125,7 @@ describe('Processor', () => {
       state.mmu.writeByte(0x5000, 0x43);
       state.reg.reg(RegMap.hl, 0x1234);
 
-      Z80.load8.LDHLn(state);
+      Z80.load8.ldMemHLImmediate(state);
 
       assert.equal(state.mmu.readByte(0x1234), 0x43);
     });
@@ -136,7 +136,7 @@ describe('Processor', () => {
       state.mmu.writeWord(0x2000, 0x6000);
       state.reg.reg(RegMap.a, 0x05);
 
-      Z80.load8.LDMemoryFromImmediateA(state);
+      Z80.load8.ldImmediateA(state);
 
       assert.equal(state.mmu.readWord(0x6000), 0x05);
     });
@@ -151,7 +151,7 @@ describe('Processor', () => {
       state.mmu.writeByte(immediateValue + 0xFF00, corrValue);
       state.reg.reg(RegMap.a, 0x12);
 
-      Z80.load8.LDHMemFF00PlusImmediateIntoA(state);
+      Z80.load8.ldhRegAMemFF00PlusImmediate(state);
 
       assert.equal(state.reg.reg(RegMap.a), corrValue);
       const newCounter = state.reg.pc();

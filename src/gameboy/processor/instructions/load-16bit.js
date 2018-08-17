@@ -7,7 +7,7 @@ import { CheckFlagFor, RegMap } from '../';
 const createOpTime = (m, t) => ({ m, t });
 
 export default {
-  LDImmediateIntoReg: ({ reg, mmu }, regAddr) => {
+  ldImmediateIntoReg: ({ reg, mmu }, regAddr) => {
     const imAddr = reg.pc();
     reg.incrementPC();
     reg.incrementPC();
@@ -16,13 +16,13 @@ export default {
     return createOpTime(3, 12);
   },
 
-  LDRegToReg: ({ reg, mmu }, fromReg, toReg) => {
+  ldRegToReg: ({ reg, mmu }, fromReg, toReg) => {
     const val = reg.reg(fromReg);
     reg.reg(toReg, val);
     return createOpTime(2, 8);
   },
 
-  LDHLFromSPPlusImmediate: ({ reg, mmu }) => {
+  ldHLFromSPPlusImmediate: ({ reg, mmu }) => {
     const spVal = reg.reg(RegMap.sp);
     const imAddr = reg.pc();
     const imVal = mmu.readByte(imAddr);
@@ -36,7 +36,7 @@ export default {
     return createOpTime(3, 12);
   },
 
-  LDSPIntoImmediate: ({ reg, mmu }) => {
+  ldSPIntoImmediate: ({ reg, mmu }) => {
     const spVal = reg.reg(RegMap.sp);
     const imAddr = reg.pc();
     const imVal = mmu.readWord(imAddr);
@@ -47,14 +47,14 @@ export default {
   },
 
   // Push register pair to the stack (PUSH HL)
-  PUSHnn: ({ reg, mmu }, addr) => {
+  push: ({ reg, mmu }, addr) => {
     reg.sp(reg.sp() - 2);
     mmu.writeWord(reg.reg(RegMap.sp), reg.reg(addr));
     return createOpTime(4, 16);
   },
 
   // Pop register pair off the stack (POP HL)
-  POPnn: ({ reg, mmu }, addr) => {
+  pop: ({ reg, mmu }, addr) => {
     const regVal = mmu.readWord(reg.sp());
     reg.sp(reg.sp() + 2);
     reg.reg(addr, regVal);

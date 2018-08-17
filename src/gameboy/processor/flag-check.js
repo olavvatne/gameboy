@@ -1,7 +1,7 @@
 /* eslint no-bitwise: 0 */
 export default class CheckFlagFor {
-  constructor() {
-    this.flag = 0b00000000;
+  constructor(flag = 0b00000000) {
+    this.flag = flag;
   }
 
   underflow(reg) {
@@ -30,5 +30,13 @@ export default class CheckFlagFor {
   }
 
   get() { return this.flag; }
+
+  isCarry() { return (this.flag & 0b00010000) === 0b00010000; }
+
+  isHalfCarry() { return (this.flag & 0b00100000) === 0b001000000; }
+
+  isZero() { return (this.flag & 0b10000000) === 0b10000000; }
+
+  isSubtraction() { return (this.flag & 0b01000000) === 0b01000000; }
 }
 

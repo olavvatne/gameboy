@@ -10,7 +10,7 @@ describe('Processor', () => {
       const state = getEmptyState();
       state.reg.reg(RegMap.bc, 100);
 
-      Z80.alu16.INCnn(state, RegMap.bc);
+      Z80.alu16.inc(state, RegMap.bc);
       assert.equal(state.reg.reg(RegMap.bc), 101);
     });
 
@@ -18,7 +18,7 @@ describe('Processor', () => {
       const state = getEmptyState();
       state.reg.reg(RegMap.hl, 52);
 
-      Z80.alu16.DECnn(state, RegMap.hl);
+      Z80.alu16.dec(state, RegMap.hl);
       assert.equal(state.reg.reg(RegMap.hl), 51);
     });
 
@@ -26,7 +26,7 @@ describe('Processor', () => {
       const state = getEmptyState();
       state.reg.reg(RegMap.sp, 172);
 
-      Z80.alu16.DECnn(state, RegMap.sp);
+      Z80.alu16.dec(state, RegMap.sp);
       assert.equal(state.reg.reg(RegMap.sp), 171);
     });
   });
