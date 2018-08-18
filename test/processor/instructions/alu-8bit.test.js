@@ -1,14 +1,20 @@
 import { assert } from 'chai';
+import { it, beforeEach } from 'mocha';
 import { Z80, RegMap, CheckFlagFor } from '../../../src/gameboy/processor';
 import getEmptyState from '../../helper/state-helper';
-import { it } from 'mocha';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
 describe('Processor', () => {
+  let state = null;
+  beforeEach(() => {
+    state = getEmptyState();
+  });
+
+  const getFlags = () => new CheckFlagFor(state.reg.flags());
+
   describe('Alu 8 bit - instruction set tests', () => {
     it('can add a register and A', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.b, 0x04);
       state.reg.reg(RegMap.a, 0x02);
 
@@ -18,7 +24,6 @@ describe('Processor', () => {
     });
 
     it('can add A and A', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0x10);
 
       Z80.alu8.add(state, RegMap.a);
@@ -27,7 +32,6 @@ describe('Processor', () => {
     });
 
     it('sets flags when doing addition', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0xFF);
       state.reg.reg(RegMap.c, 0x01);
 
@@ -36,7 +40,6 @@ describe('Processor', () => {
     });
 
     it('adds value found at addr HL with reg A', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0x01);
       state.mmu.writeByte(0x1220, 0x03);
       state.reg.reg(RegMap.hl, 0x1220);
@@ -48,7 +51,6 @@ describe('Processor', () => {
     });
 
     it('can take immediate value and add with reg A', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0xF0);
       state.reg.pc(0x3200);
       state.mmu.writeByte(0x3200, 0x01);
@@ -61,7 +63,6 @@ describe('Processor', () => {
     });
 
     it('can sum A and a reg + carry flag', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0x10);
       state.reg.reg(RegMap.d, 0x01);
       state.reg.reg(RegMap.f, 0b00010000);
@@ -77,7 +78,6 @@ describe('Processor', () => {
     });
 
     it('can sum value in mem with reg + carry flag', () => {
-      const state = getEmptyState();
       state.reg.reg(RegMap.a, 0x1);
       state.mmu.writeByte(0x2222, 0x01);
       state.reg.reg(RegMap.hl, 0x2222);
@@ -90,7 +90,6 @@ describe('Processor', () => {
     });
 
     it('can sum immediate value with A + carry flag', () => {
-      const state = getEmptyState();
       const nextInMem = 0x2223;
       const immediateVal = 0x23;
       const valInA = 0x10;
@@ -108,7 +107,6 @@ describe('Processor', () => {
     });
 
     it('can subtract a from any 8 bit reg', () => {
-      const state = getEmptyState();
       const valInA = 0xAA;
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, 0x11);
@@ -124,25 +122,22 @@ describe('Processor', () => {
     });
 
     it('sets zero flags when subtracting', () => {
-      const state = getEmptyState();
       const valInA = 0xAA;
       state.reg.reg(RegMap.a, valInA);
 
       Z80.alu8.sub(state, RegMap.a);
-      assert.isTrue(new CheckFlagFor(state.reg.flags()).isZero());
+      assert.isTrue(getFlags().isZero());
     });
 
     it('sets subtraction flag when subtracting', () => {
-      const state = getEmptyState();
       const valInA = 0xAA;
       state.reg.reg(RegMap.a, valInA);
 
       Z80.alu8.sub(state, RegMap.b);
-      assert.isTrue(new CheckFlagFor(state.reg.flags()).isSubtraction());
+      assert.isTrue(getFlags().isSubtraction());
     });
 
     it('can subtract val from mem with A', () => {
-      const state = getEmptyState();
       const valInA = 0xDD;
       const memAddr = 0x5555;
       const memVal = 0x44;
@@ -154,13 +149,12 @@ describe('Processor', () => {
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - memVal);
-      const flag = new CheckFlagFor(state.reg.flags());
+      const flag = getFlags();
       assert.isTrue(flag.isSubtraction());
       assert.isNotTrue(flag.zero());
     });
 
     it('can subtract immediate from A', () => {
-      const state = getEmptyState();
       const valInA = 0xEE;
       const pcMemAddr = 0x6662;
       const memVal = 0x59;
@@ -172,13 +166,12 @@ describe('Processor', () => {
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - memVal);
-      const flag = new CheckFlagFor(state.reg.flags());
+      const flag = getFlags();
       assert.isTrue(flag.isSubtraction());
       assert.isNotTrue(flag.zero());
     });
 
     it('can subtract reg plus carry from A', () => {
-      const state = getEmptyState();
       const valInA = 0xBE;
       const valInB = 0x99;
       state.reg.reg(RegMap.a, valInA);
@@ -189,11 +182,10 @@ describe('Processor', () => {
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - valInB - 1);
-      assert.isTrue(new CheckFlagFor(state.reg.flags()).isSubtraction());
+      assert.isTrue(getFlags().isSubtraction());
     });
 
     it('can subtract Mem HL plus carry from A', () => {
-      const state = getEmptyState();
       const valInA = 0xBE;
       const memAddr = 0x5555;
       const memVal = 0x44;
@@ -206,11 +198,10 @@ describe('Processor', () => {
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - memVal - 1);
-      assert.isTrue(new CheckFlagFor(state.reg.flags()).isSubtraction());
+      assert.isTrue(getFlags().isSubtraction());
     });
 
     it('can take the logical and of a reg and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10001000;
       const valInB = 0b00001000;
       state.reg.reg(RegMap.a, valInA);
@@ -224,7 +215,6 @@ describe('Processor', () => {
     });
 
     it('takes logical and of mem HL and A', () => {
-      const state = getEmptyState();
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
       const memAddr = 0x7645;
@@ -239,7 +229,6 @@ describe('Processor', () => {
     });
 
     it('takes logical and of immediate and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
       const memAddr = 0x7645;
@@ -254,7 +243,6 @@ describe('Processor', () => {
     });
 
     it('can take the logical or of a reg and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10001000;
       const valInC = 0b00001000;
       state.reg.reg(RegMap.a, valInA);
@@ -268,7 +256,6 @@ describe('Processor', () => {
     });
 
     it('takes logical or of mem HL and A', () => {
-      const state = getEmptyState();
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
       const memAddr = 0x7645;
@@ -283,7 +270,6 @@ describe('Processor', () => {
     });
 
     it('takes logical or of immediate and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
       const memAddr = 0x7645;
@@ -298,7 +284,6 @@ describe('Processor', () => {
     });
 
     it('can take the logical xor of a reg and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10001000;
       const valInC = 0b00001000;
       state.reg.reg(RegMap.a, valInA);
@@ -311,7 +296,6 @@ describe('Processor', () => {
     });
 
     it('takes logical xor of mem HL and A', () => {
-      const state = getEmptyState();
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
       const memAddr = 0x7645;
@@ -326,7 +310,6 @@ describe('Processor', () => {
     });
 
     it('takes logical xor of immediate and A', () => {
-      const state = getEmptyState();
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
       const memAddr = 0x7645;
@@ -342,7 +325,6 @@ describe('Processor', () => {
 
     it('compare reg with A and set flags', () => {
       // TODO: test cp borrow and subtraction borrow
-      const state = getEmptyState();
       const valInA = 0x15;
       const valInD = 0x15;
       const valInL = 0x14;
@@ -351,12 +333,12 @@ describe('Processor', () => {
       state.reg.reg(RegMap.l, valInL);
 
       Z80.alu8.cp(state, RegMap.d);
-      const flag1 = new CheckFlagFor(state.reg.flags());
+      const flag1 = getFlags();
       assert.isTrue(flag1.isZero());
       assert.isTrue(flag1.isSubtraction());
 
       Z80.alu8.cp(state, RegMap.l);
-      const flag2 = new CheckFlagFor(state.reg.flags());
+      const flag2 = getFlags();
       assert.isTrue(flag2.isSubtraction());
       const isZero = flag2.isZero();
       assert.isNotTrue(isZero);
@@ -376,9 +358,8 @@ describe('Processor', () => {
       assert.isFalse(notZero2);
       assert.isFalse(notZero3);
     });
-  
+
     it('compares A and Mem HL', () => {
-      const state = getEmptyState();
       const valInA = 0x99;
       const valInMem = 0x08;
       const memAddr = 0x7645;
@@ -393,7 +374,6 @@ describe('Processor', () => {
     });
 
     it('takes logical xor of immediate and A', () => {
-      const state = getEmptyState();
       const valInA = 0x20;
       const valInMem = 0x80;
       const memAddr = 0x7644;
@@ -406,6 +386,79 @@ describe('Processor', () => {
       const val = state.reg.flags();
       // TODO: underflow, borrow?? what what
       assert.equal(val, 0b01010000);
+    });
+
+    it('can increment a register', () => {
+      const valInD = 0x51;
+      state.reg.reg(RegMap.d, valInD);
+
+      Z80.alu8.inc(state, RegMap.d);
+
+      assert.equal(valInD + 1, state.reg.reg(RegMap.d));
+    });
+
+    it('can decrement a register', () => {
+      const valInC = 0x21;
+      state.reg.reg(RegMap.c, valInC);
+
+      Z80.alu8.dec(state, RegMap.c);
+
+      assert.equal(valInC - 1, state.reg.reg(RegMap.c));
+      assert.equal(0, state.reg.reg(RegMap.a));
+    });
+
+    it('sets zero flag on increment', () => {
+      const valInD = -1;
+      state.reg.reg(RegMap.d, valInD);
+
+      Z80.alu8.inc(state, RegMap.d);
+      const flags = getFlags();
+      assert.isTrue(flags.isZero());
+    });
+
+    it('reset subtraction flag and keep prev carry flag on increment', () => {
+      const valInD = 0x02;
+      state.reg.reg(RegMap.d, valInD);
+      state.reg.reg(RegMap.f, 0b01010000);
+
+      Z80.alu8.inc(state, RegMap.d);
+      const flags = getFlags();
+      assert.isTrue(flags.isCarry());
+      assert.isFalse(flags.isSubtraction());
+    });
+
+    it('checks zero, sets subtraction and keeps previous carry on decrement', () => {
+      const valInD = 0x01;
+      state.reg.reg(RegMap.d, valInD);
+      state.reg.reg(RegMap.f, 0b00010000);
+
+      Z80.alu8.dec(state, RegMap.d);
+      const flags = getFlags();
+      assert.isTrue(flags.isCarry());
+      assert.isTrue(flags.isZero());
+      assert.isTrue(flags.isSubtraction());
+    });
+
+    it('increments value in memAddr found in HL', () => {
+      const memAddrInHL = 0x4342;
+      const valueInMem = 0x54;
+      state.reg.reg(RegMap.hl, memAddrInHL);
+      state.mmu.writeByte(memAddrInHL, valueInMem);
+
+      Z80.alu8.incMemHL(state);
+
+      assert.equal(valueInMem + 1, state.mmu.readByte(memAddrInHL));
+    });
+
+    it('decrements value in mem with addr found in HL', () => {
+      const memAddrInHL = 0x4342;
+      const valueInMem = 0x55;
+      state.reg.reg(RegMap.hl, memAddrInHL);
+      state.mmu.writeByte(memAddrInHL, valueInMem);
+
+      Z80.alu8.decMemHL(state);
+
+      assert.equal(valueInMem - 1, state.mmu.readByte(memAddrInHL));
     });
   });
 });

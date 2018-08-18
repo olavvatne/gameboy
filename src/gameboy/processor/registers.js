@@ -73,7 +73,7 @@ export class Registers {
 
   pc(value = null) {
     if (value !== null) {
-      this._pc = value;
+      this._pc = value & 0xFFFF;
     }
     return this._pc;
   }
@@ -84,7 +84,7 @@ export class Registers {
 
   sp(value = null) {
     if (value !== null) {
-      this._sp = value;
+      this._sp = value & 0xFFFF;
     }
     return this._sp;
   }

@@ -1,4 +1,5 @@
 import { assert } from 'chai';
+import { it, beforeEach } from 'mocha';
 import { opcodes, RegMap } from '../../src/gameboy/processor';
 import getEmptyState from '../helper/state-helper';
 
@@ -7,24 +8,27 @@ import getEmptyState from '../helper/state-helper';
 
 // Tests opcode map and utilizes the GB CPU manual to verify behaviour.
 describe('Processor', () => {
+  let state = null;
+  beforeEach(() => {
+    state = getEmptyState();
+  });
+
   describe('Opcode map tests', () => {
     it('map to a specific operation and execute it', () => {
-      const s = getEmptyState();
       const nopCode = 0x00;
 
       assert.isDefined(opcodes[nopCode]);
       assert.isObject(opcodes);
       assert.isFunction(opcodes[nopCode]);
-      assert.doesNotThrow(() => opcodes[nopCode](s));
+      assert.doesNotThrow(() => opcodes[nopCode](state));
     });
 
     it('should be able to execute 0x78 by putting B Into A', () => {
-      const s = getEmptyState();
-      s.reg.reg(RegMap.b, 10);
+      state.reg.reg(RegMap.b, 10);
       const op = 0x78;
-      opcodes[op](s);
+      opcodes[op](state);
 
-      assert.equal(s.reg.reg(RegMap.a), 10);
+      assert.equal(state.reg.reg(RegMap.a), 10);
     });
 
     it('contains only defined functions', () => {
@@ -35,8 +39,7 @@ describe('Processor', () => {
 
     it('all return information about operation\'s time expenditure', () => {
       Object.keys(opcodes).forEach((op) => {
-        const s = getEmptyState();
-        const res = opcodes[op](s);
+        const res = opcodes[op](state);
         assert.isDefined(res, `${op} does not return anything`);
         assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);
         assert.isAbove(res.m, 0);

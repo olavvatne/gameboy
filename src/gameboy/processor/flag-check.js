@@ -13,9 +13,18 @@ export default class CheckFlagFor {
     this.flag |= 0x40;
     return this;
   }
+  notSubtraction() {
+    this.flag &= 0b10111111;
+    return this;
+  }
 
   carry(reg) {
     if (reg > 255) this.flag |= 0x10;
+    return this;
+  }
+
+  carry16(reg) {
+    if (reg > 0xFFFF) this.flag |= 0x10;
     return this;
   }
 
@@ -29,11 +38,16 @@ export default class CheckFlagFor {
     return this;
   }
 
+  halfCarry16(reg) {
+    if (reg > 0xFFF) this.flag |= 0x20;
+    return this;
+  }
+
   get() { return this.flag; }
 
   isCarry() { return (this.flag & 0b00010000) === 0b00010000; }
 
-  isHalfCarry() { return (this.flag & 0b00100000) === 0b001000000; }
+  isHalfCarry() { return (this.flag & 0b00100000) === 0b00100000; }
 
   isZero() { return (this.flag & 0b10000000) === 0b10000000; }
 

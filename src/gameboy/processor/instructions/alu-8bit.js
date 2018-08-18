@@ -1,5 +1,5 @@
 import { CheckFlagFor, RegMap } from '../';
-import { alu16 } from '../instructions';
+import { alu16 } from './';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -100,12 +100,6 @@ export default {
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
     reg.reg(RegMap.f, flag);
     return createOpTime(1, 4);
-  },
-
-  ADDHLn: ({ reg }, addr) => {
-    const val = reg.reg(RegMap.hl) + reg.reg(addr);
-    reg.reg(RegMap.hl, val);
-    return createOpTime(2, 8);
   },
 
   // SUBTRACTION
@@ -238,10 +232,48 @@ export default {
     return createOpTime(2, 8);
   },
 
-  inc: alu16.inc,
-  dec: alu16.dec,
+  inc: (cpu, regAddr) => {
+    const prevFlag = cpu.reg.flags();
+    alu16.inc(cpu, regAddr);
+    const val = cpu.reg.reg(regAddr);
+    const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().halfCarry(val).get();
+    cpu.reg.reg(RegMap.f, flag);
+    return createOpTime(1, 4);
+  },
+
+  dec: (cpu, regAddr) => {
+    const prevFlag = cpu.reg.flags();
+    alu16.dec(cpu, regAddr);
+    const val = cpu.reg.reg(regAddr);
+    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().get();
+    cpu.reg.reg(RegMap.f, flag);
+    // TODO: borrow
+    return createOpTime(1, 4);
+  },
 
   incMemHL: ({ reg, mmu }) => {
+    const prevFlag = reg.flags();
+
+    const memAddr = reg.reg(RegMap.hl);
+    const val = mmu.readByte(memAddr) + 1;
+    mmu.writeByte(memAddr, val);
+
+    const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().halfCarry(val).get();
+    reg.reg(RegMap.f, flag);
+
     return createOpTime(3, 12);
-  }
+  },
+
+  decMemHL: ({ reg, mmu }) => {
+    const prevFlag = reg.flags();
+
+    const memAddr = reg.reg(RegMap.hl);
+    const val = mmu.readByte(memAddr) - 1;
+    mmu.writeByte(memAddr, val);
+
+    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().get();
+    reg.reg(RegMap.f, flag);
+    // TODO: borrow
+    return createOpTime(3, 12);
+  },
 };

@@ -249,7 +249,17 @@ const opcodes = {
   0x1D: cpu => Z80.alu8.dec(cpu, RegMap.e),
   0x25: cpu => Z80.alu8.dec(cpu, RegMap.h),
   0x2D: cpu => Z80.alu8.dec(cpu, RegMap.l),
-  0x35: cpu => Z80.alu8.incMemHL(cpu, RegMap.a),
+  0x35: cpu => Z80.alu8.decMemHL(cpu, RegMap.a),
+
+  // -------- 16 bit ALU --------
+  // 1. Add HL, n
+  0x09: cpu => Z80.alu16.addRegHLReg(cpu, RegMap.bc),
+  0x19: cpu => Z80.alu16.addRegHLReg(cpu, RegMap.de),
+  0x29: cpu => Z80.alu16.addRegHLReg(cpu, RegMap.hl),
+  0x39: cpu => Z80.alu16.addRegHLReg(cpu, RegMap.sp),
+
+  // 2. ADD SP, n
+  0xE8: cpu => Z80.alu16.addRegSPImmediate(cpu),
 
   // 3 INC nn (16 bit reg)
   0x03: cpu => Z80.alu16.inc(cpu, RegMap.bc),
@@ -262,12 +272,6 @@ const opcodes = {
   0x1B: cpu => Z80.alu16.dec(cpu, RegMap.de),
   0x2B: cpu => Z80.alu16.dec(cpu, RegMap.hl),
   0x3B: cpu => Z80.alu16.dec(cpu, RegMap.sp),
-
-  // Add HL
-  0x09: cpu => Z80.alu8.ADDHLn(cpu, RegMap.bc),
-  0x19: cpu => Z80.alu8.ADDHLn(cpu, RegMap.de),
-  0x29: cpu => Z80.alu8.ADDHLn(cpu, RegMap.hl),
-  0x39: cpu => Z80.alu8.ADDHLn(cpu, RegMap.sp),
 };
 
 export default opcodes;
