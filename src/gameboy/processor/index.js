@@ -1,11 +1,11 @@
-import { load8, load16, alu8, alu16, other } from './instructions';
+import { load8, load16, alu8, alu16, misc } from './instructions';
 
 const Z80 = {
   load8,
   load16,
   alu8,
   alu16,
-  other,
+  misc,
 };
 
 export { Z80 };

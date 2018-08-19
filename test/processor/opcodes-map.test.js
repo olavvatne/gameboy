@@ -38,12 +38,15 @@ describe('Processor', () => {
     });
 
     it('all return information about operation\'s time expenditure', () => {
+      state.interupts = { enable: true };
       Object.keys(opcodes).forEach((op) => {
-        const res = opcodes[op](state);
-        assert.isDefined(res, `${op} does not return anything`);
-        assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);
-        assert.isAbove(res.m, 0);
-        assert.isAbove(res.t, 0);
+        if (op !== `${0xCB}`) {
+          const res = opcodes[op](state);
+          assert.isDefined(res, `${op} does not return anything`);
+          assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);
+          assert.isAbove(res.m, 0);
+          assert.isAbove(res.t, 0);
+        }
       });
     });
   });

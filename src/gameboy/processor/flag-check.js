@@ -19,12 +19,12 @@ export default class CheckFlagFor {
   }
 
   carry(reg) {
-    if (reg > 255) this.flag |= 0x10;
+    if (reg > 255) this.setCarry(true);
     return this;
   }
 
   carry16(reg) {
-    if (reg > 0xFFFF) this.flag |= 0x10;
+    if (reg > 0xFFFF) this.setCarry(true);
     return this;
   }
 
@@ -32,14 +32,27 @@ export default class CheckFlagFor {
     if (!(reg & 255)) this.flag |= 0x80;
     return this;
   }
+
+  setHalfCarry(isHalfCarry) {
+    if (isHalfCarry) this.flag |= 0x20;
+    else this.flag &= 0b11011111;
+    return this;
+  }
+
+  setCarry(isCarry) {
+    if (isCarry) this.flag |= 0x10;
+    else this.flag &= 0b11101111;
+    return this;
+  }
+
   // If carry occured from lower nibble (4 bit of reg) 3.2.2 GBCPUman
   halfCarry(reg) {
-    if (reg > 15) this.flag |= 0x20;
+    if (reg > 15) this.setHalfCarry(true);
     return this;
   }
 
   halfCarry16(reg) {
-    if (reg > 0xFFF) this.flag |= 0x20;
+    if (reg > 0xFFF) this.setHalfCarry(true);
     return this;
   }
 

@@ -3,10 +3,8 @@ import { Z80, RegMap } from './';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
-// TODO: Fix nameing and structure!
 const opcodes = {
-  0x00: cpu => Z80.other.nop(),
-
+  0xCB: () => { throw Error('A opcode modifier should not be called'); },
   // -------- 8 bit load --------
   // 1. LD nn n
   0x06: cpu => Z80.load8.ldImmediate(cpu, RegMap.b),
@@ -272,6 +270,44 @@ const opcodes = {
   0x1B: cpu => Z80.alu16.dec(cpu, RegMap.de),
   0x2B: cpu => Z80.alu16.dec(cpu, RegMap.hl),
   0x3B: cpu => Z80.alu16.dec(cpu, RegMap.sp),
+
+  // -------- Misc --------
+  // 1. SWAP
+  // CB: displacement opcode
+  0xCB37: cpu => Z80.misc.swap(cpu, RegMap.a),
+  0xCB30: cpu => Z80.misc.swap(cpu, RegMap.b),
+  0xCB31: cpu => Z80.misc.swap(cpu, RegMap.c),
+  0xCB32: cpu => Z80.misc.swap(cpu, RegMap.d),
+  0xCB33: cpu => Z80.misc.swap(cpu, RegMap.e),
+  0xCB34: cpu => Z80.misc.swap(cpu, RegMap.h),
+  0xCB35: cpu => Z80.misc.swap(cpu, RegMap.l),
+  0xCB36: cpu => Z80.misc.swapMemHL(cpu),
+
+  // 2. DAA
+  // TODO: Convert to Binary coded decimal operation
+  0x27: cpu => Z80.misc.daa(cpu),
+
+  // 3. CPL
+  0x2F: cpu => Z80.misc.cpl(cpu),
+
+  // 4. CCF
+  0x3F: cpu => Z80.misc.ccf(cpu),
+
+  // 5. SCF
+  0x37: cpu => Z80.misc.scf(cpu),
+
+  // 6. NOP
+  0x00: () => Z80.misc.nop(),
+
+  // 7. HALT
+  0x76: () => Z80.misc.halt(),
+
+  // 8. STOP
+  0x1000: () => Z80.misc.stop(),
+
+  // 9. DI
+  0xF3: cpu => Z80.misc.di(cpu),
+  0xFB: cpu => Z80.misc.ei(cpu),
 };
 
 export default opcodes;
