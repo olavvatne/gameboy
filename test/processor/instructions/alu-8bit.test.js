@@ -36,7 +36,11 @@ describe('Processor', () => {
       state.reg.reg(RegMap.c, 0x01);
 
       Z80.alu8.add(state, RegMap.c);
-      assert.equal(state.reg.flags(), 0b10110000);
+      assert.equal(state.reg.flags(), 0b10010000);
+
+      state.reg.reg(RegMap.c, 0x10);
+      Z80.alu8.add(state, RegMap.c);
+      assert.equal(state.reg.flags(), 0b00100000);
     });
 
     it('adds value found at addr HL with reg A', () => {

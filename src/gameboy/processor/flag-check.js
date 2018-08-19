@@ -47,12 +47,12 @@ export default class CheckFlagFor {
 
   // If carry occured from lower nibble (4 bit of reg) 3.2.2 GBCPUman
   halfCarry(reg) {
-    if (reg > 15) this.setHalfCarry(true);
+    if ((reg & 0x10) === 0x10) this.setHalfCarry(true);
     return this;
   }
 
   halfCarry16(reg) {
-    if (reg > 0xFFF) this.setHalfCarry(true);
+    if ((reg & 0x1000) === 0x1000) this.setHalfCarry(true);
     return this;
   }
 

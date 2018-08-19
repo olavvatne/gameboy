@@ -64,9 +64,8 @@ describe('Processor', () => {
       Z80.alu16.addRegHLReg(state, RegMap.de);
 
       assert.equal(0, state.reg.reg(RegMap.hl));
-      // TODO: should halfCarry only be set in case of overflow, or as long
-      // as value is above threshold?
-      assert.isTrue(getFlags().isHalfCarry());
+      // Is not a half carry because 0xFFFF and 0x0001 result in zeroes after a MSB of 1.
+      assert.isFalse(getFlags().isHalfCarry());
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -122,7 +121,9 @@ describe('Processor', () => {
       // TODO: 16 bit carry and half carry
       assert.equal(0, state.reg.sp());
       assert.isTrue(getFlags().isCarry());
-      assert.isTrue(getFlags().isHalfCarry());
+
+      // Sum does not lead to a half carry. Only carry.
+      assert.isFalse(getFlags().isHalfCarry());
     });
   });
 });

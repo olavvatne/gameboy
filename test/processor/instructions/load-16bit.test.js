@@ -33,13 +33,13 @@ describe('Processor', () => {
       state.reg.reg(RegMap.f, 0x99);
       const imAddr = 0x7654;
       const imVal = 0x11;
-      // Both over 255 and 16. Will cause carry and half carry to be set.
+      // Over 255. Will cause carry
       const correct = 0x3333 + 0x11;
       state.reg.pc(imAddr);
       state.mmu.writeWord(imAddr, imVal);
       Z80.load16.ldHLFromSPPlusImmediate(state);
       assert.equal(state.reg.reg(RegMap.hl), correct);
-      assert.equal(state.reg.flags(), 0b00110000);
+      assert.equal(state.reg.flags(), 0b00010000);
     });
 
     it('can put SP into address determined by immediate value', () => {
