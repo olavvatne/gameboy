@@ -1,5 +1,7 @@
 import { Registers, opcodes } from './';
 
+/* eslint no-bitwise: 0 */
+
 export default class ProcessorCore {
   constructor(memoryController) {
     this.mmu = memoryController;
@@ -19,7 +21,13 @@ export default class ProcessorCore {
   }
 
   decode() {
-    this.currentInstruction = opcodes[this.currentOp];
+    let op = this.currentOp;
+    if (this.isOpAModifier()) {
+      op = this.readNextOpAfterModiferAndCombine(op);
+    }
+
+    if (opcodes[op] === undefined) throw new Error(`opcode not impl: ${op.toString(16)}`);
+    this.currentInstruction = opcodes[op];
   }
 
   execute() {
@@ -29,6 +37,16 @@ export default class ProcessorCore {
 
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
+  }
+
+  isOpAModifier() {
+    return this.currentOp === 0xCB;
+  }
+
+  readNextOpAfterModiferAndCombine(op) {
+    this.fetch();
+    const nextOp = this.currentOp;
+    return (op << 8) + nextOp;
   }
 
   start() {

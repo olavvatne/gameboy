@@ -392,6 +392,25 @@ const opcodes = {
   0xCB3C: cpu => Z80.shift.srl(cpu, RegMap.h),
   0xCB3D: cpu => Z80.shift.srl(cpu, RegMap.l),
   0xCB3E: cpu => Z80.shift.srlMemHL(cpu),
+
+  // TODO: BIT, RES and SET need to be dynamically loaded into here
+
 };
+
+const LoadOpcodesIntoMap = (start, end, op) => {
+  const regs = [RegMap.b, RegMap.c, RegMap.d, RegMap.e, RegMap.h, RegMap.l, RegMap.hl, RegMap.a];
+  for (let code = start; code <= end; code += 1) {
+    const reg = regs[(code - start) % regs.length];
+    const bit = Math.floor((code - start) / regs.length);
+    opcodes[0xCB00 + code] = cpu => op(cpu, reg, bit);
+  }
+};
+
+// Many similar instructions with only reg and bit that differ.
+// Uses opcode reference in link below to dynamically load them into map.
+// http://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html
+LoadOpcodesIntoMap(0x40, 0x7F, (cpu, reg, bit) => Z80.bit.bit(cpu, reg, bit));
+LoadOpcodesIntoMap(0x80, 0xBF, (cpu, reg, bit) => Z80.bit.res(cpu, reg, bit));
+LoadOpcodesIntoMap(0xC0, 0xFF, (cpu, reg, bit) => Z80.bit.set(cpu, reg, bit));
 
 export default opcodes;

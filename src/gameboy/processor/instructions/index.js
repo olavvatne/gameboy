@@ -5,3 +5,4 @@ export { default as load16 } from './load-16bit';
 export { default as misc } from './misc';
 export { default as rotate } from './rotate';
 export { default as shift } from './shift';
+export { default as bit } from './bit';
