@@ -284,7 +284,6 @@ const opcodes = {
   0xCB36: cpu => Z80.misc.swapMemHL(cpu),
 
   // 2. DAA
-  // TODO: Convert to Binary coded decimal operation
   0x27: cpu => Z80.misc.daa(cpu),
 
   // 3. CPL
@@ -307,7 +306,92 @@ const opcodes = {
 
   // 9. DI
   0xF3: cpu => Z80.misc.di(cpu),
+
+  // 10. EI
   0xFB: cpu => Z80.misc.ei(cpu),
+
+  // -------- Rotates & shifts --------
+  // 1. RLCA
+  0x07: cpu => Z80.rotate.rcla(cpu),
+
+  // 2. RLA
+  0x17: cpu => Z80.rotate.rla(cpu),
+
+  // 3. RRCA
+  0x0F: cpu => Z80.rotate.rrca(cpu),
+
+  // 4. RRA
+  0x1F: cpu => Z80.rotate.rra(cpu),
+
+  // 5. RLC n
+  0xCB07: cpu => Z80.rotate.rlc(cpu, RegMap.a),
+  0xCB00: cpu => Z80.rotate.rlc(cpu, RegMap.b),
+  0xCB01: cpu => Z80.rotate.rlc(cpu, RegMap.c),
+  0xCB02: cpu => Z80.rotate.rlc(cpu, RegMap.d),
+  0xCB03: cpu => Z80.rotate.rlc(cpu, RegMap.e),
+  0xCB04: cpu => Z80.rotate.rlc(cpu, RegMap.h),
+  0xCB05: cpu => Z80.rotate.rlc(cpu, RegMap.l),
+  0xCB06: cpu => Z80.rotate.rlcMemHL(cpu),
+
+  // 6. RL n
+  0xCB17: cpu => Z80.rotate.rl(cpu, RegMap.a),
+  0xCB10: cpu => Z80.rotate.rl(cpu, RegMap.b),
+  0xCB11: cpu => Z80.rotate.rl(cpu, RegMap.c),
+  0xCB12: cpu => Z80.rotate.rl(cpu, RegMap.d),
+  0xCB13: cpu => Z80.rotate.rl(cpu, RegMap.e),
+  0xCB14: cpu => Z80.rotate.rl(cpu, RegMap.h),
+  0xCB15: cpu => Z80.rotate.rl(cpu, RegMap.l),
+  0xCB16: cpu => Z80.rotate.rlMemHL(cpu),
+
+  // 7. RRC n
+  0xCB0F: cpu => Z80.rotate.rrc(cpu, RegMap.a),
+  0xCB08: cpu => Z80.rotate.rrc(cpu, RegMap.b),
+  0xCB09: cpu => Z80.rotate.rrc(cpu, RegMap.c),
+  0xCB0A: cpu => Z80.rotate.rrc(cpu, RegMap.d),
+  0xCB0B: cpu => Z80.rotate.rrc(cpu, RegMap.e),
+  0xCB0C: cpu => Z80.rotate.rrc(cpu, RegMap.h),
+  0xCB0D: cpu => Z80.rotate.rrc(cpu, RegMap.l),
+  0xCB0E: cpu => Z80.rotate.rrcMemHL(cpu),
+
+  // 8. RR n
+  0xCB1F: cpu => Z80.rotate.rr(cpu, RegMap.a),
+  0xCB18: cpu => Z80.rotate.rr(cpu, RegMap.b),
+  0xCB19: cpu => Z80.rotate.rr(cpu, RegMap.c),
+  0xCB1A: cpu => Z80.rotate.rr(cpu, RegMap.d),
+  0xCB1B: cpu => Z80.rotate.rr(cpu, RegMap.e),
+  0xCB1C: cpu => Z80.rotate.rr(cpu, RegMap.h),
+  0xCB1D: cpu => Z80.rotate.rr(cpu, RegMap.l),
+  0xCB1E: cpu => Z80.rotate.rrMemHL(cpu),
+
+  // 9. SLA n
+  0xCB27: cpu => Z80.shift.sla(cpu, RegMap.a),
+  0xCB20: cpu => Z80.shift.sla(cpu, RegMap.b),
+  0xCB21: cpu => Z80.shift.sla(cpu, RegMap.c),
+  0xCB22: cpu => Z80.shift.sla(cpu, RegMap.d),
+  0xCB23: cpu => Z80.shift.sla(cpu, RegMap.e),
+  0xCB24: cpu => Z80.shift.sla(cpu, RegMap.h),
+  0xCB25: cpu => Z80.shift.sla(cpu, RegMap.l),
+  0xCB26: cpu => Z80.shift.slaMemHL(cpu),
+
+  // 10. SRA n
+  0xCB2F: cpu => Z80.shift.sra(cpu, RegMap.a),
+  0xCB28: cpu => Z80.shift.sra(cpu, RegMap.b),
+  0xCB29: cpu => Z80.shift.sra(cpu, RegMap.c),
+  0xCB2A: cpu => Z80.shift.sra(cpu, RegMap.d),
+  0xCB2B: cpu => Z80.shift.sra(cpu, RegMap.e),
+  0xCB2C: cpu => Z80.shift.sra(cpu, RegMap.h),
+  0xCB2D: cpu => Z80.shift.sra(cpu, RegMap.l),
+  0xCB2E: cpu => Z80.shift.sraMemHL(cpu),
+
+  // 11. SRL n
+  0xCB3F: cpu => Z80.shift.srl(cpu, RegMap.a),
+  0xCB38: cpu => Z80.shift.srl(cpu, RegMap.b),
+  0xCB39: cpu => Z80.shift.srl(cpu, RegMap.c),
+  0xCB3A: cpu => Z80.shift.srl(cpu, RegMap.d),
+  0xCB3B: cpu => Z80.shift.srl(cpu, RegMap.e),
+  0xCB3C: cpu => Z80.shift.srl(cpu, RegMap.h),
+  0xCB3D: cpu => Z80.shift.srl(cpu, RegMap.l),
+  0xCB3E: cpu => Z80.shift.srlMemHL(cpu),
 };
 
 export default opcodes;

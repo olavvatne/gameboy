@@ -106,4 +106,66 @@ describe('Processor', () => {
     assert.isTrue(flag.isZero()); // unaffected
     assert.isTrue(flag.isCarry());
   });
+
+  it('can correct A containing bcd into correct packed BCD representation', () => {
+    // BCD addition of something that lead to 99. No correction needed
+    const num = 0b10011001; // 99
+    const corrBcd = 0b10011001;
+    state.reg.reg(RegMap.a, num);
+
+    Z80.misc.daa(state);
+
+    const bcdNum = state.reg.reg(RegMap.a);
+
+    assert.equal(bcdNum, corrBcd);
+  });
+
+  it('can correct A containing bcd into correct bcd with other number', () => {
+    // Addition. 19 + 28 = 47
+    // 0001 1001 => 19
+    // 0010 1000 => 28
+    const num = 0b01000001; // 4 and 1. Not correctly adjusted
+    const corrBcd = 0b01000111; // 47 in bcd
+    // We have a half carry here from previous operation
+    const flag = new CheckFlagFor().setHalfCarry(true).get();
+    state.reg.reg(RegMap.a, num);
+    state.reg.reg(RegMap.f, flag);
+
+    Z80.misc.daa(state);
+
+    const bcdNum = state.reg.reg(RegMap.a);
+
+    assert.equal(bcdNum, corrBcd);
+  });
+
+  it('can correct A containing bcd into correct bcd with third number', () => {
+    const num = 0b00001010; // 10
+    const corrBcd = 0b00010000; // 1 - 0
+    state.reg.reg(RegMap.a, num);
+
+    Z80.misc.daa(state);
+
+    const bcdNum = state.reg.reg(RegMap.a);
+
+    assert.equal(bcdNum, corrBcd);
+  });
+
+  it('handles correction of bcd reg A after subtraction', () => {
+    // 47 - 28 = 19
+    // 0010 1000 => 28
+    // 0100 0111 => 47
+    // 1101 1000 => two's complement of 28
+    // 0001 1111 => 1 and 15. Not bcd 19
+    const num = 0b00011111;
+    const corrBcd = 0b00011001; // 1 - 9
+    const flag = new CheckFlagFor().setCarry(true).subtraction().get();
+    state.reg.reg(RegMap.a, num);
+    state.reg.reg(RegMap.f, flag);
+
+    Z80.misc.daa(state);
+
+    const bcdNum = state.reg.reg(RegMap.a);
+
+    assert.equal(bcdNum, corrBcd);
+  });
 });

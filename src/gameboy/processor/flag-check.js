@@ -10,11 +10,17 @@ export default class CheckFlagFor {
   }
 
   subtraction() {
-    this.flag |= 0x40;
+    this.setSubtraction(true);
     return this;
   }
   notSubtraction() {
-    this.flag &= 0b10111111;
+    this.setSubtraction(false);
+    return this;
+  }
+
+  setSubtraction(isSub) {
+    if (isSub) this.flag |= 0x40;
+    else this.flag &= 0b10111111;
     return this;
   }
 

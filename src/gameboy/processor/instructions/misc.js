@@ -37,11 +37,37 @@ export default {
     reg.reg(RegMap.f, flag);
     return createOpTime(4, 16);
   },
-
+  // ensure content in A is in packed Binary coded decimal encoding
+  // Intended to be run immediately after an a  dditon or subtraction operations,
+  // where the values were BCD encoded.
   daa: ({ reg }) => {
-    // TODO: figure out what this does?
-    // packed BCD
-    // https://en.wikipedia.org/wiki/Binary-coded_decimal
+    const prevFlag = new CheckFlagFor(reg.flags());
+    let val = reg.reg(RegMap.a);
+
+    const lowerNibble = val & 0b00001111;
+    const isAboveMaxUpperNibbleDecimal = lowerNibble > 9 || prevFlag.isHalfCarry();
+    if (isAboveMaxUpperNibbleDecimal) {
+      if (prevFlag.isSubtraction()) val = (val - 0x06) & 0xFF;
+      else val = (val + 0x06) & 0xFF;
+    }
+
+    const upperNibble = val >>> 4;
+    if (prevFlag.isSubtraction()) {
+      // subtraction disregards previous op carry flag.
+      if (upperNibble > 9) {
+        val = (val - 0x60) & 0xFF;
+      }
+    } else {
+      const isAboveMaxDecimal = upperNibble > 9 || prevFlag.isCarry();
+      if (isAboveMaxDecimal) {
+        val = (val + 0x60) & 0xFF;
+      }
+    }
+    reg.reg(RegMap.a, val);
+
+    const newFlag = new CheckFlagFor().setCarry(val > 0x99)
+      .zero(val).setSubtraction(prevFlag.isSubtraction);
+    reg.reg(RegMap.f, newFlag);
     return createOpTime(1, 4);
   },
 
