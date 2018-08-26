@@ -1,4 +1,4 @@
-import { load8, load16, alu8, alu16, misc, rotate, shift, bit } from './instructions';
+import { load8, load16, alu8, alu16, misc, rotate, shift, bit, jump } from './instructions';
 
 const Z80 = {
   load8,
@@ -9,6 +9,7 @@ const Z80 = {
   rotate,
   shift,
   bit,
+  jump,
 };
 
 export { Z80 };

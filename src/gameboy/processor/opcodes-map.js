@@ -393,8 +393,30 @@ const opcodes = {
   0xCB3D: cpu => Z80.shift.srl(cpu, RegMap.l),
   0xCB3E: cpu => Z80.shift.srlMemHL(cpu),
 
-  // TODO: BIT, RES and SET need to be dynamically loaded into here
+  //  -------- Rotates & shifts --------
+  // Are loaded dynamically into this map. See below.
 
+  //  -------- Jumps --------
+  // 1. JP nn
+  0xC3: cpu => Z80.jump.jp(cpu),
+
+  // 2. JP cc, nn
+  0xC2: cpu => Z80.jump.jpIfZ(cpu, false),
+  0xCA: cpu => Z80.jump.jpIfZ(cpu, true),
+  0xD2: cpu => Z80.jump.jpIfC(cpu, false),
+  0xDA: cpu => Z80.jump.jpIfC(cpu, true),
+
+  // 3. JP (HL)
+  0xE9: cpu => Z80.jump.jpHL(cpu),
+
+  // 4. JR n
+  0x18: cpu => Z80.jump.jr(cpu),
+
+  // 5. JR cc, n
+  0x20: cpu => Z80.jump.jrIfZ(cpu, false),
+  0x28: cpu => Z80.jump.jrIfZ(cpu, true),
+  0x30: cpu => Z80.jump.jrIfC(cpu, false),
+  0x38: cpu => Z80.jump.jrIfC(cpu, true),
 };
 
 const LoadOpcodesIntoMap = (start, end, op) => {

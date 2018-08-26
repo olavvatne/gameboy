@@ -6,3 +6,4 @@ export { default as misc } from './misc';
 export { default as rotate } from './rotate';
 export { default as shift } from './shift';
 export { default as bit } from './bit';
+export { default as jump } from './jump';
