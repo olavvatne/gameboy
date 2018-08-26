@@ -9,7 +9,7 @@ export default class Gameboy {
   }
 
   start() {
-    this.core.start();
+    return this.core.start();
   }
 
   stop() {

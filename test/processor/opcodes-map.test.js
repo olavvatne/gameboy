@@ -38,7 +38,6 @@ describe('Processor', () => {
     });
 
     it('all return information about operation\'s time expenditure', () => {
-
       Object.keys(opcodes).forEach((op) => {
         if (op !== `${0xCB}`) {
           state = getEmptyState();

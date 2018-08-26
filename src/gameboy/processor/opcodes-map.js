@@ -417,6 +417,40 @@ const opcodes = {
   0x28: cpu => Z80.jump.jrIfZ(cpu, true),
   0x30: cpu => Z80.jump.jrIfC(cpu, false),
   0x38: cpu => Z80.jump.jrIfC(cpu, true),
+
+  //  -------- Jumps --------
+  // 1. CALL nn
+  0xCD: cpu => Z80.subroutine.call(cpu),
+
+  // 2. CALL cc,nn
+  0xC4: cpu => Z80.subroutine.callIfZ(cpu, false),
+  0xCC: cpu => Z80.subroutine.callIfZ(cpu, true),
+  0xD4: cpu => Z80.subroutine.callIfC(cpu, false),
+  0xDC: cpu => Z80.subroutine.callIfC(cpu, true),
+
+  //  -------- Restarts --------
+  // 1. RST n
+  0xC7: cpu => Z80.subroutine.rst(cpu, 0x00),
+  0xCF: cpu => Z80.subroutine.rst(cpu, 0x08),
+  0xD7: cpu => Z80.subroutine.rst(cpu, 0x10),
+  0xDF: cpu => Z80.subroutine.rst(cpu, 0x18),
+  0xE7: cpu => Z80.subroutine.rst(cpu, 0x20),
+  0xEF: cpu => Z80.subroutine.rst(cpu, 0x28),
+  0xF7: cpu => Z80.subroutine.rst(cpu, 0x30),
+  0xFF: cpu => Z80.subroutine.rst(cpu, 0x38),
+
+  //  -------- Returns --------
+  // 1. RET
+  0xC9: cpu => Z80.subroutine.ret(cpu),
+
+  // 2. RET cc
+  0xC0: cpu => Z80.subroutine.retIfZ(cpu, false),
+  0xC8: cpu => Z80.subroutine.retIfZ(cpu, true),
+  0xD0: cpu => Z80.subroutine.retIfC(cpu, false),
+  0xD8: cpu => Z80.subroutine.retIfC(cpu, true),
+
+  // 3. RETI
+  0xD9: cpu => Z80.subroutine.reti(cpu),
 };
 
 const LoadOpcodesIntoMap = (start, end, op) => {

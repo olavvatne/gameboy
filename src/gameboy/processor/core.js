@@ -48,14 +48,21 @@ export default class ProcessorCore {
     const nextOp = this.currentOp;
     return (op << 8) + nextOp;
   }
+  loop() {
+    if (!this.running) {
+      return;
+    }
+    this.fetch();
+    this.decode();
+    this.execute();
 
+    setTimeout(() => {
+      this.loop();
+    }, 10);
+  }
   start() {
     this.running = true;
-    while (this.running) {
-      this.fetch();
-      this.decode();
-      this.execute();
-    }
+    this.loop();
   }
 
   stop() {
