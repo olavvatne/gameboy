@@ -407,8 +407,7 @@ const LoadOpcodesIntoMap = (start, end, op) => {
 };
 
 // Many similar instructions with only reg and bit that differ.
-// Uses opcode reference in link below to dynamically load them into map.
-// http://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html
+// Uses opcode reference to dynamically load them into map. See tests for reference.
 LoadOpcodesIntoMap(0x40, 0x7F, (cpu, reg, bit) => Z80.bit.bit(cpu, reg, bit));
 LoadOpcodesIntoMap(0x80, 0xBF, (cpu, reg, bit) => Z80.bit.res(cpu, reg, bit));
 LoadOpcodesIntoMap(0xC0, 0xFF, (cpu, reg, bit) => Z80.bit.set(cpu, reg, bit));
