@@ -19,17 +19,12 @@ export const RegMap = {
 export class Registers {
   constructor() {
     this._initGeneralPurposeRegisters();
-    this._initProgramCounter();
     this._initStackPointer();
   }
 
   _initGeneralPurposeRegisters() {
     this._gpr_buffer = new ArrayBuffer(numRegs);
     this._gpr = new DataView(this._gpr_buffer);
-  }
-
-  _initProgramCounter() {
-    this._pc = 0x0100; // Default on start up - 3.2.3 GBCPUman
   }
 
   _initStackPointer() {

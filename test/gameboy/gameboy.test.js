@@ -1,7 +1,5 @@
 import { assert } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
-import { Gameboy } from '../../src/gameboy';
+import TestRunner from './runner';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
@@ -9,18 +7,10 @@ import { Gameboy } from '../../src/gameboy';
 // End to end test of cpu and memory.
 // Runs bootstrap binary and checks that emulator has all the instructions needed.
 describe('Gameboy', () => {
-  describe('End to end of cpu and memory', (done) => {
-    it('runs binary bootstrap without issue', () => {
-      const gameboy = new Gameboy();
-      const binary = fs.readFileSync(path.resolve(__dirname, '../helper/bootstrap.bin'));
-      const start = 0x0100;
-      binary.map((val, idx) => gameboy.memory.writeByte(start + idx, val));
-      setTimeout(() => {
-        gameboy.stop();
-        done();
-      }, 500);
-
-      assert.doesNotThrow(() => gameboy.start());
+  describe('End to end of cpu and memory', () => {
+    it('runs bootstrap without issue', () => {
+      const gameboy = new TestRunner();
+      assert.doesNotThrow(() => gameboy.testBootstrap());
     });
   });
 });
