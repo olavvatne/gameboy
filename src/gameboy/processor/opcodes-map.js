@@ -115,10 +115,10 @@ const opcodes = {
 
   // -------- 16 bit load --------
   // 1. LD n,nn
-  0x01: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.BC),
-  0x11: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.DE),
-  0x21: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.HL),
-  0x31: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.SP),
+  0x01: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.bc),
+  0x11: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.de),
+  0x21: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.hl),
+  0x31: cpu => Z80.load16.ldImmediateIntoReg(cpu, RegMap.sp),
 
   // 2. LD SP,HL
   0xF9: cpu => Z80.load16.ldRegToReg(cpu, RegMap.hl, RegMap.sp),

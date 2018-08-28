@@ -51,13 +51,15 @@ export default {
   },
 
   ldImmediate: ({ reg, mmu }, addr) => {
-    mmu.writeByte(reg.pc(), reg.reg(addr));
+    const imAddr = reg.pc();
+    reg.incrementPC();
+    const imVal = mmu.readByte(imAddr);
+    reg.reg(addr, imVal);
     return createOpTime(2, 8);
   },
   // Put byte at memory location found in 16 bit registers into A
   ldRegAMem: ({ reg, mmu }, regAddr) => {
-    const memAddr = mmu.readWord(reg.reg(regAddr));
-    const val = mmu.readByte(memAddr);
+    const val = mmu.readByte(reg.reg(regAddr));
     reg.reg(RegMap.a, val);
     return createOpTime(2, 8);
   },

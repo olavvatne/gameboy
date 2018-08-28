@@ -24,6 +24,10 @@ export default class MemoryCore {
   }
 
   readWord(address) {
+    if (address < 0x0100 && this._inBios) {
+      return (bios[address + 1] << 8) | bios[address];
+    }
+
     return this._memory.getUint16(address, true);
   }
 

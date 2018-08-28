@@ -13,13 +13,14 @@ describe('Memory', () => {
 
     it('can write a byte to an address', () => {
       const memory = getMemory();
-      memory.writeByte(185, 0x23);
-      const val = memory.readByte(185);
+      memory.writeByte(0x101, 0x23);
+      const val = memory.readByte(0x101);
       assert.equal(val, 0x23);
     });
 
     it('can write a word to an address', () => {
       const memory = getMemory();
+      memory.exitBios();
       memory.writeWord(93, 0x3467);
       const val = memory.readWord(93);
       assert.equal(val, 0x3467);

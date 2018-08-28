@@ -36,9 +36,9 @@ describe('Processor', () => {
     });
 
     it('can load into A the value from memory based on immediate word', () => {
-      const pcVal = 0x00AB;
+      const pcVal = 0x01AB;
       state.reg.pc(pcVal);
-      state.mmu.writeWord(0x0AB, 0x1234);
+      state.mmu.writeWord(0x01AB, 0x1234);
       state.mmu.writeByte(0x1234, 0xEF);
 
       Z80.load8.ldRegAImmediateWord(state);
@@ -47,18 +47,19 @@ describe('Processor', () => {
       assert.equal(state.reg.reg(RegMap.a), 0xEF);
     });
 
-    it('can put register 8 bit value into immediate value', () => {
-      // TODO: Need to verify if I understand this instruction correctly.
-      const pcVal = 0x00AC;
-      state.reg.pc(pcVal);
+    it('can put 8 bit immediate value into register', () => {
+      const pcAddr = 0x0AC;
+      const pcVal = 0x11;
+      state.mmu.exitBios();
+      state.reg.pc(pcAddr);
 
       reg8bitList.forEach((reg, idx) => {
-        state.reg.reg(RegMap.b, 0x12 + idx);
+        state.mmu.writeWord(state.reg.pc(), pcVal + idx);
 
         Z80.load8.ldImmediate(state, reg);
 
-        const immediate = state.mmu.readByte(pcVal);
-        assert.equal(state.reg.reg(reg), immediate);
+        const immediate = state.reg.reg(reg);
+        assert.equal(immediate, pcVal + idx);
       });
     });
 

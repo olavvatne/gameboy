@@ -24,6 +24,7 @@ export default class ProcessorCore {
     let op = this.currentOp;
     if (this.isOpAModifier()) {
       op = this.readNextOpAfterModiferAndCombine(op);
+      this.currentOp = op;
     }
 
     if (opcodes[op] === undefined) throw new Error(`opcode not impl: ${op.toString(16)}`);

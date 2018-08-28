@@ -18,11 +18,20 @@ export default class TestRunner {
       this.core.fetch();
       this.core.decode();
       this.printCurrent();
+      this.printState();
+      if (this.core.currentOp === 0x77) {
+        console.log('retirm');
+      }
       this.core.execute();
     }
   }
 
   printCurrent() {
     console.log(this.info.getDescription(this.core.currentOp));
+  }
+
+  printState() {
+    const state = this.core.reg.getState();
+    console.log(Object.keys(state).map(key => ` ${key}: ${state[key]}`).join());
   }
 }

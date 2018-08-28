@@ -22,8 +22,8 @@ export default class OpcodeInfoManager {
   findInfo(op) {
     if (op === null || op === undefined) return {};
     if ((op >>> 8) === 0xCB) {
-      const key = getHex(op & 0x00FF);
-      return this.cbprefixed[key];
+      const cbKey = getHex(op & 0x00FF);
+      return this._opcodes.cbprefixed[cbKey];
     }
     const key = getHex(op);
     return this._opcodes.unprefixed[key];
