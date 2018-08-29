@@ -15,7 +15,6 @@ export default class ProcessorCore {
 
   fetch() {
     const pc = this.reg.pc();
-    // TODO: Check if displacement code
     this.currentOp = this.mmu.readByte(pc);
     this.reg.pc(pc + 1);
   }

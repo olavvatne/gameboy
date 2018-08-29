@@ -464,5 +464,74 @@ describe('Processor', () => {
 
       assert.equal(valueInMem - 1, state.mmu.readByte(memAddrInHL));
     });
+
+    it('should set half carry flag if there was a borrow from bit 4 to bit 3', () => {
+      const willCauseHalfCarry = 0b00010000;
+
+      state.reg.reg(RegMap.b, willCauseHalfCarry);
+
+      Z80.alu8.dec(state, RegMap.b);
+
+      assert.isTrue(getFlags().isHalfCarry());
+
+      const notCarry = 0b00001111;
+      state.reg.reg(RegMap.b, notCarry);
+
+      Z80.alu8.dec(state, RegMap.b);
+
+      assert.isFalse(getFlags().isHalfCarry());
+
+      const notCarry2 = 0b00010001;
+      state.reg.reg(RegMap.b, notCarry2);
+
+      Z80.alu8.dec(state, RegMap.b);
+
+      assert.isFalse(getFlags().isHalfCarry());
+    });
+
+    it('set borrow flag on subtraction which result in borrow', () => {
+      const valInA = 0x09;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.b, 0x10);
+
+      Z80.alu8.sub(state, RegMap.b);
+      assert.isTrue(getFlags().isCarry());
+    });
+
+    it('does not set carry borrow if A is bigger than what we subtract', () => {
+      const valInA = 0xAA;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.c, 0x10);
+
+      Z80.alu8.sub(state, RegMap.c);
+      assert.isFalse(getFlags().isCarry());
+    });
+
+    it('sets half carry on sub, whenever one borrows from bit 4', () => {
+      const valInA = 0b00010000;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.c, 0x01);
+
+      Z80.alu8.sub(state, RegMap.c);
+      assert.isTrue(getFlags().isHalfCarry());
+    });
+
+    it('does not set half carry on sub, when there clearly has not been a borrow', () => {
+      const valInA = 0b00010001;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.c, 0x01);
+
+      Z80.alu8.sub(state, RegMap.c);
+      assert.isFalse(getFlags().isHalfCarry());
+    });
+
+    it('sets half carry on sub, also with a bigger borrow', () => {
+      const valInA = 0b00110011;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.c, 0x04);
+
+      Z80.alu8.sub(state, RegMap.c);
+      assert.isTrue(getFlags().isHalfCarry());
+    });
   });
 });

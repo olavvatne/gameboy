@@ -4,8 +4,8 @@ export default class CheckFlagFor {
     this.flag = flag;
   }
 
-  underflow(reg) {
-    if (reg < 0) this.flag |= 0x10;
+  underflow(val) {
+    if (val < 0) this.flag |= 0x10;
     return this;
   }
 
@@ -24,18 +24,18 @@ export default class CheckFlagFor {
     return this;
   }
 
-  carry(reg) {
-    if (reg > 255) this.setCarry(true);
+  carry(val) {
+    if (val > 255) this.setCarry(true);
     return this;
   }
 
-  carry16(reg) {
-    if (reg > 0xFFFF) this.setCarry(true);
+  carry16(val) {
+    if (val > 0xFFFF) this.setCarry(true);
     return this;
   }
 
-  zero(reg) {
-    if (!(reg & 255)) this.flag |= 0x80;
+  zero(val) {
+    if (!(val & 255)) this.flag |= 0x80;
     return this;
   }
 
@@ -52,13 +52,25 @@ export default class CheckFlagFor {
   }
 
   // If carry occured from lower nibble (4 bit of reg) 3.2.2 GBCPUman
-  halfCarry(reg) {
-    if ((reg & 0x10) === 0x10) this.setHalfCarry(true);
+  halfCarry(val) {
+    if ((val & 0x10) === 0x10) this.setHalfCarry(true);
     return this;
   }
 
-  halfCarry16(reg) {
-    if ((reg & 0x1000) === 0x1000) this.setHalfCarry(true);
+  halfCarry16(val) {
+    if ((val & 0x1000) === 0x1000) this.setHalfCarry(true);
+    return this;
+  }
+
+  // If the lower nibble from the subtraction is bigger than the lower nibble from original number,
+  //  we see that some kind of borrowing has taken place.
+  halfCarryBorrow(resultOfSub, minuend) {
+    this.setHalfCarry((minuend & 0x0F) < (resultOfSub & 0x0F));
+    return this;
+  }
+
+  carryBorrow(resultOfSub) {
+    this.setCarry(resultOfSub < 0);
     return this;
   }
 

@@ -6,10 +6,9 @@ import { alu16 } from './';
 /* eslint newline-per-chained-call: 0 */
 const createOpTime = (m, t) => ({ m, t });
 
-const setSubtractionFlag = (reg, val) => {
-  // TODO: set H and C if no borrow?
-  // TODO: set half carry and carry
-  const flag = new CheckFlagFor().zero(val).subtraction().get();
+const setSubtractionFlag = (reg, val, minuend) => {
+
+  const flag = new CheckFlagFor().zero(val).subtraction().carryBorrow(val).halfCarryBorrow(val, minuend).get();
   reg.reg(RegMap.f, flag);
 };
 
@@ -104,42 +103,44 @@ export default {
 
   // SUBTRACTION
   sub: ({ reg }, addr) => {
-    const val = reg.reg(RegMap.a) - reg.reg(addr);
-    reg.reg(RegMap.a, val);
-    setSubtractionFlag(reg, val);
+    const regA = reg.reg(RegMap.a);
+    const val = regA - reg.reg(addr);
+    reg.reg(RegMap.a, val & 0xFF);
+    setSubtractionFlag(reg, val, regA);
     return createOpTime(1, 4);
   },
 
   subMemHL: ({ reg, mmu }) => {
+    const regA = reg.reg(RegMap.a);
     const val = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu);
     reg.reg(RegMap.a, val);
-    setSubtractionFlag(reg, val);
+    setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
   subImmediate: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) - readImmediateValueAndIncrementPC(reg, mmu);
+    const regA = reg.reg(RegMap.a);
+    const val = regA - readImmediateValueAndIncrementPC(reg, mmu);
     reg.reg(RegMap.a, val);
-    setSubtractionFlag(reg, val);
+    setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
   sbc: ({ reg }, addr) => {
-    // TODO: half and carry borrow?
     const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const val = reg.reg(RegMap.a) - reg.reg(addr) - isCarry;
+    const regA = reg.reg(RegMap.a);
+    const val = regA - reg.reg(addr) - isCarry;
     reg.reg(RegMap.a, val);
-    setSubtractionFlag(reg, val);
+    setSubtractionFlag(reg, val, regA);
     return createOpTime(1, 4);
   },
 
   sbcMemHL: ({ reg, mmu }) => {
-    // TODO: what happens if value subracted from A is bigger. Negative number?
-    // TODO: half and carry borrow?
     const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const val = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu) - isCarry;
-    reg.reg(RegMap.a, val);
-    setSubtractionFlag(reg, val);
+    const regA = reg.reg(RegMap.a);
+    const val = regA - readValFromHLMem(reg, mmu) - isCarry;
+    reg.reg(RegMap.a, val & 0xFF);
+    setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
@@ -241,13 +242,14 @@ export default {
     return createOpTime(1, 4);
   },
 
+  // Seems like the offical manual says to set H if there was a borrow to bit 3.
   dec: (cpu, regAddr) => {
     const prevFlag = cpu.reg.flags();
     alu16.dec(cpu, regAddr);
     const val = cpu.reg.reg(regAddr);
-    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().get();
+    const isH = (val & 0x0F) === 0x0F; // Only way to borrow. -1 each time. From 0001 000 -> 0000 111;
+    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().setHalfCarry(isH).get();
     cpu.reg.reg(RegMap.f, flag);
-    // TODO: borrow
     return createOpTime(1, 4);
   },
 
