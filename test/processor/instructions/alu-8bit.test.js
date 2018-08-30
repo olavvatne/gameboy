@@ -328,7 +328,6 @@ describe('Processor', () => {
     });
 
     it('compare reg with A and set flags', () => {
-      // TODO: test cp borrow and subtraction borrow
       const valInA = 0x15;
       const valInD = 0x15;
       const valInL = 0x14;
@@ -388,7 +387,6 @@ describe('Processor', () => {
       Z80.alu8.cpImmediate(state);
 
       const val = state.reg.flags();
-      // TODO: underflow, borrow?? what what
       assert.equal(val, 0b01010000);
     });
 
@@ -532,6 +530,50 @@ describe('Processor', () => {
 
       Z80.alu8.sub(state, RegMap.c);
       assert.isTrue(getFlags().isHalfCarry());
+    });
+
+    it('sets zero flag if result is zero when doing compare', () => {
+      const valInA = 10;
+      const valInB = 10;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.b, valInB);
+
+      Z80.alu8.cp(state, RegMap.b);
+
+      const flags = getFlags();
+      assert.isTrue(flags.isZero());
+      assert.isTrue(flags.isSubtraction());
+      assert.isFalse(flags.isCarry());
+    });
+
+
+    it('sets carry flag if there is borrow', () => {
+      const valInA = 10;
+      const valInB = 14;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.b, valInB);
+
+      Z80.alu8.cp(state, RegMap.b);
+
+      const flags = getFlags();
+      assert.isFalse(flags.isZero());
+      assert.isTrue(flags.isSubtraction());
+      assert.isTrue(flags.isCarry());
+    });
+
+    it('sets half carry flag if there is borrow from bit 4', () => {
+      const valInA = 0b0010000;
+      const valInB = 0b0000001;
+      state.reg.reg(RegMap.a, valInA);
+      state.reg.reg(RegMap.b, valInB);
+
+      Z80.alu8.cp(state, RegMap.b);
+
+      const flags = getFlags();
+      assert.isFalse(flags.isZero());
+      assert.isTrue(flags.isSubtraction());
+      assert.isTrue(flags.isHalfCarry());
+      assert.isFalse(flags.isCarry());
     });
   });
 });

@@ -60,10 +60,10 @@ export class Registers {
   _reg16(num, value = null) {
     const regOffset = (num - RegMap.af) * 2;
     if (value !== null) {
-      this._gpr.setUint16(regOffset, value, true);
+      this._gpr.setUint16(regOffset, value, false);
     }
 
-    return this._gpr.getUint16(regOffset, true);
+    return this._gpr.getUint16(regOffset, false);
   }
 
   pc(value = null) {

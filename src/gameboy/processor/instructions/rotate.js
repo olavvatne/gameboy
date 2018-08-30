@@ -7,38 +7,38 @@ import { CheckFlagFor, RegMap } from '../';
 
 const createOpTime = (m, t) => ({ m, t });
 
-const rotateLeftWithMsbAround = (val, reg) => {
+const rotateLeftWithMsbAround = (val, reg, checkZero) => {
   const msb = (val & 0b10000000) === 0b10000000;
-  const newVal = (val << 1) + msb;
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(msb).get();
+  const newVal = ((val << 1) + msb) & 0xFF;
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(msb).get();
   reg.reg(RegMap.f, newFlag);
   return newVal;
 };
 
-const rotateLeftWithCarryAround = (val, reg) => {
+const rotateLeftWithCarryAround = (val, reg, checkZero) => {
   const isCarry = new CheckFlagFor(reg.flags()).isCarry();
   const msb = (val & 0b10000000) === 0b10000000;
-  const newVal = (val << 1) + isCarry;
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(msb).get();
+  const newVal = ((val << 1) + isCarry) & 0xFF;
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(msb).get();
   reg.reg(RegMap.f, newFlag);
   return newVal;
 };
 
-const rotateRightWithLsbAround = (val, reg) => {
+const rotateRightWithLsbAround = (val, reg, checkZero) => {
   const lsb = val & 0b00000001;
   const isLsb = lsb === 0b00000001;
-  const newVal = (val >>> 1) + (lsb << 7);
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(isLsb).get();
+  const newVal = ((val >>> 1) + (lsb << 7)) & 0xFF;
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(isLsb).get();
   reg.reg(RegMap.f, newFlag);
   return newVal;
 };
 
-const rotateRightWithCarryAround = (val, reg) => {
+const rotateRightWithCarryAround = (val, reg, checkZero) => {
   const isCarry = new CheckFlagFor(reg.flags()).isCarry();
   const lsb = val & 0b00000001;
   const isLsb = lsb === 0b00000001;
-  const newVal = (val >>> 1) + (isCarry << 7);
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(isLsb).get();
+  const newVal = ((val >>> 1) + (isCarry << 7)) & 0xFF;
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(isLsb).get();
   reg.reg(RegMap.f, newFlag);
   return newVal;
 };
@@ -46,14 +46,14 @@ const rotateRightWithCarryAround = (val, reg) => {
 export default {
   rcla: ({ reg }) => {
     const val = reg.reg(RegMap.a);
-    const newVal = rotateLeftWithMsbAround(val, reg);
+    const newVal = rotateLeftWithMsbAround(val, reg, false);
     reg.reg(RegMap.a, newVal);
     return createOpTime(1, 4);
   },
 
   rla: ({ reg }) => {
     const val = reg.reg(RegMap.a);
-    const newVal = rotateLeftWithCarryAround(val, reg);
+    const newVal = rotateLeftWithCarryAround(val, reg, false);
     reg.reg(RegMap.a, newVal);
 
     return createOpTime(1, 4);
@@ -61,7 +61,7 @@ export default {
 
   rrca: ({ reg }) => {
     const val = reg.reg(RegMap.a);
-    const newVal = rotateRightWithLsbAround(val, reg);
+    const newVal = rotateRightWithLsbAround(val, reg, false);
     reg.reg(RegMap.a, newVal);
 
     return createOpTime(1, 4);
@@ -69,7 +69,7 @@ export default {
 
   rra: ({ reg }) => {
     const val = reg.reg(RegMap.a);
-    const newVal = rotateRightWithCarryAround(val, reg);
+    const newVal = rotateRightWithCarryAround(val, reg, false);
     reg.reg(RegMap.a, newVal);
 
     return createOpTime(1, 4);
@@ -77,7 +77,7 @@ export default {
 
   rlc: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
-    const newVal = rotateLeftWithMsbAround(val, reg);
+    const newVal = rotateLeftWithMsbAround(val, reg, true);
     reg.reg(regAddr, newVal);
     return createOpTime(2, 8);
   },
@@ -85,14 +85,14 @@ export default {
   rlcMemHL: ({ reg, mmu }) => {
     const addr = reg.reg(RegMap.hl);
     const val = mmu.readByte(addr);
-    const newVal = rotateLeftWithMsbAround(val, reg);
+    const newVal = rotateLeftWithMsbAround(val, reg, true);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },
 
   rl: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
-    const newVal = rotateLeftWithCarryAround(val, reg);
+    const newVal = rotateLeftWithCarryAround(val, reg, true);
     reg.reg(regAddr, newVal);
     return createOpTime(2, 8);
   },
@@ -100,14 +100,14 @@ export default {
   rlMemHL: ({ reg, mmu }) => {
     const addr = reg.reg(RegMap.hl);
     const val = mmu.readByte(addr);
-    const newVal = rotateLeftWithCarryAround(val, reg);
+    const newVal = rotateLeftWithCarryAround(val, reg, true);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },
 
   rrc: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
-    const newVal = rotateRightWithLsbAround(val, reg);
+    const newVal = rotateRightWithLsbAround(val, reg, true);
     reg.reg(regAddr, newVal);
     return createOpTime(2, 8);
   },
@@ -115,14 +115,14 @@ export default {
   rrcMemHL: ({ reg, mmu }) => {
     const addr = reg.reg(RegMap.hl);
     const val = mmu.readByte(addr);
-    const newVal = rotateRightWithLsbAround(val, reg);
+    const newVal = rotateRightWithLsbAround(val, reg, true);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },
 
   rr: ({ reg }, regAddr) => {
     const val = reg.reg(regAddr);
-    const newVal = rotateRightWithCarryAround(val, reg);
+    const newVal = rotateRightWithCarryAround(val, reg, true);
     reg.reg(regAddr, newVal);
     return createOpTime(2, 8);
   },
@@ -130,7 +130,7 @@ export default {
   rrMemHL: ({ reg, mmu }) => {
     const addr = reg.reg(RegMap.hl);
     const val = mmu.readByte(addr);
-    const newVal = rotateRightWithCarryAround(val, reg);
+    const newVal = rotateRightWithCarryAround(val, reg, true);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },

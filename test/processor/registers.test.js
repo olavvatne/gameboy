@@ -54,17 +54,16 @@ describe('Processor', () => {
       const dVal = reg.reg(RegMap.d);
       const eVal = reg.reg(RegMap.e);
 
-      // Little endian
       assert.equal(deVal, 0xABCD);
-      assert.equal(dVal, 0xCD);
-      assert.equal(eVal, 0xAB);
+      assert.equal(dVal, 0xAB);
+      assert.equal(eVal, 0xCD);
     });
 
     it('can set two 8 bit registers that are read correctly as 16 bit', () => {
       reg.reg(RegMap.h, 0x12);
       reg.reg(RegMap.l, 0xEF);
       const val = reg.reg(RegMap.hl);
-      assert.equal(val, 0xEF12);
+      assert.equal(val, 0x12EF);
     });
   });
 });

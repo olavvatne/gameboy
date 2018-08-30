@@ -1,4 +1,5 @@
 import { CheckFlagFor, RegMap } from '../';
+import Util from './../util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -25,10 +26,10 @@ export default {
   ldHLFromSPPlusImmediate: ({ reg, mmu }) => {
     const spVal = reg.reg(RegMap.sp);
     const imAddr = reg.pc();
-    const imVal = mmu.readByte(imAddr);
+    const imSignedByte = Util.convertSignedByte(mmu.readByte(imAddr));
     reg.incrementPC();
-    const newVal = spVal + imVal;
-    reg.reg(RegMap.hl, spVal + imVal);
+    const newVal = spVal + imSignedByte;
+    reg.reg(RegMap.hl, spVal + imSignedByte);
 
     const flag = new CheckFlagFor().carry(newVal).halfCarry(newVal).get();
     reg.reg(RegMap.f, flag);

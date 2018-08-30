@@ -5,7 +5,7 @@ export default class CheckFlagFor {
   }
 
   underflow(val) {
-    if (val < 0) this.flag |= 0x10;
+    this.setCarry(val < 0);
     return this;
   }
 
@@ -25,17 +25,23 @@ export default class CheckFlagFor {
   }
 
   carry(val) {
-    if (val > 255) this.setCarry(true);
+    this.setCarry(val > 255);
     return this;
   }
 
   carry16(val) {
-    if (val > 0xFFFF) this.setCarry(true);
+    this.setCarry(val > 0xFFFF);
     return this;
   }
 
   zero(val) {
-    if (!(val & 255)) this.flag |= 0x80;
+    this.setZero(!(val & 255));
+    return this;
+  }
+
+  setZero(isZero) {
+    if (isZero) this.flag |= 0x80;
+    else this.flag &= 0b01111111;
     return this;
   }
 

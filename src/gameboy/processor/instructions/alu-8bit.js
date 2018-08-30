@@ -7,8 +7,8 @@ import { alu16 } from './';
 const createOpTime = (m, t) => ({ m, t });
 
 const setSubtractionFlag = (reg, val, minuend) => {
-
-  const flag = new CheckFlagFor().zero(val).subtraction().carryBorrow(val).halfCarryBorrow(val, minuend).get();
+  const flag = new CheckFlagFor().zero(val).subtraction()
+    .carryBorrow(val).halfCarryBorrow(val, minuend).get();
   reg.reg(RegMap.f, flag);
 };
 
@@ -30,6 +30,28 @@ const setLogicalAndFlag = (reg, val) => {
 
 const setLogicalOrFlag = (reg, val) => {
   const flag = new CheckFlagFor().zero(val).get();
+  reg.reg(RegMap.f, flag);
+};
+
+const setFlagsOnCompare = (reg, val) => {
+  const valInA = reg.reg(RegMap.a);
+  const flag = new CheckFlagFor().subtraction().zero(val)
+    .underflow(val).halfCarryBorrow(val, valInA).get();
+  reg.reg(RegMap.f, flag);
+};
+
+const setFlagsOnInc = (reg, val) => {
+  const prevFlag = reg.flags();
+  const isH = (val & 0x0F) === 0; // inc by one. if lower nibble 0000, a half carry has occured.
+  const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().setHalfCarry(isH).get();
+  reg.reg(RegMap.f, flag);
+};
+
+const setFlagsOnDec = (reg, val) => {
+  const prevFlag = reg.flags();
+  // Only way to borrow. -1 each time. From 0001 000 -> 0000 111
+  const isH = (val & 0x0F) === 0x0F;
+  const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().setHalfCarry(isH).get();
   reg.reg(RegMap.f, flag);
 };
 
@@ -209,73 +231,51 @@ export default {
   },
   // Compare reg to A, setting flags (CP reg, B)
   cp: ({ reg }, regAddr) => {
-    // TODO: borrow stuff
-    const temp = reg.reg(RegMap.a) - reg.reg(regAddr);
-
-    const flag = new CheckFlagFor().subtraction().zero(temp).underflow(temp).get();
-    reg.reg(RegMap.f, flag);
+    const res = reg.reg(RegMap.a) - reg.reg(regAddr);
+    setFlagsOnCompare(reg, res);
     return createOpTime(1, 4);
   },
 
-  cpMemHL: ({ reg, mmu }, regAddr) => {
-    const temp = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu);
-
-    const flag = new CheckFlagFor().subtraction().zero(temp).underflow(temp).get();
-    reg.reg(RegMap.f, flag);
+  cpMemHL: ({ reg, mmu }) => {
+    const res = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu);
+    setFlagsOnCompare(reg, res);
     return createOpTime(2, 8);
   },
 
-  cpImmediate: ({ reg, mmu }, regAddr) => {
-    const temp = reg.reg(RegMap.a) - readImmediateValueAndIncrementPC(reg, mmu);
-
-    const flag = new CheckFlagFor().subtraction().zero(temp).underflow(temp).get();
-    reg.reg(RegMap.f, flag);
+  cpImmediate: ({ reg, mmu }) => {
+    const res = reg.reg(RegMap.a) - readImmediateValueAndIncrementPC(reg, mmu);
+    setFlagsOnCompare(reg, res);
     return createOpTime(2, 8);
   },
 
   inc: (cpu, regAddr) => {
-    const prevFlag = cpu.reg.flags();
     alu16.inc(cpu, regAddr);
     const val = cpu.reg.reg(regAddr);
-    const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().halfCarry(val).get();
-    cpu.reg.reg(RegMap.f, flag);
+    setFlagsOnInc(cpu.reg, val);
     return createOpTime(1, 4);
   },
 
   // Seems like the offical manual says to set H if there was a borrow to bit 3.
   dec: (cpu, regAddr) => {
-    const prevFlag = cpu.reg.flags();
     alu16.dec(cpu, regAddr);
     const val = cpu.reg.reg(regAddr);
-    const isH = (val & 0x0F) === 0x0F; // Only way to borrow. -1 each time. From 0001 000 -> 0000 111;
-    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().setHalfCarry(isH).get();
-    cpu.reg.reg(RegMap.f, flag);
+    setFlagsOnDec(cpu.reg, val);
     return createOpTime(1, 4);
   },
 
   incMemHL: ({ reg, mmu }) => {
-    const prevFlag = reg.flags();
-
     const memAddr = reg.reg(RegMap.hl);
     const val = mmu.readByte(memAddr) + 1;
     mmu.writeByte(memAddr, val);
-
-    const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().halfCarry(val).get();
-    reg.reg(RegMap.f, flag);
-
+    setFlagsOnInc(reg, val);
     return createOpTime(3, 12);
   },
 
   decMemHL: ({ reg, mmu }) => {
-    const prevFlag = reg.flags();
-
     const memAddr = reg.reg(RegMap.hl);
     const val = mmu.readByte(memAddr) - 1;
     mmu.writeByte(memAddr, val);
-
-    const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().get();
-    reg.reg(RegMap.f, flag);
-    // TODO: borrow
+    setFlagsOnDec(reg, val);
     return createOpTime(3, 12);
   },
 };

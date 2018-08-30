@@ -126,6 +126,8 @@ export default {
   ldImmediateA: ({ reg, mmu }) => {
     const valInA = reg.reg(RegMap.a);
     const addr = mmu.readWord(reg.pc());
+    reg.incrementPC();
+    reg.incrementPC();
     mmu.writeByte(addr, valInA);
     return createOpTime(4, 16);
   },

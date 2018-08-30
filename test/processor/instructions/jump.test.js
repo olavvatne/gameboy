@@ -36,7 +36,8 @@ describe('Processor', () => {
       state.reg.pc(0x2100);
       state.mmu.writeWord(0x2100, jumpTo);
       Z80.jump.jpIfZ(state, true);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 2);
+      state.reg.pc(0x2100);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
       Z80.jump.jpIfZ(state, true);
@@ -50,7 +51,8 @@ describe('Processor', () => {
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       state.mmu.writeWord(0x1100, jumpTo);
       Z80.jump.jpIfC(state, false);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 2);
+      state.reg.pc(0x1100);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       Z80.jump.jpIfC(state, false);
@@ -64,7 +66,8 @@ describe('Processor', () => {
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       state.mmu.writeWord(0x1100, jumpTo);
       Z80.jump.jpIfC(state, true);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 2);
+      state.reg.pc(0x1100);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       Z80.jump.jpIfC(state, true);
@@ -85,63 +88,99 @@ describe('Processor', () => {
 
       Z80.jump.jr(state);
 
-      assert.equal(state.reg.pc(), 0x1200 + 0x10);
+      assert.equal(state.reg.pc(), 0x1200 + 0x10 + 1);
+    });
+
+    it('works with signed bytes as well', () => {
+      const jumpTo = -5;
+      state.reg.pc(0x1200);
+      state.mmu.writeByte(0x1200, 0b11111011); // -5
+
+      Z80.jump.jr(state);
+
+      assert.equal(state.reg.pc(), 0x1200 + jumpTo + 1);
     });
 
     it('jumps to pc + immediate if Z is reset', () => {
-      const jumpTo = 0xFF;
+      const signedJumpTo = 0xE7; // signed format so this is actually -25
+      const actualJumpTo = -25;
       const noJump = 0x1100;
-      state.reg.pc(0x1100);
+      state.reg.pc(noJump);
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
-      state.mmu.writeByte(0x1100, jumpTo);
+      state.mmu.writeByte(0x1100, signedJumpTo);
       Z80.jump.jrIfZ(state, false);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 1);
+      state.reg.pc(noJump);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(1).get());
       Z80.jump.jrIfZ(state, false);
-      assert.equal(state.reg.pc(), noJump + jumpTo);
+      assert.equal(state.reg.pc(), noJump + actualJumpTo + 1);
     });
 
     it('jumps to pc + immediate if Z is set', () => {
-      const jumpTo = 0xFF;
+      const jumpTo = 0x7F; // twos complement. 7th bit is zero, so positve. 127
       const noJump = 0x1100;
       state.reg.pc(0x1100);
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(1).get());
       state.mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfZ(state, true);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 1);
+      state.reg.pc(0x1100);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
       Z80.jump.jrIfZ(state, true);
-      assert.equal(state.reg.pc(), noJump + jumpTo);
+      assert.equal(state.reg.pc(), noJump + jumpTo + 1);
     });
 
     it('jumps to pc + immediate if C is reset', () => {
-      const jumpTo = 0xFF;
+      const jumpTo = 0xFF; // negative num -> -1
       const noJump = 0x1100;
       state.reg.pc(0x1100);
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       state.mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfC(state, false);
-      assert.equal(state.reg.pc(), noJump);
+      assert.equal(state.reg.pc(), noJump + 1);
+      state.reg.pc(0x1100);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       Z80.jump.jrIfC(state, false);
-      assert.equal(state.reg.pc(), noJump + jumpTo);
+      assert.equal(state.reg.pc(), noJump); // jumps negative 1 but need to increment PC as well
     });
 
     it('jumps to pc + immediate if C is set', () => {
+      const jumpTo = 0x1F;
+      const noJump = 0x1100;
+      state.reg.pc(0x1100);
+      state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
+      state.mmu.writeByte(0x1100, jumpTo);
+      Z80.jump.jrIfC(state, true);
+      assert.equal(state.reg.pc(), noJump + 1);
+      state.reg.pc(0x1100);
+
+      state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
+      Z80.jump.jrIfC(state, true);
+      assert.equal(state.reg.pc(), noJump + jumpTo + 1);
+    });
+
+    it('if no jump, it should still increment pc', () => {
+      const jumpTo = 0x0F;
+      const noJump = 0x1100;
+      state.reg.pc(0x1100);
+      state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
+      state.mmu.writeByte(0x1100, jumpTo);
+      Z80.jump.jrIfZ(state, false);
+
+      assert.equal(state.reg.pc(), noJump + 1);
+    });
+
+    it('also increments pc if no jump on jrIfC', () => {
       const jumpTo = 0xFF;
       const noJump = 0x1100;
       state.reg.pc(0x1100);
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       state.mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfC(state, true);
-      assert.equal(state.reg.pc(), noJump);
-
-      state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
-      Z80.jump.jrIfC(state, true);
-      assert.equal(state.reg.pc(), noJump + jumpTo);
+      assert.equal(state.reg.pc(), noJump + 1);
     });
   });
 });

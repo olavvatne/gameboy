@@ -175,5 +175,19 @@ describe('Processor', () => {
       assert.equal(state.mmu.readByte(0x1234), afterRotate);
       assert.isTrue(getFlags().isCarry());
     });
+
+    it('should stay 8 bit when rotating left, or else the zero check does not work', () => {
+      const beforeRotate = 0b10000000;
+      const afterRotate = 0b00000000;
+      const prevFlag = new CheckFlagFor().get();
+      state.reg.reg(RegMap.c, beforeRotate);
+      state.reg.reg(RegMap.f, prevFlag);
+
+      Z80.rotate.rl(state, RegMap.c);
+
+      assert.equal(state.reg.reg(RegMap.c), afterRotate);
+      assert.isTrue(getFlags().isCarry());
+      assert.isTrue(getFlags().isZero());
+    });
   });
 });

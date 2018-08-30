@@ -34,12 +34,14 @@ export default {
   callIfZ: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isZero() === condition) doCall(reg, mmu);
+    else reg.pc(reg.pc() + 2);
     return createOpTime(3, 12);
   },
 
   callIfC: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isCarry() === condition) doCall(reg, mmu);
+    else reg.pc(reg.pc() + 2);
     return createOpTime(3, 12);
   },
 

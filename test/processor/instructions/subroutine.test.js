@@ -24,12 +24,14 @@ describe('Processor', () => {
     });
 
     it('calls if Z flag is reset', () => {
-      state.reg.pc(0x1000);
-      state.mmu.writeWord(0x1000, 0xAAAA);
+      const initPc = 0x1000;
+      state.reg.pc(initPc);
+      state.mmu.writeWord(initPc, 0xAAAA);
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
       Z80.subroutine.callIfZ(state, false);
 
-      assert.equal(state.reg.pc(), 0x1000);
+      assert.equal(state.reg.pc(), initPc + 2);
+      state.reg.pc(initPc);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(1).get());
       Z80.subroutine.callIfZ(state, false);
@@ -40,12 +42,14 @@ describe('Processor', () => {
     });
 
     it('calls if Z flag is set', () => {
-      state.reg.pc(0x1000);
-      state.mmu.writeWord(0x1000, 0xAAAA);
+      const initPc = 0x1000;
+      state.reg.pc(initPc);
+      state.mmu.writeWord(initPc, 0xAAAA);
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(1).get());
       Z80.subroutine.callIfZ(state, true);
 
-      assert.equal(state.reg.pc(), 0x1000);
+      assert.equal(state.reg.pc(), initPc + 2);
+      state.reg.pc(initPc);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
       Z80.subroutine.callIfZ(state, true);
@@ -55,13 +59,16 @@ describe('Processor', () => {
       assert.equal(state.mmu.readWord(state.reg.sp()), 0x1000 + immediateOffset);
     });
 
+    // TODO: convert to parameterized test loop
     it('calls if C flag is reset', () => {
-      state.reg.pc(0x1100);
-      state.mmu.writeWord(0x1100, 0xAAAC);
+      const initPc = 0x1100;
+      state.reg.pc(initPc);
+      state.mmu.writeWord(initPc, 0xAAAC);
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       Z80.subroutine.callIfC(state, false);
 
-      assert.equal(state.reg.pc(), 0x1100);
+      assert.equal(state.reg.pc(), initPc + 2);
+      state.reg.pc(initPc);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       Z80.subroutine.callIfC(state, false);
@@ -72,12 +79,14 @@ describe('Processor', () => {
     });
 
     it('calls if C flag is set', () => {
-      state.reg.pc(0x1200);
-      state.mmu.writeWord(0x1200, 0xAAAB);
+      const initPc = 0x1200;
+      state.reg.pc(initPc);
+      state.mmu.writeWord(initPc, 0xAAAB);
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       Z80.subroutine.callIfC(state, true);
 
-      assert.equal(state.reg.pc(), 0x1200);
+      assert.equal(state.reg.pc(), initPc + 2);
+      state.reg.pc(initPc);
 
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       Z80.subroutine.callIfC(state, true);

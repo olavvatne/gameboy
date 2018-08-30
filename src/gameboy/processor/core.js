@@ -40,7 +40,7 @@ export default class ProcessorCore {
   }
 
   isOpAModifier() {
-    return this.currentOp === 0xCB;
+    return this.currentOp === 0xCB || this.currentOp === 0x10;
   }
 
   readNextOpAfterModiferAndCombine(op) {

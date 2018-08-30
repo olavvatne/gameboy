@@ -1,4 +1,5 @@
 import { CheckFlagFor, RegMap } from '../';
+import Util from './../util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -31,9 +32,9 @@ export default {
   },
 
   addRegSPImmediate: ({ reg, mmu }) => {
-    const immediateValue = mmu.readByte(reg.pc());
+    const immediateSigned = Util.convertSignedByte(mmu.readByte(reg.pc()));
     reg.incrementPC();
-    const val = reg.sp() + immediateValue;
+    const val = reg.sp() + immediateSigned;
     reg.sp(val);
     const flag = new CheckFlagFor().carry16(val).halfCarry16(val).get();
     reg.reg(RegMap.f, flag);

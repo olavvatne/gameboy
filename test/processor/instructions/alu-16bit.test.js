@@ -111,14 +111,13 @@ describe('Processor', () => {
 
     it('checks carry and half carry on add immediate to SP', () => {
       const pcVal = 0x4342;
-      const valueInMem = 0xFF;
-      const spVal = 0xFF01;
+      const valueInMem = 0x7F;
+      const spVal = 0xFF81;
       state.reg.pc(pcVal);
       state.reg.sp(spVal);
       state.mmu.writeByte(pcVal, valueInMem);
 
       Z80.alu16.addRegSPImmediate(state);
-      // TODO: 16 bit carry and half carry
       assert.equal(0, state.reg.sp());
       assert.isTrue(getFlags().isCarry());
 

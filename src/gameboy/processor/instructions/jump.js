@@ -1,4 +1,5 @@
 import { CheckFlagFor, RegMap } from '..';
+import Util from './../util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -14,8 +15,8 @@ const doJump = ({ reg, mmu }) => {
 
 const addImmediateToPc = ({ reg, mmu }) => {
   const pcAddr = reg.pc();
-  const val = mmu.readByte(pcAddr);
-  reg.pc((pcAddr + val) & 0xFFFF);
+  const signedByte = Util.convertSignedByte(mmu.readByte(pcAddr));
+  reg.pc((pcAddr + signedByte + 1) & 0xFFFF);
 };
 
 export default {
@@ -27,12 +28,14 @@ export default {
   jpIfZ: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isZero() === condition) doJump({ reg, mmu });
+    else reg.pc(reg.pc() + 2);
     return createOpTime(3, 12);
   },
 
   jpIfC: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isCarry() === condition) doJump({ reg, mmu });
+    else reg.pc(reg.pc() + 2);
     return createOpTime(3, 12);
   },
 
@@ -49,12 +52,14 @@ export default {
   jrIfZ: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isZero() === condition) addImmediateToPc({ reg, mmu });
+    else reg.incrementPC();
     return createOpTime(3, 12);
   },
 
   jrIfC: ({ reg, mmu }, condition) => {
     const flag = new CheckFlagFor(reg.flags());
     if (flag.isCarry() === condition) addImmediateToPc({ reg, mmu });
+    else reg.incrementPC();
     return createOpTime(3, 12);
   },
 };

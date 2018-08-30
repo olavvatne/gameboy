@@ -30,7 +30,7 @@ describe('Processor', () => {
       Z80.bit.bit(state, RegMap.d, 7);
       assert.isTrue(getFlags().isZero());
       Z80.bit.bit(state, RegMap.d, 6);
-      assert.isTrue(getFlags().isZero());
+      assert.isFalse(getFlags().isZero());
     });
 
     it('tests bit in a mem location found in reg HL', () => {

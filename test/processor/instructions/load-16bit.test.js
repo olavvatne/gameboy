@@ -77,5 +77,17 @@ describe('Processor', () => {
       assert.equal(state.reg.reg(RegMap.de), correct);
       assert.equal(state.reg.sp(), oldPointer);
     });
+
+    it('loads immediate into 16 bit register, with endian correct', () => {
+      const val = 0xABCD;
+      const pcAddr = 0x5565;
+      state.mmu.writeByte(pcAddr + 1, 0xAB);
+      state.mmu.writeByte(pcAddr, 0xCD);
+      state.reg.pc(pcAddr);
+
+      Z80.load16.ldImmediateIntoReg(state, RegMap.bc);
+
+      assert.equal(state.reg.reg(RegMap.bc), val);
+    });
   });
 });
