@@ -19,16 +19,13 @@ export const RegMap = {
 export class Registers {
   constructor() {
     this._initGeneralPurposeRegisters();
-    this._initStackPointer();
+    this._sp = 0xFFFE; // Default on start up
+    this._pc = 0x00;
   }
 
   _initGeneralPurposeRegisters() {
     this._gpr_buffer = new ArrayBuffer(numRegs);
     this._gpr = new DataView(this._gpr_buffer);
-  }
-
-  _initStackPointer() {
-    this._sp = 0xFFFE; // Default on start up
   }
 
   static is16BitAccessAddress(num) {

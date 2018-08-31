@@ -11,6 +11,7 @@ describe('Gameboy', () => {
     it('runs bootstrap without issue', () => {
       const gameboy = new TestRunner();
       assert.doesNotThrow(() => gameboy.testBootstrap());
+      assert.isFalse(gameboy.memory._inBios);
     });
   });
 });

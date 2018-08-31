@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { CPU, RegMap } from '../../src/gameboy/processor';
+import { CPU } from '../../src/gameboy/processor';
 import { Memory } from '../../src/gameboy/memory';
 import OpcodeInfoManager from '../../src/info/info-manager';
 /* eslint no-console: 0 */
@@ -12,8 +12,8 @@ const logo = [
 ];
 
 const checksum = [
-  0x00, 0x4D, 0x41, 0x52, 0x49, 0x4F, 0x27, 0x53, 0x20, 0x50, 0x49, 0x43, 0x52, 0x4F, 0x53, 0x53,
-  0x00, 0x30, 0x31, 0x03, 0x03, 0x03, 0x02, 0x01, 0x33, 0x00, 0x19,
+  0x54, 0x45, 0x54, 0x52, 0x49, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x0A,
 ];
 
 export default class TestRunner {
@@ -38,29 +38,16 @@ export default class TestRunner {
   }
 
   testBootstrap() {
-    let startPrinting = false;
-    while (this.core.reg.pc() !== 0x0100) {
+    while (this.core.reg.pc() < 0x0100) {
       // gpu need to write to vertical-blank period register. Mock it here
       if (this.core.reg.pc() === 0x66) {
         this.memory.writeByte(0xFF44, 144);
       }
-      if (this.core.reg.pc() === 0xE0) {
-        startPrinting = true;
-      }
-      if (this.core.reg.pc() === 0xF9) {
-        console.log("did run without issue");
-      }
+
       this.core.fetch();
       this.core.decode();
-      if (startPrinting) {
-        this.printCurrent();
-        this.printState();
-      }
-     
       this.core.execute();
     }
-   
-    console.log("did run without issue");
   }
 
   printCurrent() {
