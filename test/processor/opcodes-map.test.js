@@ -41,6 +41,7 @@ describe('Processor', () => {
       Object.keys(opcodes).forEach((op) => {
         if (op !== `${0xCB}`) {
           state = getEmptyState();
+          state.mmu.exitBios();
           const res = opcodes[op](state);
           assert.isDefined(res, `${op} does not return anything`);
           assert.containsAllKeys(res, ['m', 't'], `No clock info on op ${op}`);

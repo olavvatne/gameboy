@@ -1,2 +1,2 @@
 /* eslint-disable import/prefer-default-export */
-export { default as Memory } from './controller';
+export { default as MMU } from './controller';

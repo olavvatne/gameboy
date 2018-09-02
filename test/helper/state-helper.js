@@ -1,6 +1,6 @@
 import { Registers } from '../../src/gameboy/processor';
-import { Memory } from '../../src/gameboy/memory';
+import { MMU } from '../../src/gameboy/memory';
 
-const getEmptyState = () => ({ reg: new Registers(), mmu: new Memory(), interupt: {} });
+const getEmptyState = () => ({ reg: new Registers(), mmu: new MMU(), interupt: {} });
 
 export default getEmptyState;

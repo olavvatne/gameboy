@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CPU } from '../../src/gameboy/processor';
-import { Memory } from '../../src/gameboy/memory';
+import { MMU } from '../../src/gameboy/memory';
 import OpcodeInfoManager from '../../src/info/info-manager';
 /* eslint no-console: 0 */
 
@@ -18,7 +18,7 @@ const checksum = [
 
 export default class TestRunner {
   constructor() {
-    this.memory = new Memory();
+    this.memory = new MMU();
     this.core = new CPU(this.memory);
     const opcodesInfoJson = fs.readFileSync(path.resolve(__dirname, '../../src/info/opcodes.json'));
     this.info = new OpcodeInfoManager(opcodesInfoJson);

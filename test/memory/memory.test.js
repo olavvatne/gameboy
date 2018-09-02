@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { Memory } from '../../src/gameboy/memory';
+import { MMU } from '../../src/gameboy/memory';
 
-const getMemory = () => new Memory();
+const getMemory = () => new MMU();
 
 describe('Memory', () => {
   describe('Memory tests', () => {
