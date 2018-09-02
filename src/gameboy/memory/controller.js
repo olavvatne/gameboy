@@ -2,19 +2,16 @@ import bios from './bios';
 import Memory from './memory';
 /* eslint no-bitwise: 0 */
 
-const memorySize = 2 ** 16;
-
 export default class MMU {
-  constructor() {
-    this._memory = new Memory(memorySize);
+  constructor(vram = new Memory(2 ** 13), oam = new Memory(2 ** 8)) {
     this._rom0 = new Memory(2 ** 14);
     this._rom1 = new Memory(2 ** 14);
-    this._tempUntilGPUVram = new Memory(2 ** 13);
+    this._vram = vram;
     this._eram = new Memory(2 ** 13);
     this._wram = new Memory(2 ** 13);
     this._zram = new Memory(2 ** 7);
     this._tempIO = new Memory(2 ** 7);
-    this._tempOAM = new Memory(2 ** 7);
+    this._oam = oam;
     this._inBios = true;
   }
 
@@ -44,7 +41,7 @@ export default class MMU {
       case 0x8000:
       case 0x9000:
       // TODO: GPU VRAM
-        return this._tempUntilGPUVram.readByte(address & 0x1FFF);
+        return this._vram.readByte(address & 0x1FFF);
       // Cartridge RAM
       case 0xA000:
       case 0xB000:
@@ -60,7 +57,7 @@ export default class MMU {
           return this._wram.readByte(address & 0x1FFF);
         } else if (address < 0xFF00) {
           // TODO: GPU OAM
-          return this._tempOAM.readByte(address & 0xFF);
+          return this._oam.readByte(address & 0xFF);
         } else if (address < 0xFF80) {
           // TODO: IO handling
           return this._tempIO.readByte(address & 0xFF);
@@ -100,7 +97,7 @@ export default class MMU {
       case 0x8000:
       case 0x9000:
       // TODO: GPU VRAM
-        this._tempUntilGPUVram.writeByte(address & 0x1FFF, value);
+        this._vram.writeByte(address & 0x1FFF, value);
         break;
       // Cartridge RAM
       case 0xA000:
@@ -119,7 +116,7 @@ export default class MMU {
           this._wram.writeByte(address & 0x1FFF, value);
         } else if (address < 0xFF00) {
           // TODO: GPU OAM
-          this._tempOAM.writeByte(address & 0xFF, value);
+          this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
           // TODO: IO handling
           if (address === 0xFF50 && this._inBios) this.exitBios();

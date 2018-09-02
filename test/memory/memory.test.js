@@ -7,8 +7,20 @@ describe('Memory', () => {
   describe('Memory tests', () => {
     it('can initalize with correctly sized memory', () => {
       const memory = getMemory();
-      const all = memory.getAll();
-      assert.equal(all.byteLength, 2 ** 16);
+      memory.exitBios();
+      memory.writeByte(0x0000, 0x01);
+      memory.writeByte(0xFFFF, 0x02);
+      memory.writeByte(0xDFFF, 0x03);
+      assert.equal(memory.readByte(0x0000), 0x01);
+      assert.equal(memory.readByte(0xFFFF), 0x02);
+      assert.equal(memory.readByte(0xDFFF), 0x03);
+    });
+
+    it('throw if you try to write to bios', () => {
+      const memory = getMemory();
+      assert.throws(() => memory.writeByte(0x0099, 0x10));
+      memory.exitBios();
+      assert.doesNotThrow(() => memory.writeByte(0x0099, 0x10));
     });
 
     it('can write a byte to an address', () => {

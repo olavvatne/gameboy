@@ -1,10 +1,11 @@
 import { CPU } from './processor';
 import { MMU } from './memory';
+import { GPU } from './gpu';
 
 export default class Gameboy {
-  constructor() {
-    // TODO: supply canvas elements
-    this.memory = new MMU();
+  constructor(canvas) {
+    this.gpu = new GPU(canvas);
+    this.memory = new MMU(this.gpu.getVideoMemory(), this.gpu.getAttributeTable());
     this.core = new CPU(this.memory);
   }
 
