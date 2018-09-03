@@ -3,8 +3,9 @@ import { Registers, opcodes } from './';
 /* eslint no-bitwise: 0 */
 
 export default class ProcessorCore {
-  constructor(memoryController) {
+  constructor(memoryController, notifyGpu) {
     this.mmu = memoryController;
+    this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
     this.clock = { machineCycles: 0, clockCycles: 0 };
     this.interupts = { enable: true };
@@ -37,6 +38,8 @@ export default class ProcessorCore {
 
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
+
+    this.notifyGpu(timeSpent.t);
   }
 
   isOpAModifier() {

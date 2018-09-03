@@ -2,7 +2,6 @@ import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
 import { RenderTiming } from '../../src/gameboy/gpu';
 
-
 describe('GPU', () => {
   const numFrameTicks = 70224;
   let timing = null;
@@ -39,7 +38,42 @@ describe('GPU', () => {
     it('goes into hblank state after line state', () => {
       timing.step(80);
       timing.step(172);
-      assert.equal(timing.getMode(), RenderTiming.Mode.background);
+      assert.equal(timing.getMode(), RenderTiming.Mode.hblank);
+    });
+
+    it('stays in hblank for a duration before starting on a new line', () => {
+      timing.step(80);
+      timing.step(172);
+      timing.step(204);
+      assert.equal(timing.getMode(), RenderTiming.Mode.sprite);
+      assert.equal(timing._line, 1);
+    });
+
+    it('enters vblank after 144 lines have been scanned', () => {
+      for (let i = 0; i < 144; i += 1) {
+        timing.step(80);
+        timing.step(172);
+        timing.step(204);
+      }
+      assert.equal(timing.getMode(), RenderTiming.Mode.vblank);
+      assert.equal(timing._line, 144);
+    });
+
+    it('goes back to line 1 after finishing vblank', () => {
+      for (let i = 0; i < 144; i += 1) {
+        timing.step(80);
+        timing.step(172);
+        timing.step(204);
+      }
+      for (let i = 0; i < 9; i += 1) {
+        timing.step(456);
+        assert.equal(timing.getMode(), RenderTiming.Mode.vblank);
+      }
+      assert.equal(timing._line, 153);
+      timing.step(456);
+
+      assert.equal(timing.getMode(), RenderTiming.Mode.sprite);
+      assert.equal(timing._line, 0);
     });
   });
 });

@@ -57,7 +57,7 @@ class RenderTiming {
   _visitVblankState() {
     if (this._modeClock >= ticksVBlank) {
       this._modeClock = 0;
-      this._mode = Mode.sprite;
+      this._mode = Mode.vblank;
       this._line += 1;
 
       if (this._line >= numlines + numVertLines) {
