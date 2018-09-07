@@ -3,14 +3,14 @@ import Memory from './memory';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {
-  constructor(vram = new Memory(2 ** 13), oam = new Memory(2 ** 8)) {
+  constructor(vram = new Memory(2 ** 13), oam = new Memory(2 ** 8), io = new Memory(2 ** 7)) {
     this._rom0 = new Memory(2 ** 14);
     this._rom1 = new Memory(2 ** 14);
     this._vram = vram;
     this._eram = new Memory(2 ** 13);
     this._wram = new Memory(2 ** 13);
     this._zram = new Memory(2 ** 7);
-    this._tempIO = new Memory(2 ** 7);
+    this.io = io;
     this._oam = oam;
     this._inBios = true;
   }
@@ -60,7 +60,7 @@ export default class MMU {
           return this._oam.readByte(address & 0xFF);
         } else if (address < 0xFF80) {
           // TODO: IO handling
-          return this._tempIO.readByte(address & 0xFF);
+          return this.io.readByte(address & 0xFF);
         }
         return this._zram.readByte(address & 0x7F);
       default:
@@ -118,9 +118,8 @@ export default class MMU {
           // TODO: GPU OAM
           this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
-          // TODO: IO handling
           if (address === 0xFF50 && this._inBios) this.exitBios();
-          this._tempIO.writeByte(address & 0xFF, value);
+          this.io.writeByte(address & 0xFF, value);
         } else {
           this._zram.writeByte(address & 0x7F, value);
         }

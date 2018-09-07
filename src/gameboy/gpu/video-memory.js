@@ -1,8 +1,12 @@
 import Memory from '../memory/memory';
 
+/* eslint no-bitwise: 0 */
+
+const tilesetAddressMax = 0x9800 & 0x1FFF;
+
 export default class VideoMemory extends Memory {
-  constructor(size, frameBuffer) {
-    super(size);
+  constructor(frameBuffer) {
+    super(2 ** 13);
     this._frameBuffer = frameBuffer;
   }
 
@@ -12,14 +16,20 @@ export default class VideoMemory extends Memory {
 
   writeByte(address, value) {
     super.writeByte(address, value);
-    this._frameBuffer.updateTile(address, value);
+
+    // Test if address falls inside tile set area.
+    // Include both rows to update enable row update
+    if (address < tilesetAddressMax) {
+      // Identify first byte of tile row. Send both row bytes to update tile
+      const firstAddr = address - (address % 2);
+      const firstByte = this.readByte(firstAddr);
+      const secondByte = this.readByte(firstAddr + 1);
+      this._frameBuffer.updateTile(firstAddr, firstByte, secondByte);
+    }
   }
 
-  writeWord(address, value) {
-    super.writeWord(address, value);
-  }
-
-  readWord(address) {
-    return super.readWord(address);
+  getTileAddressFromMap(tilemap, offset) {
+    const mapAddr = tilemap ? 0x1C00 : 0x1800;
+    return this.readByte(mapAddr + offset);
   }
 }

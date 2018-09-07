@@ -1,3 +1,4 @@
+import Util from '../util';
 /*
   tile based. 8x8 pixels. 256 unique tiles.
   Two maps of 32x32 tiles held in memory. One displayed at the time.
@@ -14,6 +15,9 @@
 // TODO: create updateTile method which is called from vram
 // TODO: getImage should get
 // TODO: scroll x and scroll y. Wraps around as well
+
+/* eslint no-bitwise: 0 */
+
 const numTiles = 384;
 
 const initTileset = () => {
@@ -30,14 +34,26 @@ export default class FrameBuffer {
   }
 
 
-  updateTile(address, value) {
+  updateTile(address, firstByte, secondByte) {
+    // 16 bytes per tile. A row is 2 bytes.
+    // A tile pixel is 2 bits, one in each of the bytes.
 
+    const tile = (address >> 4) & 0x1FF;
+    const row = (address >> 1) & 0x7;
+    for (let i = 0; i < 8; i += 1) {
+      const bit0 = Util.getBit(firstByte, 7 - i);
+      const bit1 = Util.getBit(secondByte, 7 - i);
+      const val = bit0 + (bit1 * 2);
+      this.tileset[tile][row][i] = val;
+    }
   }
 
-  renderScanline() {
-  }
+  getTile(tileset, tile) {
+    if (tileset > 1) throw new Error('Only two tilesets');
 
-  getImage() {
-    return null;
+    if (tileset === 1 && tile >= 0 && tile < 256) return this.tileset[tile];
+    const secondSetOffset = 128 * 2;
+    if (tileset === 0 && tile >= -128 && tile < 128) return this.tileset[tile + secondSetOffset];
+    throw new Error('tile is out of bounds');
   }
 }
