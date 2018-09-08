@@ -54,9 +54,17 @@ function runTests() {
 }
 
 export function scripts() {
-  const b = browserify(`${dirs.src}/gameboy/gameboy.js`, { debug: isWatchify, fullPaths: isWatchify });
+  // Runner
+  browserify(`${dirs.src}/runner.js`)
+    .transform('babelify', { presets: ['@babel/env'] })
+    .bundle()
+    .pipe(source('runner.js'))
+    .pipe(gulp.dest(dirs.dest));
+
+  const b = browserify(`${dirs.src}/gameboy/bundle.js`, { debug: isWatchify, fullPaths: isWatchify, standalone: 'Gameboy' });
   b.transform(babelify, {
-    presets: ['@babel/preset-env'],
+    presets: ['@babel/env'],
+    global: true,
     sourceMaps: isWatchify,
   });
 

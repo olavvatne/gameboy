@@ -8,7 +8,7 @@ export default class Screen {
       this._data = {
         width: 160,
         height: 144,
-        data: new Array(160 * 144 * 4).fill(255),
+        data: new Array(160 * 144 * 4).fill(200),
       };
     }
   }
