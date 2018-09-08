@@ -20,16 +20,26 @@
   "homepage": "https://github.com/olavvatne/gameboy#readme",
   "babel": {
     "presets": [
-      "env"
-    ],
-    "retainLines": true,
-    "sourceMaps": true
+      [
+        "@babel/env",
+        {
+          "targets": {
+            "edge": "17",
+            "firefox": "60",
+            "chrome": "67",
+            "safari": "11.1"
+          }
+        }
+      ]
+    ]
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "babel-eslint": "^8.2.3",
-    "babel-preset-env": "^1.7.0",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "browser-sync": "^2.24.4",
     "browserify": "^16.2.2",
     "chai": "^4.1.2",

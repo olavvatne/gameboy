@@ -13,7 +13,7 @@
                 "--timeout",
                 "999999",
                 "--require",
-                "babel-register",
+                "@babel/register",
                 "--colors",
                 "${workspaceFolder}/test/**/*.test.js"
             ],
@@ -32,7 +32,7 @@
                 "--timeout",
                 "999999",
                 "--require",
-                "babel-register",
+                "@babel/register",
                 "--colors",
                 "${workspaceFolder}/test/**/*.test.js"
             ],
@@ -52,7 +52,7 @@
                 "999999",
                 "--colors",
                 "--require",
-                "babel-register",
+                "@babel/register",
                 "${file}"
             ],
             "console": "integratedTerminal",

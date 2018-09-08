@@ -5,7 +5,7 @@ import FrameBuffer from './frame-buffer';
 import Renderer from './renderer';
 
 export default class GPU {
-  constructor(canvas) {
+  constructor(screen) {
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0,
     };
@@ -19,7 +19,7 @@ export default class GPU {
     this._renderTiming = new RenderTiming();
     this._vram = new VideoMemory(this._frameBuffer);
     this._oam = new Memory(2 ** 8); // TODO: create special memory that trigger actions on gpu
-    this._renderer = new Renderer(this._frameBuffer, canvas, this._vram, this.registers, this.palette);
+    this._renderer = new Renderer(this._frameBuffer, screen, this._vram, this.registers, this.palette);
   }
   
   setPalette() {

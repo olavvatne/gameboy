@@ -9,7 +9,7 @@ describe('GPU', () => {
   let mem = null;
   beforeEach(() => {
     buffer = new FrameBuffer();
-    mem = new VideoMemory(2 ** 13, buffer);
+    mem = new VideoMemory(buffer);
   });
   const getTileset = () => buffer.tileset;
 

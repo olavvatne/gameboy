@@ -49,14 +49,14 @@ function runTests() {
   return gulp.src(['test/**/*.js'], { read: false })
     .pipe(mocha({
       reporter: 'spec',
-      require: ['babel-core/register'],
+      require: ['@babel/register'],
     }));
 }
 
 export function scripts() {
   const b = browserify(`${dirs.src}/gameboy/gameboy.js`, { debug: isWatchify, fullPaths: isWatchify });
   b.transform(babelify, {
-    presets: ['env'],
+    presets: ['@babel/preset-env'],
     sourceMaps: isWatchify,
   });
 
