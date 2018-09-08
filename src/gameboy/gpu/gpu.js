@@ -10,18 +10,18 @@ export default class GPU {
       x: 0, y: 0, tileset: 0, tilemap: 0,
     };
     this.palette = [
-      [255, 255, 255],
-      [192, 192, 192],
-      [96, 96, 96],
-      [0, 0, 0],
+      [255, 255, 255, 255],
+      [192, 192, 192, 255],
+      [96, 96, 96, 255],
+      [0, 0, 0, 255],
     ];
     this._frameBuffer = new FrameBuffer();
-    this._renderTiming = new RenderTiming();
+    this.renderTiming = new RenderTiming();
     this._vram = new VideoMemory(this._frameBuffer);
     this._oam = new Memory(2 ** 8); // TODO: create special memory that trigger actions on gpu
     this._renderer = new Renderer(this._frameBuffer, screen, this._vram, this.registers, this.palette);
   }
-  
+
   setPalette() {
     // TODO: stuff
   }
@@ -43,8 +43,8 @@ export default class GPU {
   }
 
   step(tick) {
-    const result = this._renderTiming.step(tick);
-    if (result.shouldScanline) this._renderer.renderScanline(this._renderTiming.getLine());
+    const result = this.renderTiming.step(tick);
+    if (result.shouldScanline) this._renderer.renderScanline(this.renderTiming.getLine());
     if (result.lastHblank) this._renderer.displayImage();
   }
 }

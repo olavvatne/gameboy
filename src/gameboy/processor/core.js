@@ -52,23 +52,12 @@ export default class ProcessorCore {
     return (op << 8) + nextOp;
   }
   loop() {
-    if (!this.running) {
-      return;
+    console.log("Frame");
+    const oneFrame = this.clock.clockCycles + 70224;
+    while (this.clock.clockCycles < oneFrame) {
+      this.fetch();
+      this.decode();
+      this.execute();
     }
-    this.fetch();
-    this.decode();
-    this.execute();
-
-    setTimeout(() => {
-      this.loop();
-    }, 10);
-  }
-  start() {
-    this.running = true;
-    this.loop();
-  }
-
-  stop() {
-    this.running = false;
   }
 }

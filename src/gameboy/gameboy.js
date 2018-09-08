@@ -9,14 +9,16 @@ export default class Gameboy {
     this.io = new IORegister(this.gpu);
     this.memory = new MMU(this.gpu.getVideoMemory(), this.gpu.getAttributeTable(), this.io);
     this.core = new CPU(this.memory, tick => this.gpu.step(tick));
+    this.interval = null;
   }
 
   start() {
-    return this.core.start();
+    this.core.loop();
+    this.interval = setInterval(() => this.core.loop(), 1);
   }
 
-  stop() {
-    this.core.stop();
+  pause() {
+    if (this.interval != null) clearInterval(this.interval);
   }
 
   // TODO: Create a load method.

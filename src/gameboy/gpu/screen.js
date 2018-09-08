@@ -1,11 +1,11 @@
 export default class Screen {
   constructor(canvas) {
     this._canvas = canvas;
-    this._data = null;
+    this._image = null;
     if (this._canvas) {
-      this._data = this._canvas.createImageData(160, 144);
+      this._image = this._canvas.createImageData(160, 144);
     } else {
-      this._data = {
+      this._image = {
         width: 160,
         height: 144,
         data: new Array(160 * 144 * 4).fill(200),
@@ -13,16 +13,16 @@ export default class Screen {
     }
   }
   setPixel(y, x, pixel) {
-    const pos = (y * this._data.width) + (x * 4);
+    const pos = (y * this._image.width) + (x * 4);
     const [r, g, b, a] = pixel;
-    this._data[pos] = r;
-    this._data[pos + 1] = g;
-    this._data[pos + 2] = b;
-    this._data[pos + 3] = a;
+    this._image.data[pos] = r;
+    this._image.data[pos + 1] = g;
+    this._image.data[pos + 2] = b;
+    this._image.data[pos + 3] = a;
   }
 
   displayImage() {
     if (!this._canvas) return;
-    this._canvas.putImageData(this._data, 0, 0);
+    this._canvas.putImageData(this._image, 0, 0);
   }
 }

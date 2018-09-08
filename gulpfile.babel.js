@@ -64,7 +64,6 @@ export function scripts() {
   const b = browserify(`${dirs.src}/gameboy/bundle.js`, { debug: isWatchify, fullPaths: isWatchify, standalone: 'Gameboy' });
   b.transform(babelify, {
     presets: ['@babel/env'],
-    global: true,
     sourceMaps: isWatchify,
   });
 

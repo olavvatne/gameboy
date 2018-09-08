@@ -1,3 +1,5 @@
+/* eslint no-bitwise: 0 */
+
 const ticksBackgroundLine = 172;
 const ticksSpriteLine = 80;
 const ticksHBlank = 204;
@@ -23,7 +25,7 @@ class RenderTiming {
   }
 
   getLine() {
-    return this._line;
+    return this._line & 0xFF;
   }
 
   // simple state machine that based on tick switches between hblank, vblank and line(s) states.

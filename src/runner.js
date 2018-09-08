@@ -14,13 +14,13 @@ const putLogoInMem = (gameboy) => {
   for (let i = 0; i < logo.length; i += 1) {
     gameboy.memory.writeByte(0x104 + i, logo[i]);
   }
-}
+};
 
 const putChecksumInMem = (gameboy) => {
   for (let i = 0; i < checksum.length; i += 1) {
     gameboy.memory.writeByte(0x134 + i, checksum[i]);
   }
-}
+};
 
 const runGameboy = () => {
   const c = document.getElementById('screen');

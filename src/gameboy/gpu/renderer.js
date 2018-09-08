@@ -10,8 +10,9 @@ export default class Renderer {
     this._palette = palette;
   }
   _findCurrentPositionInMap(line) {
-    this._mapOffset = ((line + this._registers.y) & 0xFF) >> 3;
-    this._tileOffset = this._registers.x >> 3;
+    // TODO: what happens here?
+    this._mapOffset = (((line + this._registers.y) & 0xFF) >> 3) << 5;
+    this._tileOffset = (this._registers.x >> 3) & 0x1F;
   }
 
   _findCurrentTileAddress() {
@@ -22,8 +23,8 @@ export default class Renderer {
   renderScanline(line) {
     this._findCurrentPositionInMap(line);
     this._findCurrentTileAddress();
-    const tileY = line + this._registers.y & 7;
-    let tileX = this._registers.x & 7;
+    const tileY = (line + this._registers.y) & 7;
+    let tileX = (this._registers.x) & 7;
 
     for (let i = 0; i < 160; i += 1) {
       const tile = this._frameBuffer.getTile(this._registers.tileset, this._tileAddress);
