@@ -1,6 +1,6 @@
 import { RegMap } from '../';
 import { alu16 } from './';
-
+import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
@@ -10,7 +10,6 @@ import { alu16 } from './';
 // Makes instructions modular and easier to test. Only need to test the state.
 // Implementation based on explanations given by GBCPUman
 // Mention of immediate values treated as using program counter as value
-const createOpTime = (m, t) => ({ m, t });
 
 const ldMemHL = ({ reg, mmu }, regAddr) => {
   const hl = reg.reg(RegMap.hl);

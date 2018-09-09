@@ -1,0 +1,13 @@
+#container {
+  margin: 0 auto;
+  width: 80%;
+  max-width: 1000px;
+}
+
+canvas {
+  display: block;
+  width: 640px;
+  height: 567px;
+  margin: auto;
+  border: 1px solid black
+}

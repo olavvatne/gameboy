@@ -52,7 +52,6 @@ export default class ProcessorCore {
     return (op << 8) + nextOp;
   }
   loop() {
-    console.log("Frame");
     const oneFrame = this.clock.clockCycles + 70224;
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();

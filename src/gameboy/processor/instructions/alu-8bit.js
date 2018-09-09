@@ -1,10 +1,10 @@
 import { CheckFlagFor, RegMap } from '../';
 import { alu16 } from './';
+import { createOpTime } from '../clock-util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
-const createOpTime = (m, t) => ({ m, t });
 
 const setSubtractionFlag = (reg, val, minuend) => {
   const flag = new CheckFlagFor().zero(val).subtraction()

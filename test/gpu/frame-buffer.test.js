@@ -1,8 +1,6 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import FrameBuffer from '../../src/gameboy/gpu/frame-buffer';
-import Util from '../../src/gameboy/util';
-import VideoMemory from '../../src/gameboy/gpu/video-memory';
+import { FrameBuffer, VideoMemory } from '../../src/gameboy/gpu';
 
 describe('GPU', () => {
   let buffer = null;
@@ -23,21 +21,6 @@ describe('GPU', () => {
 
       assert.lengthOf(getTileset()[383], 8);
       assert.lengthOf(getTileset()[383][0], 8);
-    });
-
-    it('has a getBit helper that works correcty', () => {
-      const byte = 0b01100111;
-      const bitIndices = [7, 6, 5, 4, 3, 2, 1, 0];
-      const res = bitIndices.map(idx => Util.getBit(byte, idx));
-      assert.deepEqual(res, [0, 1, 1, 0, 0, 1, 1, 1]);
-    });
-
-    it('retrieves bits where msb is the leftmost', () => {
-      const byte = 0b10000000;
-      const msb = Util.getBit(byte, 7);
-      const lsb = Util.getBit(byte, 0);
-      assert.equal(msb, 1);
-      assert.equal(lsb, 0);
     });
 
     it('can access correct tile in tileset 1', () => {
@@ -82,6 +65,5 @@ describe('GPU', () => {
 
       assert.deepEqual(buffer.getTile(1, 0)[0], correctTileRow);
     });
-    
   });
 });

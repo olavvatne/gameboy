@@ -21,6 +21,15 @@ export default class Screen {
     this._image.data[pos + 3] = a;
   }
 
+  getPixel(y, x) {
+    const pos = (y * this._image.width * 4) + (x * 4);
+    const r = this._image.data[pos];
+    const g = this._image.data[pos + 1];
+    const b = this._image.data[pos + 2];
+    const a = this._image.data[pos + 3];
+    return [r, g, b, a];
+  }
+
   displayImage() {
     if (!this._canvas) return;
     this._canvas.putImageData(this._image, 0, 0);

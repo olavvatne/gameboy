@@ -1,4 +1,5 @@
 import Memory from '../memory/memory';
+import Util from '../util';
 
 /* eslint no-bitwise: 0 */
 
@@ -30,6 +31,7 @@ export default class VideoMemory extends Memory {
 
   getTileAddressFromMap(tilemap, offset) {
     const mapAddr = tilemap ? 0x1C00 : 0x1800;
-    return this.readByte(mapAddr + offset);
+    const val = this.readByte(mapAddr + offset);
+    return Util.convertSignedByte(val);
   }
 }

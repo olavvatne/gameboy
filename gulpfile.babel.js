@@ -21,6 +21,7 @@ const dirs = {
 const globs = {
   html: '/**/*.html',
   scripts: '/**/*.js',
+  css: '/**/*.css',
 };
 
 let isWatchify = false;
@@ -35,9 +36,16 @@ function views() {
     .on('end', browserSync.reload)
     .on('error', (err) => { console.log(err); this.emit('end'); });
 }
+function css() {
+  return gulp.src(dirs.src + globs.css)
+    .pipe(gulp.dest(dirs.dest))
+    .on('end', browserSync.reload)
+    .on('error', (err) => { console.log(err); this.emit('end'); });
+}
 
 function watchAssets() {
   gulp.watch(dirs.src + globs.html, views);
+  gulp.watch(dirs.src + globs.css, css);
   browserSync.init({
     server: {
       baseDir: dirs.dest,
@@ -89,6 +97,6 @@ export function scripts() {
 }
 
 export const clean = () => del([dirs.dest]);
-export const build = gulp.series(runTests, clean, scripts, views);
+export const build = gulp.series(runTests, clean, scripts, views, css);
 export const watch = gulp.series(setupWatch, build, watchAssets);
 export const test = () => runTests();

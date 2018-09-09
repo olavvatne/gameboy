@@ -1,12 +1,12 @@
 import { CheckFlagFor, RegMap } from '..';
 import { jump } from './';
+import { createOpTime } from '../clock-util';
 // Consists of Call, restart and return instructions which modify stack.
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
 /* eslint no-param-reassign: 0 */
-const createOpTime = (m, t) => ({ m, t });
 
 const addToStack = (reg, mmu, val) => {
   reg.sp(reg.sp() - 2);
