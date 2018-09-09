@@ -8,12 +8,12 @@ export default class Screen {
       this._image = {
         width: 160,
         height: 144,
-        data: new Array(160 * 144 * 4).fill(200),
+        data: new Array(160 * 144 * 4).fill(255),
       };
     }
   }
   setPixel(y, x, pixel) {
-    const pos = (y * this._image.width) + (x * 4);
+    const pos = (y * this._image.width * 4) + (x * 4);
     const [r, g, b, a] = pixel;
     this._image.data[pos] = r;
     this._image.data[pos + 1] = g;

@@ -25,8 +25,6 @@ export default class VideoMemory extends Memory {
       const firstByte = this.readByte(firstAddr);
       const secondByte = this.readByte(firstAddr + 1);
       this._frameBuffer.updateTile(firstAddr, firstByte, secondByte);
-    } else {
-      console.log(address + " " + value);
     }
   }
 
