@@ -4,7 +4,7 @@ import { Z80, RegMap } from './';
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
 const opcodes = {
-  0xCB: () => { throw Error('A opcode modifier should not be called'); },
+  0xCB: () => { throw Error('An opcode modifier should not be called'); },
   // -------- 8 bit load --------
   // 1. LD nn n
   0x06: cpu => Z80.load8.ldImmediate(cpu, RegMap.b),

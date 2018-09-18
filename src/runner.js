@@ -1,4 +1,4 @@
-/* global document Gameboy */
+/* global document window Gameboy */
 const logo = [
   0xce, 0xed, 0x66, 0x66, 0xcc, 0x0d, 0x00, 0x0b, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0c, 0x00, 0x0d,
   0x00, 0x08, 0x11, 0x1f, 0x88, 0x89, 0x00, 0x0e, 0xdc, 0xcc, 0x6e, 0xe6, 0xdd, 0xdd, 0xd9, 0x99,
@@ -22,13 +22,18 @@ const putChecksumInMem = (gameboy) => {
   }
 };
 
-const runGameboy = () => {
+const initGameboy = () => {
   const c = document.getElementById('screen');
   const gameboy = new Gameboy(c.getContext('2d'));
   putLogoInMem(gameboy);
   putChecksumInMem(gameboy);
-  gameboy.start();
+  return gameboy;
 };
 
-setTimeout(runGameboy, 500);
+window.onload = () => {
+  const gameboy = initGameboy();
+  document.getElementById('start').onclick = () => gameboy.start();
+  document.getElementById('pause').onclick = () => gameboy.pause();
+  document.getElementById('reset').onclick = () => gameboy.reset();
+};
 

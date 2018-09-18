@@ -26,14 +26,6 @@ export default class GPU {
     // TODO: stuff
   }
 
-  removeImage() {
-    // TODO: imp
-  }
-
-  showImage() {
-    // TODO: imp
-  }
-
   getVideoMemory() {
     return this._vram;
   }
@@ -46,5 +38,11 @@ export default class GPU {
     const result = this.renderTiming.step(tick);
     if (result.shouldScanline) this._renderer.renderScanline(this.renderTiming.getLine());
     if (result.lastHblank) this._renderer.displayImage();
+  }
+
+  reset() {
+    this.registers = {
+      x: 0, y: 0, tileset: 0, tilemap: 0,
+    };
   }
 }

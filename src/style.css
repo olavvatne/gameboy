@@ -4,6 +4,34 @@
   max-width: 1000px;
 }
 
+#controls {
+  margin: auto;
+  text-align: center;
+  align-content: center;
+}
+
+#controls > button {
+  box-shadow: none;
+  box-shadow: none;
+  appearance: none;
+  padding: 0em 0.8em;
+  margin: 0.2em;
+  background: white;
+  line-height: 1.8;
+  font-size: 20px;
+  color: cornflowerblue;
+  border: 3px solid cornflowerblue;
+}
+
+#controls > button:active {
+  background: floralwhite;
+}
+
+#controls > button:hover {
+  border: 3px solid dodgerblue;
+  color: dodgerblue;
+}
+
 canvas {
   display: block;
   width: 640px;

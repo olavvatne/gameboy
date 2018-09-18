@@ -139,4 +139,9 @@ export default class MMU {
   getAll() {
     return new Uint8Array(this._memory._mem_buffer);
   }
+
+  reset() {
+    this._inBios = true;
+    // TODO: wipe stuff?
+  }
 }

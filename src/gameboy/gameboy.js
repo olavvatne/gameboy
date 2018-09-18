@@ -13,6 +13,7 @@ export default class Gameboy {
   }
 
   start() {
+    console.log("LOL");
     this.core.loop();
     this.interval = setInterval(() => this.core.loop(), 1);
   }
@@ -21,5 +22,10 @@ export default class Gameboy {
     if (this.interval != null) clearInterval(this.interval);
   }
 
-  // TODO: Create a load method.
+  reset() {
+    if (this.interval != null) clearInterval(this.interval);
+    this.gpu.reset();
+    this.core.reset();
+    this.mmu.reset();
+  }
 }
