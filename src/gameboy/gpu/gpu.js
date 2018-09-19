@@ -3,6 +3,7 @@ import VideoMemory from './video-memory';
 import RenderTiming from './timing';
 import FrameBuffer from './frame-buffer';
 import Renderer from './renderer';
+import Util from '../util';
 
 export default class GPU {
   constructor(screen) {
@@ -20,11 +21,18 @@ export default class GPU {
     this.renderTiming = new RenderTiming();
     this._vram = new VideoMemory(this._frameBuffer);
     this._oam = new Memory(2 ** 8); // TODO: create special memory that trigger actions on gpu
-    this._renderer = new Renderer(this._frameBuffer, screen, this._vram, this.registers, this.palette);
+    this._renderer = new Renderer(
+      this._frameBuffer, screen, this._vram,
+      this.registers, this.palette,
+    );
   }
 
-  setPalette() {
-    // TODO: stuff
+  setPalette(value) {
+    // 4 color palette. Each 2 bits in the byte decides palette color
+    for (let i = 0; i < 4; i += 1) {
+      const pal = Util.getHalfNibble(value, i);
+      this.palette[pal] = Util.getPaletteColor(pal);
+    }
   }
 
   removeImage() {

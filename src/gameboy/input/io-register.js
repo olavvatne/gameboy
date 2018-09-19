@@ -18,7 +18,7 @@ export default class IORegister extends Memory {
     if (address === 0x40) this._handleLCDC(value);
     else if (address === 0x42) this._gpu.registers.y = value;
     else if (address === 0x43) this._gpu.registers.x = value;
-    // TODO: palette switch
+    else if (address === 0x47) this._gpu.setPalette(value);
   }
 
   _handleLCDC(value) {
