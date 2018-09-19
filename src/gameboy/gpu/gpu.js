@@ -6,6 +6,7 @@ import Renderer from './renderer';
 
 export default class GPU {
   constructor(screen) {
+    this.screen = screen;
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0,
     };
@@ -26,6 +27,14 @@ export default class GPU {
     // TODO: stuff
   }
 
+  removeImage() {
+    this.screen.reset();
+  }
+
+  showImage() {
+    // TODO: lcd, what does it do?
+  }
+
   getVideoMemory() {
     return this._vram;
   }
@@ -41,8 +50,10 @@ export default class GPU {
   }
 
   reset() {
-    this.registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0,
-    };
+    this.registers.x = 0;
+    this.registers.y = 0;
+    this.registers.tilemap = 0;
+    this.registers.tileset = 0;
+    this.screen.reset();
   }
 }

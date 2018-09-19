@@ -34,4 +34,16 @@ export default class Screen {
     if (!this._canvas) return;
     this._canvas.putImageData(this._image, 0, 0);
   }
+
+  reset() {
+    if (this._canvas) {
+      for (let i = 0; i < this._image.data.length; i += 1) {
+        this._image.data[i] = 0;
+      }
+    } else {
+      this._image.data = new Array(160 * 144 * 4).fill(255);
+    }
+
+    this.displayImage();
+  }
 }

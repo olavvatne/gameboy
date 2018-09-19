@@ -11,7 +11,6 @@ export default class ProcessorCore {
     this.interupts = { enable: true };
     this.currentOp = 0x00;
     this.currentInstruction = null;
-    this.running = false;
   }
 
   fetch() {
@@ -59,5 +58,12 @@ export default class ProcessorCore {
       this.decode();
       this.execute();
     }
+  }
+
+  reset() {
+    this.reg = new Registers();
+    this.clock.machineCycles = 0;
+    this.clock.clockCycles = 0;
+    this.currentOp = 0x00;
   }
 }
