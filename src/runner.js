@@ -1,4 +1,4 @@
-/* global document window Gameboy */
+/* global document window Gameboy FileReader */
 const logo = [
   0xce, 0xed, 0x66, 0x66, 0xcc, 0x0d, 0x00, 0x0b, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0c, 0x00, 0x0d,
   0x00, 0x08, 0x11, 0x1f, 0x88, 0x89, 0x00, 0x0e, 0xdc, 0xcc, 0x6e, 0xe6, 0xdd, 0xdd, 0xd9, 0x99,
@@ -22,18 +22,30 @@ const putChecksumInMem = (gameboy) => {
   }
 };
 
+let gameboy = null;
 const initGameboy = () => {
   const c = document.getElementById('screen');
-  const gameboy = new Gameboy(c.getContext('2d'));
+  gameboy = new Gameboy(c.getContext('2d'));
   putLogoInMem(gameboy);
   putChecksumInMem(gameboy);
-  return gameboy;
+};
+
+const handleRomSelect = (evt) => {
+  if (evt.target.files.length < 1) return;
+  const localRom = evt.target.files[0];
+  const rd = new FileReader();
+  rd.onload = () => {
+    const data = rd.result;
+    gameboy.loadRom(data);
+  };
+  rd.readAsBinaryString(localRom);
 };
 
 window.onload = () => {
-  const gameboy = initGameboy();
+  initGameboy();
   document.getElementById('start').onclick = () => gameboy.start();
   document.getElementById('pause').onclick = () => gameboy.pause();
   document.getElementById('reset').onclick = () => gameboy.reset();
+  document.getElementById('load').addEventListener('change', handleRomSelect, false);
 };
 

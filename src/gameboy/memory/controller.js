@@ -136,8 +136,15 @@ export default class MMU {
     this.writeByte(address, leastSignificant);
   }
 
-  getAll() {
-    return new Uint8Array(this._memory._mem_buffer);
+  loadBank(data, pos) {
+    const prevInBios = this._inBios;
+    this._inBios = false;
+    const maxIndex = Math.min(data.length, 2 ** 15);
+    for (let i = pos; i < maxIndex; i += 1) {
+      this.writeByte(i, data.charCodeAt(i));
+    }
+
+    this._inBios = prevInBios;
   }
 
   reset() {
