@@ -7,16 +7,16 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 /* eslint no-param-reassign: 0 */
 
-const doJump = ({ reg, mmu }) => {
-  const pcAddr = reg.pc();
+const doJump = ({ map, mmu }) => {
+  const pcAddr = map.pc();
   const newPc = mmu.readWord(pcAddr);
-  reg.pc(newPc);
+  map.pc(newPc);
 };
 
-const addImmediateToPc = ({ reg, mmu }) => {
-  const pcAddr = reg.pc();
+const addImmediateToPc = ({ map, mmu }) => {
+  const pcAddr = map.pc();
   const signedByte = Util.convertSignedByte(mmu.readByte(pcAddr));
-  reg.pc((pcAddr + signedByte + 1) & 0xFFFF);
+  map.pc((pcAddr + signedByte + 1) & 0xFFFF);
 };
 
 export default {
@@ -25,16 +25,16 @@ export default {
     return createOpTime(3, 12);
   },
 
-  jpIfZ: ({ reg, mmu, map }, condition) => {
+  jpIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) doJump({ reg, mmu });
+    if (flag.isZero() === condition) doJump({ map, mmu });
     else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  jpIfC: ({ reg, mmu, map }, condition) => {
+  jpIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) doJump({ reg, mmu });
+    if (flag.isCarry() === condition) doJump({ map, mmu });
     else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
@@ -49,16 +49,16 @@ export default {
     return createOpTime(2, 8);
   },
 
-  jrIfZ: ({ reg, mmu, map }, condition) => {
+  jrIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) addImmediateToPc({ reg, mmu });
+    if (flag.isZero() === condition) addImmediateToPc({ map, mmu });
     else map.pc(map.pc() + 1);
     return createOpTime(3, 12);
   },
 
-  jrIfC: ({ reg, mmu, map }, condition) => {
+  jrIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) addImmediateToPc({ reg, mmu });
+    if (flag.isCarry() === condition) addImmediateToPc({ map, mmu });
     else map.pc(map.pc() + 1);
     return createOpTime(3, 12);
   },

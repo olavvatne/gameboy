@@ -17,11 +17,11 @@ export default {
   // TODO: Halt until interupt somewhere. Not here
   halt: () => createOpTime(1, 4),
 
-  swap: ({ reg, map }, addr) => {
-    const val = reg.reg(addr);
+  swap: ({ map }, regX) => {
+    const val = regX();
     const newVal = swapNibbles(val);
     const flag = new CheckFlagFor().zero(newVal).get();
-    reg.reg(addr, newVal);
+    regX(newVal);
     map.f(flag);
     return createOpTime(2, 8);
   },

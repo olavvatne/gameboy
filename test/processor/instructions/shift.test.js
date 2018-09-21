@@ -20,7 +20,7 @@ describe('Processor', () => {
       const beforeShift = 0b10101111;
       const afterShift = 0b01011110;
       state.reg.reg(RegMap.l, beforeShift);
-      Z80.shift.sla(state, RegMap.l);
+      Z80.shift.sla(state, state.map.l);
 
       assert.equal(state.reg.reg(RegMap.l), afterShift);
       assert.isTrue(getFlags().isCarry());
@@ -30,7 +30,7 @@ describe('Processor', () => {
       const beforeShift = 0b00101111;
       const afterShift = 0b01011110;
       state.reg.reg(RegMap.l, beforeShift);
-      Z80.shift.sla(state, RegMap.l);
+      Z80.shift.sla(state, state.map.l);
 
       assert.equal(state.reg.reg(RegMap.l), afterShift);
       assert.isFalse(getFlags().isCarry());
@@ -52,7 +52,7 @@ describe('Processor', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11111000;
       state.reg.reg(RegMap.e, beforeShift);
-      Z80.shift.sra(state, RegMap.e);
+      Z80.shift.sra(state, state.map.e);
 
       const val = state.reg.reg(RegMap.e);
       assert.equal(val, afterShift);
@@ -75,7 +75,7 @@ describe('Processor', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b01111000;
       state.reg.reg(RegMap.e, beforeShift);
-      Z80.shift.srl(state, RegMap.e);
+      Z80.shift.srl(state, state.map.e);
 
       const val = state.reg.reg(RegMap.e);
       assert.equal(val, afterShift);

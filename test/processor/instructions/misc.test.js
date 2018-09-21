@@ -17,7 +17,7 @@ describe('Processor', () => {
       const correctSwapped = 0b01101001;
       state.reg.reg(RegMap.b, 0b10010110);
 
-      Z80.misc.swap(state, RegMap.b);
+      Z80.misc.swap(state, state.map.b);
 
       assert.equal(state.reg.reg(RegMap.b), correctSwapped);
     });

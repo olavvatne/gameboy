@@ -89,7 +89,7 @@ describe('Processor', () => {
       const afterRotate = 0b11100001;
       state.reg.reg(RegMap.b, beforeRotate);
 
-      Z80.rotate.rlc(state, RegMap.b);
+      Z80.rotate.rlc(state, state.map.b);
 
       assert.equal(state.reg.reg(RegMap.b), afterRotate);
       assert.isTrue(getFlags().isCarry());
@@ -113,7 +113,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.c, beforeRotate);
       state.reg.reg(RegMap.f, prevFlag);
 
-      Z80.rotate.rl(state, RegMap.c);
+      Z80.rotate.rl(state, state.map.c);
 
       assert.equal(state.reg.reg(RegMap.c), afterRotate);
       assert.isFalse(getFlags().isCarry());
@@ -135,7 +135,7 @@ describe('Processor', () => {
       const afterRotate = 0b10010000;
       state.reg.reg(RegMap.d, beforeRotate);
 
-      Z80.rotate.rrc(state, RegMap.d);
+      Z80.rotate.rrc(state, state.map.d);
 
       assert.equal(state.reg.reg(RegMap.d), afterRotate);
       assert.isTrue(getFlags().isCarry());
@@ -159,7 +159,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.h, beforeRotate);
       state.reg.reg(RegMap.f, prevFlag);
 
-      Z80.rotate.rr(state, RegMap.h);
+      Z80.rotate.rr(state, state.map.h);
 
       assert.equal(state.reg.reg(RegMap.h), afterRotate);
       assert.isFalse(getFlags().isCarry());
@@ -183,7 +183,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.c, beforeRotate);
       state.reg.reg(RegMap.f, prevFlag);
 
-      Z80.rotate.rl(state, RegMap.c);
+      Z80.rotate.rl(state, state.map.c);
 
       assert.equal(state.reg.reg(RegMap.c), afterRotate);
       assert.isTrue(getFlags().isCarry());

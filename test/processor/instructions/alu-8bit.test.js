@@ -18,7 +18,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.b, 0x04);
       state.reg.reg(RegMap.a, 0x02);
 
-      Z80.alu8.add(state, RegMap.b);
+      Z80.alu8.add(state, state.map.b);
 
       assert.equal(state.reg.reg(RegMap.a), 0x06);
     });
@@ -26,7 +26,7 @@ describe('Processor', () => {
     it('can add A and A', () => {
       state.reg.reg(RegMap.a, 0x10);
 
-      Z80.alu8.add(state, RegMap.a);
+      Z80.alu8.add(state, state.map.a);
 
       assert.equal(state.reg.reg(RegMap.a), 0x10 + 0x10);
     });
@@ -35,11 +35,11 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, 0xFF);
       state.reg.reg(RegMap.c, 0x01);
 
-      Z80.alu8.add(state, RegMap.c);
+      Z80.alu8.add(state, state.map.c);
       assert.equal(state.reg.flags(), 0b10010000);
 
       state.reg.reg(RegMap.c, 0x10);
-      Z80.alu8.add(state, RegMap.c);
+      Z80.alu8.add(state, state.map.c);
       assert.equal(state.reg.flags(), 0b00100000);
     });
 
@@ -70,12 +70,12 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, 0x10);
       state.reg.reg(RegMap.d, 0x01);
       state.reg.reg(RegMap.f, 0b00010000);
-      Z80.alu8.adcPlusCarry(state, RegMap.d);
+      Z80.alu8.adcPlusCarry(state, state.map.d);
       const val = state.reg.reg(RegMap.a);
 
       state.reg.reg(RegMap.a, 0x10);
       state.reg.reg(RegMap.f, 0b00000000);
-      Z80.alu8.adcPlusCarry(state, RegMap.d);
+      Z80.alu8.adcPlusCarry(state, state.map.d);
       const val2 = state.reg.reg(RegMap.a);
       assert.notEqual(val, val2);
       assert.equal(val, 0x10 + 0x01 + 1);
@@ -116,11 +116,11 @@ describe('Processor', () => {
       state.reg.reg(RegMap.b, 0x11);
       state.reg.reg(RegMap.c, 0x22);
 
-      Z80.alu8.sub(state, RegMap.b);
+      Z80.alu8.sub(state, state.map.b);
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - 0x11);
 
-      Z80.alu8.sub(state, RegMap.c);
+      Z80.alu8.sub(state, state.map.c);
       const val2 = state.reg.reg(RegMap.a);
       assert.equal(val2, valInA - 0x11 - 0x22);
     });
@@ -129,7 +129,7 @@ describe('Processor', () => {
       const valInA = 0xAA;
       state.reg.reg(RegMap.a, valInA);
 
-      Z80.alu8.sub(state, RegMap.a);
+      Z80.alu8.sub(state, state.map.a);
       assert.isTrue(getFlags().isZero());
     });
 
@@ -137,7 +137,7 @@ describe('Processor', () => {
       const valInA = 0xAA;
       state.reg.reg(RegMap.a, valInA);
 
-      Z80.alu8.sub(state, RegMap.b);
+      Z80.alu8.sub(state, state.map.b);
       assert.isTrue(getFlags().isSubtraction());
     });
 
@@ -182,7 +182,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.b, valInB);
       state.reg.reg(RegMap.f, 0b00010000);
 
-      Z80.alu8.sbc(state, RegMap.b);
+      Z80.alu8.sbc(state, state.map.b);
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, valInA - valInB - 1);
@@ -211,7 +211,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, valInB);
 
-      Z80.alu8.and(state, RegMap.b);
+      Z80.alu8.and(state, state.map.b);
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, 0b00001000);
@@ -252,7 +252,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, valInC);
 
-      Z80.alu8.or(state, RegMap.c);
+      Z80.alu8.or(state, state.map.c);
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, 0b10001000);
@@ -292,7 +292,7 @@ describe('Processor', () => {
       const valInC = 0b00001000;
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, valInC);
-      Z80.alu8.xor(state, RegMap.c);
+      Z80.alu8.xor(state, state.map.c);
 
       const val = state.reg.reg(RegMap.a);
       assert.equal(val, 0b10000000);
@@ -335,12 +335,12 @@ describe('Processor', () => {
       state.reg.reg(RegMap.d, valInD);
       state.reg.reg(RegMap.l, valInL);
 
-      Z80.alu8.cp(state, RegMap.d);
+      Z80.alu8.cp(state, state.map.d);
       const flag1 = getFlags();
       assert.isTrue(flag1.isZero());
       assert.isTrue(flag1.isSubtraction());
 
-      Z80.alu8.cp(state, RegMap.l);
+      Z80.alu8.cp(state, state.map.l);
       const flag2 = getFlags();
       assert.isTrue(flag2.isSubtraction());
       const isZero = flag2.isZero();
@@ -394,7 +394,7 @@ describe('Processor', () => {
       const valInD = 0x51;
       state.reg.reg(RegMap.d, valInD);
 
-      Z80.alu8.inc(state, RegMap.d);
+      Z80.alu8.inc(state, state.map.d);
 
       assert.equal(valInD + 1, state.reg.reg(RegMap.d));
     });
@@ -403,7 +403,7 @@ describe('Processor', () => {
       const valInC = 0x21;
       state.reg.reg(RegMap.c, valInC);
 
-      Z80.alu8.dec(state, RegMap.c);
+      Z80.alu8.dec(state, state.map.c);
 
       assert.equal(valInC - 1, state.reg.reg(RegMap.c));
       assert.equal(0, state.reg.reg(RegMap.a));
@@ -413,7 +413,7 @@ describe('Processor', () => {
       const valInD = -1;
       state.reg.reg(RegMap.d, valInD);
 
-      Z80.alu8.inc(state, RegMap.d);
+      Z80.alu8.inc(state, state.map.d);
       const flags = getFlags();
       assert.isTrue(flags.isZero());
     });
@@ -423,7 +423,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.d, valInD);
       state.reg.reg(RegMap.f, 0b01010000);
 
-      Z80.alu8.inc(state, RegMap.d);
+      Z80.alu8.inc(state, state.map.d);
       const flags = getFlags();
       assert.isTrue(flags.isCarry());
       assert.isFalse(flags.isSubtraction());
@@ -434,7 +434,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.d, valInD);
       state.reg.reg(RegMap.f, 0b00010000);
 
-      Z80.alu8.dec(state, RegMap.d);
+      Z80.alu8.dec(state, state.map.d);
       const flags = getFlags();
       assert.isTrue(flags.isCarry());
       assert.isTrue(flags.isZero());
@@ -468,21 +468,21 @@ describe('Processor', () => {
 
       state.reg.reg(RegMap.b, willCauseHalfCarry);
 
-      Z80.alu8.dec(state, RegMap.b);
+      Z80.alu8.dec(state, state.map.b);
 
       assert.isTrue(getFlags().isHalfCarry());
 
       const notCarry = 0b00001111;
       state.reg.reg(RegMap.b, notCarry);
 
-      Z80.alu8.dec(state, RegMap.b);
+      Z80.alu8.dec(state, state.map.b);
 
       assert.isFalse(getFlags().isHalfCarry());
 
       const notCarry2 = 0b00010001;
       state.reg.reg(RegMap.b, notCarry2);
 
-      Z80.alu8.dec(state, RegMap.b);
+      Z80.alu8.dec(state, state.map.b);
 
       assert.isFalse(getFlags().isHalfCarry());
     });
@@ -492,7 +492,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, 0x10);
 
-      Z80.alu8.sub(state, RegMap.b);
+      Z80.alu8.sub(state, state.map.b);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -501,7 +501,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, 0x10);
 
-      Z80.alu8.sub(state, RegMap.c);
+      Z80.alu8.sub(state, state.map.c);
       assert.isFalse(getFlags().isCarry());
     });
 
@@ -510,7 +510,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, 0x01);
 
-      Z80.alu8.sub(state, RegMap.c);
+      Z80.alu8.sub(state, state.map.c);
       assert.isTrue(getFlags().isHalfCarry());
     });
 
@@ -519,7 +519,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, 0x01);
 
-      Z80.alu8.sub(state, RegMap.c);
+      Z80.alu8.sub(state, state.map.c);
       assert.isFalse(getFlags().isHalfCarry());
     });
 
@@ -528,7 +528,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.c, 0x04);
 
-      Z80.alu8.sub(state, RegMap.c);
+      Z80.alu8.sub(state, state.map.c);
       assert.isTrue(getFlags().isHalfCarry());
     });
 
@@ -538,7 +538,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, valInB);
 
-      Z80.alu8.cp(state, RegMap.b);
+      Z80.alu8.cp(state, state.map.b);
 
       const flags = getFlags();
       assert.isTrue(flags.isZero());
@@ -553,7 +553,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, valInB);
 
-      Z80.alu8.cp(state, RegMap.b);
+      Z80.alu8.cp(state, state.map.b);
 
       const flags = getFlags();
       assert.isFalse(flags.isZero());
@@ -567,7 +567,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.a, valInA);
       state.reg.reg(RegMap.b, valInB);
 
-      Z80.alu8.cp(state, RegMap.b);
+      Z80.alu8.cp(state, state.map.b);
 
       const flags = getFlags();
       assert.isFalse(flags.isZero());

@@ -16,6 +16,22 @@ export const RegMap = {
   sp: 12,
 };
 
+export const NameMap = {
+  a: 'a',
+  f: 'f',
+  b: 'b',
+  c: 'c',
+  d: 'd',
+  e: 'e',
+  h: 'h',
+  l: 'l',
+  af: 'af',
+  bc: 'bc',
+  de: 'de',
+  hl: 'hl',
+  sp: 'sp',
+};
+
 export class Registers {
   constructor() {
     this._initGeneralPurposeRegisters();

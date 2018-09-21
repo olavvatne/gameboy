@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '../';
+import { CheckFlagFor } from '../';
 import Util from './../../util';
 import { createOpTime } from '../clock-util';
 
@@ -7,18 +7,18 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 
 export default {
-  ldImmediateIntoReg: ({ reg, mmu, map }, regAddr) => {
+  ldImmediateIntoReg: ({ mmu, map }, regX) => {
     const pc = map.pc();
     const imAddr = pc;
     map.pc(pc + 2);
     const imVal = mmu.readWord(imAddr);
-    reg.reg(regAddr, imVal);
+    regX(imVal);
     return createOpTime(3, 12);
   },
 
-  ldRegToReg: ({ reg }, fromReg, toReg) => {
-    const val = reg.reg(fromReg);
-    reg.reg(toReg, val);
+  ldRegToReg: (_, fromReg, toReg) => {
+    const val = fromReg();
+    toReg(val);
     return createOpTime(2, 8);
   },
 
@@ -48,19 +48,19 @@ export default {
   },
 
   // Push register pair to the stack (PUSH HL)
-  push: ({ reg, mmu, map }, addr) => {
+  push: ({ mmu, map }, regX) => {
     const sp = map.sp();
     map.sp(sp - 2);
-    mmu.writeWord(sp - 2, reg.reg(addr));
+    mmu.writeWord(sp - 2, regX());
     return createOpTime(4, 16);
   },
 
   // Pop register pair off the stack (POP HL)
-  pop: ({ reg, mmu, map }, addr) => {
+  pop: ({ mmu, map }, regX) => {
     const sp = map.sp();
     const regVal = mmu.readWord(sp);
     map.sp(sp + 2);
-    reg.reg(addr, regVal);
+    regX(regVal);
     return createOpTime(3, 12);
   },
 

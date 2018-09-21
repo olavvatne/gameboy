@@ -32,9 +32,7 @@ export default class ProcessorCore {
 
   execute() {
     // TODO: interupt. Send in temp interup object
-    const state = {
-      reg: this.reg, mmu: this.mmu, interupt: this.interupts, map: this.reg.map,
-    };
+    const state = { mmu: this.mmu, interupt: this.interupts, map: this.reg.map };
     const timeSpent = this.currentInstruction(state);
 
     this.clock.machineCycles += timeSpent.m;

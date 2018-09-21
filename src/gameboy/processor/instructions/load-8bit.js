@@ -11,37 +11,37 @@ import { createOpTime } from '../clock-util';
 // Implementation based on explanations given by GBCPUman
 // Mention of immediate values treated as using program counter as value
 
-const ldMemHL = ({ reg, mmu, map }, regAddr) => {
+const ldMemHL = ({ mmu, map }, regX) => {
   const hl = map.hl();
   const val = mmu.readByte(hl);
-  reg.reg(regAddr, val);
+  regX(val);
 
   return createOpTime(2, 8);
 };
 
-const ldMemRegA = ({ reg, mmu }, regMemAddr, regAddr) => {
-  const memAddr = reg.reg(regMemAddr);
-  const val = reg.reg(regAddr);
+const ldMemRegA = ({ mmu, map }, regWithMem) => {
+  const memAddr = regWithMem();
+  const val = map.a();
   mmu.writeByte(memAddr, val);
 
   return createOpTime(2, 8);
 };
 
 export default {
-  ld: ({ reg }, addr1, addr2) => {
-    reg.reg(addr1, reg.reg(addr2));
+  ld: (_, regX, regY) => {
+    regX(regY());
     return createOpTime(1, 4);
   },
 
-  ldMemHLReg: ({ reg, mmu, map }, regAddr) => {
-    const val = reg.reg(regAddr);
+  ldMemHLReg: ({ mmu, map }, regX) => {
+    const val = regX();
     const memAddr = map.hl();
     mmu.writeByte(memAddr, val);
     return createOpTime(2, 8);
   },
 
 
-  ldMemHLImmediate: ({ reg, mmu, map }) => {
+  ldMemHLImmediate: ({ mmu, map }) => {
     const pc = map.pc();
     const val = mmu.readByte(pc);
     map.pc(pc + 1);
@@ -50,28 +50,28 @@ export default {
     return createOpTime(3, 12);
   },
 
-  ldImmediate: ({ reg, mmu, map }, addr) => {
+  ldImmediate: ({ mmu, map }, regX) => {
     const pc = map.pc();
     const imAddr = pc;
     map.pc(pc + 1);
     const imVal = mmu.readByte(imAddr);
-    reg.reg(addr, imVal);
+    regX(imVal);
     return createOpTime(2, 8);
   },
   // Put byte at memory location found in 16 bit registers into A
-  ldRegAMem: ({ reg, mmu, map }, regAddr) => {
-    const val = mmu.readByte(reg.reg(regAddr));
+  ldRegAMem: ({ mmu, map }, regX) => {
+    const val = mmu.readByte(regX());
     map.a(val);
     return createOpTime(2, 8);
   },
 
-  ldRegARegCPlusConst: ({ reg, mmu, map }) => {
+  ldRegARegCPlusConst: ({ mmu, map }) => {
     const val = mmu.readByte(0xFF00 + map.c());
     map.a(val);
     return createOpTime(2, 8);
   },
 
-  ldRegCPlusConstRegA: ({ reg, mmu, map }) => {
+  ldRegCPlusConstRegA: ({ mmu, map }) => {
     const addr = 0xFF00 + map.c();
     const val = map.a();
     mmu.writeByte(addr, val);
@@ -83,26 +83,26 @@ export default {
   ldMemRegA,
 
   lddRegAMemHL: (cpu) => {
-    ldMemHL(cpu, RegMap.a);
-    alu16.dec(cpu, RegMap.hl);
+    ldMemHL(cpu, cpu.map.a);
+    alu16.dec(cpu, cpu.map.hl);
     return createOpTime(2, 8);
   },
 
   lddMemHLRegA: (cpu) => {
-    ldMemRegA(cpu, RegMap.hl, RegMap.a);
-    alu16.dec(cpu, RegMap.hl);
+    ldMemRegA(cpu, cpu.map.hl);
+    alu16.dec(cpu, cpu.map.hl);
     return createOpTime(2, 8);
   },
 
   ldiRegAMemHL: (cpu) => {
-    ldMemHL(cpu, RegMap.a);
-    alu16.inc(cpu, RegMap.hl);
+    ldMemHL(cpu, cpu.map.a);
+    alu16.inc(cpu, cpu.map.hl);
     return createOpTime(2, 8);
   },
 
   ldiMemHLRegA: (cpu) => {
-    ldMemRegA(cpu, RegMap.hl, RegMap.a);
-    alu16.inc(cpu, RegMap.hl);
+    ldMemRegA(cpu, cpu.map.hl);
+    alu16.inc(cpu, cpu.map.hl);
     return createOpTime(2, 8);
   },
 

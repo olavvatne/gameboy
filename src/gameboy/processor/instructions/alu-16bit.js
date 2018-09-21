@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '../';
+import { CheckFlagFor } from '../';
 import Util from './../../util';
 import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
@@ -6,10 +6,10 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 
 export default {
-  addRegHLReg: ({ reg, map }, addr) => {
+  addRegHLReg: ({ map }, regX) => {
     const prevFlag = map.f();
 
-    const val = map.hl() + reg.reg(addr);
+    const val = map.hl() + regX();
     map.hl(val);
 
     const flag = new CheckFlagFor(prevFlag).notSubtraction().halfCarry16(val).carry16(val).get();
@@ -18,15 +18,15 @@ export default {
     return createOpTime(2, 8);
   },
 
-  inc: ({ reg }, regAddr) => {
-    const val = reg.reg(regAddr);
-    reg.reg(regAddr, val + 1);
+  inc: (_, regX) => {
+    const val = regX();
+    regX(val + 1);
     return createOpTime(2, 8);
   },
 
-  dec: ({ reg }, regAddr) => {
-    const val = reg.reg(regAddr);
-    reg.reg(regAddr, val - 1);
+  dec: (_, regX) => {
+    const val = regX();
+    regX(val - 1);
     return createOpTime(2, 8);
   },
 

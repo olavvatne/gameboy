@@ -107,7 +107,7 @@ describe('Processor', () => {
 
     it('can return by popping from stack and jumping to that address', () => {
       state.reg.reg(RegMap.hl, 0x3333);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
 
       Z80.subroutine.ret(state);
@@ -119,7 +119,7 @@ describe('Processor', () => {
     it('returns if C flag is reset', () => {
       const returnAddr = 0x8888;
       state.reg.reg(RegMap.hl, returnAddr);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(true).get());
       Z80.subroutine.retIfC(state, false);
@@ -136,7 +136,7 @@ describe('Processor', () => {
     it('returns if C flag is set', () => {
       const returnAddr = 0x8881;
       state.reg.reg(RegMap.hl, returnAddr);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
       state.reg.reg(RegMap.f, new CheckFlagFor().setCarry(false).get());
       Z80.subroutine.retIfC(state, true);
@@ -153,7 +153,7 @@ describe('Processor', () => {
     it('returns if Z flag is reset', () => {
       const returnAddr = 0x8828;
       state.reg.reg(RegMap.hl, returnAddr);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(0).get());
       Z80.subroutine.retIfZ(state, false);
@@ -170,7 +170,7 @@ describe('Processor', () => {
     it('returns if Z flag is set', () => {
       const returnAddr = 0x8381;
       state.reg.reg(RegMap.hl, returnAddr);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
       state.reg.reg(RegMap.f, new CheckFlagFor().zero(1).get());
       Z80.subroutine.retIfZ(state, true);
@@ -187,7 +187,7 @@ describe('Processor', () => {
     it('can return and set enable interupts in one go', () => {
       const retAddr = 0x4324;
       state.reg.reg(RegMap.hl, retAddr);
-      Z80.load16.push(state, RegMap.hl);
+      Z80.load16.push(state, state.map.hl);
       const sp = state.reg.sp();
 
       Z80.subroutine.reti(state);

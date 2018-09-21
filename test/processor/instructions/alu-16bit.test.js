@@ -17,21 +17,21 @@ describe('Processor', () => {
     it('can increment a register', () => {
       state.reg.reg(RegMap.bc, 100);
 
-      Z80.alu16.inc(state, RegMap.bc);
+      Z80.alu16.inc(state, state.map.bc);
       assert.equal(state.reg.reg(RegMap.bc), 101);
     });
 
     it('can decrement a register', () => {
       state.reg.reg(RegMap.hl, 52);
 
-      Z80.alu16.dec(state, RegMap.hl);
+      Z80.alu16.dec(state, state.map.hl);
       assert.equal(state.reg.reg(RegMap.hl), 51);
     });
 
     it('can decrement a stack pointer', () => {
       state.reg.reg(RegMap.sp, 172);
 
-      Z80.alu16.dec(state, RegMap.sp);
+      Z80.alu16.dec(state, state.map.sp);
       assert.equal(state.reg.reg(RegMap.sp), 171);
     });
 
@@ -41,7 +41,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.hl, valInHL);
       state.reg.reg(RegMap.de, valInDE);
 
-      Z80.alu16.addRegHLReg(state, RegMap.de);
+      Z80.alu16.addRegHLReg(state, state.map.de);
 
       assert.equal(valInHL + valInDE, state.reg.reg(RegMap.hl));
     });
@@ -50,7 +50,7 @@ describe('Processor', () => {
       const valInHL = 0x5543;
       state.reg.reg(RegMap.hl, valInHL);
 
-      Z80.alu16.addRegHLReg(state, RegMap.hl);
+      Z80.alu16.addRegHLReg(state, state.map.hl);
 
       assert.equal(valInHL * 2, state.reg.reg(RegMap.hl));
     });
@@ -61,7 +61,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.hl, valInHL);
       state.reg.reg(RegMap.de, valInDE);
 
-      Z80.alu16.addRegHLReg(state, RegMap.de);
+      Z80.alu16.addRegHLReg(state, state.map.de);
 
       assert.equal(0, state.reg.reg(RegMap.hl));
       // Is not a half carry because 0xFFFF and 0x0001 result in zeroes after a MSB of 1.
@@ -75,7 +75,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.hl, valInHL);
       state.reg.reg(RegMap.de, valInDE);
 
-      Z80.alu16.addRegHLReg(state, RegMap.de);
+      Z80.alu16.addRegHLReg(state, state.map.de);
 
       assert.isFalse(getFlags().isCarry());
       assert.isTrue(getFlags().isHalfCarry());
@@ -86,7 +86,7 @@ describe('Processor', () => {
       state.reg.reg(RegMap.f, 0b11000000);
       state.reg.reg(RegMap.hl, valInHL);
 
-      Z80.alu16.addRegHLReg(state, RegMap.hl);
+      Z80.alu16.addRegHLReg(state, state.map.hl);
 
       assert.equal(2, state.reg.reg(RegMap.hl));
       const flags = getFlags();

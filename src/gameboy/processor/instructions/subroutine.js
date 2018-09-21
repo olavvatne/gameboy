@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '..';
+import { CheckFlagFor } from '..';
 import { jump } from './';
 import { createOpTime } from '../clock-util';
 // Consists of Call, restart and return instructions which modify stack.
@@ -8,75 +8,76 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 /* eslint no-param-reassign: 0 */
 
-const addToStack = (reg, mmu, val) => {
-  reg.sp(reg.sp() - 2);
-  mmu.writeWord(reg.reg(RegMap.sp), val);
+const addToStack = (map, mmu, val) => {
+  const newSp = map.sp() - 2;
+  map.sp(newSp);
+  mmu.writeWord(newSp, val);
 };
 
-const popFromStack = (reg, mmu, val) => {
-  const regVal = mmu.readWord(reg.sp());
-  reg.sp(reg.sp() + 2);
+const popFromStack = (map, mmu) => {
+  const regVal = mmu.readWord(map.sp());
+  map.sp(map.sp() + 2);
   return regVal;
 };
 
-const doCall = (reg, mmu) => {
-  const nextInstruction = (reg.pc() + 2) & 0xFFFF;
-  addToStack(reg, mmu, nextInstruction);
-  jump.jp({ reg, mmu });
+const doCall = (map, mmu) => {
+  const nextInstruction = (map.pc() + 2) & 0xFFFF;
+  addToStack(map, mmu, nextInstruction);
+  jump.jp({ mmu, map });
 };
 
 export default {
-  call: ({ reg, mmu }) => {
-    doCall(reg, mmu);
+  call: ({ mmu, map }) => {
+    doCall(map, mmu);
     return createOpTime(3, 12);
   },
 
-  callIfZ: ({ reg, mmu, map }, condition) => {
+  callIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) doCall(reg, mmu);
+    if (flag.isZero() === condition) doCall(map, mmu);
     else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  callIfC: ({ reg, mmu, map }, condition) => {
+  callIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) doCall(reg, mmu);
+    if (flag.isCarry() === condition) doCall(map, mmu);
     else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  rst: ({ reg, mmu, map }, addr) => {
-    addToStack(reg, mmu, map.pc());
+  rst: ({ mmu, map }, addr) => {
+    addToStack(map, mmu, map.pc());
     map.pc(addr);
     return createOpTime(8, 32);
   },
 
-  ret: ({ reg, mmu, map }) => {
-    const val = popFromStack(reg, mmu);
+  ret: ({ mmu, map }) => {
+    const val = popFromStack(map, mmu);
     map.pc(val);
     return createOpTime(2, 8);
   },
 
-  retIfZ: ({ reg, mmu, map }, condition) => {
+  retIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) {
-      const val = popFromStack(reg, mmu);
+      const val = popFromStack(map, mmu);
       map.pc(val);
     }
     return createOpTime(2, 8);
   },
 
-  retIfC: ({ reg, mmu, map }, condition) => {
+  retIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) {
-      const val = popFromStack(reg, mmu);
+      const val = popFromStack(map, mmu);
       map.pc(val);
     }
     return createOpTime(2, 8);
   },
 
-  reti: ({ reg, mmu, map, interupt }) => {
-    const val = popFromStack(reg, mmu);
+  reti: ({ mmu, map, interupt }) => {
+    const val = popFromStack(map, mmu);
     map.pc(val);
     interupt.enable = true;
     return createOpTime(2, 8);

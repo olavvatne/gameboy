@@ -1,35 +1,35 @@
-import { CheckFlagFor, RegMap } from '../';
+import { CheckFlagFor, NameMap } from '../';
 import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
 /* eslint no-param-reassign: 0 */
 
-const getValFromRegOrMem = (reg, mmu, regAddr) => {
-  if (regAddr === RegMap.hl) {
-    return mmu.readByte(reg.reg(RegMap.hl));
+const getValFromRegOrMem = (map, mmu, regAddr) => {
+  if (regAddr === NameMap.hl) {
+    return mmu.readByte(map.hl());
   }
-  return reg.reg(regAddr);
+  return map[regAddr]();
 };
 
-const setValInRegOrMem = (reg, mmu, regAddr, val) => {
-  if (regAddr === RegMap.hl) {
-    mmu.writeByte(reg.reg(RegMap.hl), val);
+const setValInRegOrMem = (map, mmu, regAddr, val) => {
+  if (regAddr === NameMap.hl) {
+    mmu.writeByte(map.hl(), val);
   } else {
-    reg.reg(regAddr, val);
+    map[regAddr](val);
   }
 };
 
 const getTimeExpenditure = (regAddr) => {
-  if (regAddr === RegMap.hl) {
+  if (regAddr === NameMap.hl) {
     return createOpTime(4, 16);
   }
   return createOpTime(2, 8);
 };
 
 export default {
-  bit: ({ reg, mmu, map }, regAddr, bitNr) => {
-    const val = getValFromRegOrMem(reg, mmu, regAddr);
+  bit: ({ mmu, map }, regAddr, bitNr) => {
+    const val = getValFromRegOrMem(map, mmu, regAddr);
     const mask = 1 << bitNr;
     const flag = new CheckFlagFor(map.f()).notSubtraction()
       .setHalfCarry(true).zero(val & mask).get();
@@ -37,19 +37,19 @@ export default {
     return getTimeExpenditure(regAddr);
   },
 
-  set: ({ reg, mmu }, regAddr, bitNr) => {
-    let val = getValFromRegOrMem(reg, mmu, regAddr);
+  set: ({ mmu, map }, regAddr, bitNr) => {
+    let val = getValFromRegOrMem(map, mmu, regAddr);
     const mask = 1 << bitNr;
     val |= mask;
-    setValInRegOrMem(reg, mmu, regAddr, val);
+    setValInRegOrMem(map, mmu, regAddr, val);
     return getTimeExpenditure(regAddr);
   },
 
-  res: ({ reg, mmu }, regAddr, bitNr) => {
-    let val = getValFromRegOrMem(reg, mmu, regAddr);
+  res: ({ mmu, map }, regAddr, bitNr) => {
+    let val = getValFromRegOrMem(map, mmu, regAddr);
     const mask = 1 << bitNr;
     val &= ~mask;
-    setValInRegOrMem(reg, mmu, regAddr, val);
+    setValInRegOrMem(map, mmu, regAddr, val);
     return getTimeExpenditure(regAddr);
   },
 };

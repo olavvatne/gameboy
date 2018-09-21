@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '../';
+import { CheckFlagFor } from '../';
 import { createOpTime } from '../clock-util';
 
 /* eslint no-bitwise: 0 */
@@ -6,15 +6,15 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 /* eslint no-param-reassign: 0 */
 
-const shiftLeft = (val, reg) => {
+const shiftLeft = (val, map) => {
   const msb = (val & 0b10000000) === 0b10000000;
   const newVal = val << 1;
   const newFlag = new CheckFlagFor().zero(newVal).setCarry(msb).get();
-  reg.reg(RegMap.f, newFlag);
+  map.f(newFlag);
   return newVal;
 };
 
-const shiftRight = (val, reg, keepMsb) => {
+const shiftRight = (val, map, keepMsb) => {
   const lsb = val & 0b00000001;
   const isLsb = lsb === 0b00000001;
   let newVal = val >>> 1;
@@ -24,52 +24,52 @@ const shiftRight = (val, reg, keepMsb) => {
   }
 
   const newFlag = new CheckFlagFor().zero(newVal).setCarry(isLsb).get();
-  reg.reg(RegMap.f, newFlag);
+  map.f(newFlag);
   return newVal;
 };
 
 export default {
-  sla: ({ reg }, regAddr) => {
-    const val = reg.reg(regAddr);
-    const newVal = shiftLeft(val, reg);
-    reg.reg(regAddr, newVal);
+  sla: ({ map }, regX) => {
+    const val = regX();
+    const newVal = shiftLeft(val, map);
+    regX(newVal);
     return createOpTime(2, 8);
   },
 
-  slaMemHL: ({ reg, mmu, map }) => {
+  slaMemHL: ({ mmu, map }) => {
     const addr = map.hl();
     const val = mmu.readByte(addr);
-    const newVal = shiftLeft(val, reg);
+    const newVal = shiftLeft(val, map);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },
 
-  sra: ({ reg }, regAddr) => {
-    const val = reg.reg(regAddr);
-    const newVal = shiftRight(val, reg, true);
-    reg.reg(regAddr, newVal);
+  sra: ({ map }, regX) => {
+    const val = regX();
+    const newVal = shiftRight(val, map, true);
+    regX(newVal);
     return createOpTime(2, 8);
   },
 
-  sraMemHL: ({ reg, mmu, map }) => {
+  sraMemHL: ({ mmu, map }) => {
     const addr = map.hl();
     const val = mmu.readByte(addr);
-    const newVal = shiftRight(val, reg, true);
+    const newVal = shiftRight(val, map, true);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },
 
-  srl: ({ reg }, regAddr) => {
-    const val = reg.reg(regAddr);
-    const newVal = shiftRight(val, reg);
-    reg.reg(regAddr, newVal);
+  srl: ({ map }, regX) => {
+    const val = regX();
+    const newVal = shiftRight(val, map);
+    regX(newVal);
     return createOpTime(2, 8);
   },
 
-  srlMemHL: ({ reg, mmu, map }) => {
+  srlMemHL: ({ mmu, map }) => {
     const addr = map.hl();
     const val = mmu.readByte(addr);
-    const newVal = shiftRight(val, reg);
+    const newVal = shiftRight(val, map);
     mmu.writeByte(addr, newVal);
     return createOpTime(4, 16);
   },

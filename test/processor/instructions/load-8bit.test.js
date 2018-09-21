@@ -19,9 +19,9 @@ describe('Processor', () => {
       state.reg.reg(RegMap.b, 230);
       state.reg.reg(RegMap.c, 105);
 
-      Z80.load8.ldMemHLReg(state, RegMap.b);
+      Z80.load8.ldMemHLReg(state, state.map.b);
       assert.equal(state.mmu.readByte(2005), 230);
-      Z80.load8.ldMemHLReg(state, RegMap.c);
+      Z80.load8.ldMemHLReg(state, state.map.c);
       assert.equal(state.mmu.readByte(2005), 105);
     });
 
@@ -54,11 +54,11 @@ describe('Processor', () => {
       state.reg.pc(pcAddr);
 
       reg8bitList.forEach((reg, idx) => {
-        state.mmu.writeWord(state.reg.pc(), pcVal + idx);
+        state.mmu.writeWord(state.map.pc(), pcVal + idx);
 
-        Z80.load8.ldImmediate(state, reg);
+        Z80.load8.ldImmediate(state, state.map[reg]);
 
-        const immediate = state.reg.reg(reg);
+        const immediate = state.map[reg]();
         assert.equal(immediate, pcVal + idx);
       });
     });
@@ -70,7 +70,7 @@ describe('Processor', () => {
       assert.equal(state.reg.reg(RegMap.a), 0x00);
       reg8bitList.forEach((reg) => {
         state.reg.reg(RegMap.hl, memAddr);
-        Z80.load8.ldMemHL(state, reg);
+        Z80.load8.ldMemHL(state, state.map[reg]);
         assert.equal(state.reg.reg(reg), 0x59);
       });
     });
@@ -150,6 +150,26 @@ describe('Processor', () => {
       assert.equal(state.reg.reg(RegMap.a), corrValue);
       const newCounter = state.reg.pc();
       assert.equal(newCounter, 0x1235);
+    });
+
+    it('can put mem val from address HL into reg c', () => {
+      const addr = 0x3458;
+      state.map.hl(addr);
+      state.mmu.writeByte(addr, 0x99);
+
+      Z80.load8.ldMemHL(state, state.map.c);
+
+      assert.equal(state.map.c(), 0x99);
+    });
+
+    it('can load value from reg bc mem location into a', () => {
+      const addr = 0x3231;
+      state.map.bc(addr);
+      state.mmu.writeByte(addr, 0x19);
+
+      Z80.load8.ldRegAMem(state, state.map.bc);
+
+      assert.equal(state.map.a(), 0x19);
     });
   });
 });

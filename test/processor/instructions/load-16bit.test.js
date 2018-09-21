@@ -17,14 +17,14 @@ describe('Processor', () => {
       state.mmu.writeWord(0x4444, 0x1000);
       state.reg.reg(RegMap.de, 0x9999);
 
-      Z80.load16.ldImmediateIntoReg(state, RegMap.de);
+      Z80.load16.ldImmediateIntoReg(state, state.map.de);
 
       assert.equal(state.reg.reg(RegMap.de), 0x1000);
     });
 
     it('can put HL into stack pointer', () => {
       state.reg.reg(RegMap.hl, 0x3214);
-      Z80.load16.ldRegToReg(state, RegMap.hl, RegMap.sp);
+      Z80.load16.ldRegToReg(state, state.map.hl, state.map.sp);
       assert.equal(state.reg.reg(RegMap.sp), 0x3214);
     });
 
@@ -60,7 +60,7 @@ describe('Processor', () => {
       const correct = 0x8888;
       state.reg.reg(RegMap.af, correct);
 
-      Z80.load16.push(state, RegMap.af);
+      Z80.load16.push(state, state.map.af);
 
       assert.equal(state.reg.sp(), oldPointer - 2);
       assert.equal(state.mmu.readWord(state.reg.sp()), correct);
@@ -71,8 +71,8 @@ describe('Processor', () => {
       const correct = 0x7777;
       state.reg.reg(RegMap.bc, correct);
 
-      Z80.load16.push(state, RegMap.bc);
-      Z80.load16.pop(state, RegMap.de);
+      Z80.load16.push(state, state.map.bc);
+      Z80.load16.pop(state, state.map.de);
 
       assert.equal(state.reg.reg(RegMap.de), correct);
       assert.equal(state.reg.sp(), oldPointer);
@@ -85,7 +85,7 @@ describe('Processor', () => {
       state.mmu.writeByte(pcAddr, 0xCD);
       state.reg.pc(pcAddr);
 
-      Z80.load16.ldImmediateIntoReg(state, RegMap.bc);
+      Z80.load16.ldImmediateIntoReg(state, state.map.bc);
 
       assert.equal(state.reg.reg(RegMap.bc), val);
     });
