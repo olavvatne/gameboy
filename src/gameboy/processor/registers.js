@@ -23,8 +23,9 @@ export class Registers {
     this._pc = 0x00;
     this.map = this._createAccessorMap();
   }
+
   _createAccessorMap() {
-    this.map = {
+    return {
       a: val => this._reg8(RegMap.a, val),
       b: val => this._reg8(RegMap.b, val),
       c: val => this._reg8(RegMap.c, val),

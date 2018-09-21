@@ -58,192 +58,192 @@ const setFlagsOnDec = (reg, val) => {
 export default {
 
   // ADDITION
-  add: ({ reg }, regAddr) => {
-    const val = reg.reg(RegMap.a) + reg.reg(regAddr);
+  add: ({ reg, map }, regAddr) => {
+    const val = map.a() + reg.reg(regAddr);
     const flag = new CheckFlagFor().zero(val).carry(val).halfCarry(val).get();
-    reg.reg(RegMap.f, flag);
-    reg.reg(RegMap.a, val);
+    map.f(flag);
+    map.a(val);
     return createOpTime(1, 4);
   },
 
-  addMemHL: ({ reg, mmu }) => {
+  addMemHL: ({ reg, mmu, map }) => {
     const valFromMem = readValFromHLMem(reg, mmu);
-    const sum = valFromMem + reg.reg(RegMap.a);
-    reg.reg(RegMap.a, sum);
+    const sum = valFromMem + map.a();
+    map.a(sum);
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(2, 8);
   },
 
-  adcMemHLPlusCarry: ({ reg, mmu }) => {
+  adcMemHLPlusCarry: ({ reg, mmu, map }) => {
     const valFromMem = readValFromHLMem(reg, mmu);
-    const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const sum = valFromMem + reg.reg(RegMap.a) + isCarry;
-    reg.reg(RegMap.a, sum);
+    const isCarry = new CheckFlagFor(map.f()).isCarry();
+    const sum = valFromMem + map.a() + isCarry;
+    map.a(sum);
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(2, 8);
   },
 
-  adcImmediatePlusCarry: ({ reg, mmu }) => {
+  adcImmediatePlusCarry: ({ reg, mmu, map }) => {
     const immediateValue = readImmediateValueAndIncrementPC(reg, mmu);
-    const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const sum = immediateValue + reg.reg(RegMap.a) + isCarry;
-    reg.reg(RegMap.a, sum);
+    const isCarry = new CheckFlagFor(map.f()).isCarry();
+    const sum = immediateValue + map.a() + isCarry;
+    map.a(sum);
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(2, 8);
   },
 
-  addImmediate: ({ reg, mmu }) => {
+  addImmediate: ({ reg, mmu, map }) => {
     const imVal = readImmediateValueAndIncrementPC(reg, mmu);
-    const sum = imVal + reg.reg(RegMap.a);
-    reg.reg(RegMap.a, sum);
+    const sum = imVal + map.a();
+    map.a(sum);
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(2, 8);
   },
 
-  adcPlusCarry: ({ reg, mmu }, regAddr) => {
-    const val = reg.reg(RegMap.a) + reg.reg(regAddr);
+  adcPlusCarry: ({ reg, map }, regAddr) => {
+    const val = map.a() + reg.reg(regAddr);
     const isCarry = new CheckFlagFor(reg.flags()).isCarry();
     const sum = val + isCarry;
-    reg.reg(RegMap.a, sum);
+    map.a(sum);
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).halfCarry(sum).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
     return createOpTime(1, 4);
   },
 
   // SUBTRACTION
-  sub: ({ reg }, addr) => {
-    const regA = reg.reg(RegMap.a);
+  sub: ({ reg, map }, addr) => {
+    const regA = map.a();
     const val = regA - reg.reg(addr);
-    reg.reg(RegMap.a, val & 0xFF);
+    map.a(val & 0xFF);
     setSubtractionFlag(reg, val, regA);
     return createOpTime(1, 4);
   },
 
-  subMemHL: ({ reg, mmu }) => {
-    const regA = reg.reg(RegMap.a);
-    const val = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu);
-    reg.reg(RegMap.a, val);
+  subMemHL: ({ reg, mmu, map }) => {
+    const regA = map.a();
+    const val = regA - readValFromHLMem(reg, mmu);
+    map.a(val);
     setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
-  subImmediate: ({ reg, mmu }) => {
-    const regA = reg.reg(RegMap.a);
+  subImmediate: ({ reg, mmu, map }) => {
+    const regA = map.a();
     const val = regA - readImmediateValueAndIncrementPC(reg, mmu);
-    reg.reg(RegMap.a, val);
+    map.a(val);
     setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
-  sbc: ({ reg }, addr) => {
-    const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const regA = reg.reg(RegMap.a);
+  sbc: ({ reg, map }, addr) => {
+    const isCarry = new CheckFlagFor(map.f()).isCarry();
+    const regA = map.a();
     const val = regA - reg.reg(addr) - isCarry;
-    reg.reg(RegMap.a, val);
+    map.a(val);
     setSubtractionFlag(reg, val, regA);
     return createOpTime(1, 4);
   },
 
-  sbcMemHL: ({ reg, mmu }) => {
-    const isCarry = new CheckFlagFor(reg.flags()).isCarry();
-    const regA = reg.reg(RegMap.a);
+  sbcMemHL: ({ reg, mmu, map }) => {
+    const isCarry = new CheckFlagFor(map.f()).isCarry();
+    const regA = map.a();
     const val = regA - readValFromHLMem(reg, mmu) - isCarry;
-    reg.reg(RegMap.a, val & 0xFF);
+    map.a(val & 0xFF);
     setSubtractionFlag(reg, val, regA);
     return createOpTime(2, 8);
   },
 
   // LOGICAL
-  and: ({ reg, mmu }, regAddr) => {
-    const val = reg.reg(RegMap.a) & reg.reg(regAddr);
-    reg.reg(RegMap.a, val);
+  and: ({ reg, map }, regAddr) => {
+    const val = map.a() & reg.reg(regAddr);
+    map.a(val);
     setLogicalAndFlag(reg, val);
     return createOpTime(1, 4);
   },
 
-  andMemHL: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) & readValFromHLMem(reg, mmu);
-    reg.reg(RegMap.a, val);
+  andMemHL: ({ reg, mmu, map }) => {
+    const val = map.a() & readValFromHLMem(reg, mmu);
+    map.a(val);
     setLogicalAndFlag(reg, val);
     return createOpTime(2, 8);
   },
 
-  andImmediate: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) & readImmediateValueAndIncrementPC(reg, mmu);
-    reg.reg(RegMap.a, val);
+  andImmediate: ({ reg, mmu, map }) => {
+    const val = map.a() & readImmediateValueAndIncrementPC(reg, mmu);
+    map.a(val);
     setLogicalAndFlag(reg, val);
     return createOpTime(2, 8);
   },
 
-  or: ({ reg, mmu }, regAddr) => {
-    const val = reg.reg(RegMap.a) | reg.reg(regAddr);
-    reg.reg(RegMap.a, val);
+  or: ({ reg, mmu, map }, regAddr) => {
+    const val = map.a() | reg.reg(regAddr);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(1, 4);
   },
 
-  orMemHL: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) | readValFromHLMem(reg, mmu);
-    reg.reg(RegMap.a, val);
+  orMemHL: ({ reg, mmu, map }) => {
+    const val = map.a() | readValFromHLMem(reg, mmu);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(2, 8);
   },
 
-  orImmediate: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) | readImmediateValueAndIncrementPC(reg, mmu);
-    reg.reg(RegMap.a, val);
+  orImmediate: ({ reg, mmu, map }) => {
+    const val = map.a() | readImmediateValueAndIncrementPC(reg, mmu);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(2, 8);
   },
 
-  xor: ({ reg, mmu }, regAddr) => {
-    const val = reg.reg(RegMap.a) ^ reg.reg(regAddr);
-    reg.reg(RegMap.a, val);
+  xor: ({ reg, mmu, map }, regAddr) => {
+    const val = map.a() ^ reg.reg(regAddr);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(1, 4);
   },
 
-  xorMemHL: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) ^ readValFromHLMem(reg, mmu);
-    reg.reg(RegMap.a, val);
+  xorMemHL: ({ reg, mmu, map }) => {
+    const val = map.a() ^ readValFromHLMem(reg, mmu);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(2, 8);
   },
 
-  xorImmediate: ({ reg, mmu }) => {
-    const val = reg.reg(RegMap.a) ^ readImmediateValueAndIncrementPC(reg, mmu);
-    reg.reg(RegMap.a, val);
+  xorImmediate: ({ reg, mmu, map }) => {
+    const val = map.a() ^ readImmediateValueAndIncrementPC(reg, mmu);
+    map.a(val);
     setLogicalOrFlag(reg, val);
     return createOpTime(2, 8);
   },
   // Compare reg to A, setting flags (CP reg, B)
-  cp: ({ reg }, regAddr) => {
-    const res = reg.reg(RegMap.a) - reg.reg(regAddr);
+  cp: ({ reg, map }, regAddr) => {
+    const res = map.a() - reg.reg(regAddr);
     setFlagsOnCompare(reg, res);
     return createOpTime(1, 4);
   },
 
-  cpMemHL: ({ reg, mmu }) => {
-    const res = reg.reg(RegMap.a) - readValFromHLMem(reg, mmu);
+  cpMemHL: ({ reg, mmu, map }) => {
+    const res = map.a() - readValFromHLMem(reg, mmu);
     setFlagsOnCompare(reg, res);
     return createOpTime(2, 8);
   },
 
-  cpImmediate: ({ reg, mmu }) => {
-    const res = reg.reg(RegMap.a) - readImmediateValueAndIncrementPC(reg, mmu);
+  cpImmediate: ({ reg, mmu, map }) => {
+    const res = map.a() - readImmediateValueAndIncrementPC(reg, mmu);
     setFlagsOnCompare(reg, res);
     return createOpTime(2, 8);
   },
@@ -263,16 +263,16 @@ export default {
     return createOpTime(1, 4);
   },
 
-  incMemHL: ({ reg, mmu }) => {
-    const memAddr = reg.reg(RegMap.hl);
+  incMemHL: ({ reg, mmu, map }) => {
+    const memAddr = map.hl();
     const val = mmu.readByte(memAddr) + 1;
     mmu.writeByte(memAddr, val);
     setFlagsOnInc(reg, val);
     return createOpTime(3, 12);
   },
 
-  decMemHL: ({ reg, mmu }) => {
-    const memAddr = reg.reg(RegMap.hl);
+  decMemHL: ({ reg, mmu, map }) => {
+    const memAddr = map.hl();
     const val = mmu.readByte(memAddr) - 1;
     mmu.writeByte(memAddr, val);
     setFlagsOnDec(reg, val);

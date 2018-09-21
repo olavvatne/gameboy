@@ -31,53 +31,53 @@ export default {
     return createOpTime(3, 12);
   },
 
-  callIfZ: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  callIfZ: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) doCall(reg, mmu);
-    else reg.pc(reg.pc() + 2);
+    else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  callIfC: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  callIfC: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) doCall(reg, mmu);
-    else reg.pc(reg.pc() + 2);
+    else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  rst: ({ reg, mmu }, addr) => {
-    addToStack(reg, mmu, reg.pc());
-    reg.pc(addr);
+  rst: ({ reg, mmu, map }, addr) => {
+    addToStack(reg, mmu, map.pc());
+    map.pc(addr);
     return createOpTime(8, 32);
   },
 
-  ret: ({ reg, mmu }) => {
+  ret: ({ reg, mmu, map }) => {
     const val = popFromStack(reg, mmu);
-    reg.pc(val);
+    map.pc(val);
     return createOpTime(2, 8);
   },
 
-  retIfZ: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  retIfZ: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) {
       const val = popFromStack(reg, mmu);
-      reg.pc(val);
+      map.pc(val);
     }
     return createOpTime(2, 8);
   },
 
-  retIfC: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  retIfC: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) {
       const val = popFromStack(reg, mmu);
-      reg.pc(val);
+      map.pc(val);
     }
     return createOpTime(2, 8);
   },
 
-  reti: ({ reg, mmu, interupt }) => {
+  reti: ({ reg, mmu, map, interupt }) => {
     const val = popFromStack(reg, mmu);
-    reg.pc(val);
+    map.pc(val);
     interupt.enable = true;
     return createOpTime(2, 8);
   },

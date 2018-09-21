@@ -42,33 +42,33 @@ const rotateRightWithCarryAround = (val, reg, checkZero) => {
 };
 
 export default {
-  rcla: ({ reg }) => {
-    const val = reg.reg(RegMap.a);
+  rcla: ({ reg, map }) => {
+    const val = map.a();
     const newVal = rotateLeftWithMsbAround(val, reg, false);
-    reg.reg(RegMap.a, newVal);
+    map.a(newVal);
     return createOpTime(1, 4);
   },
 
-  rla: ({ reg }) => {
-    const val = reg.reg(RegMap.a);
+  rla: ({ reg, map }) => {
+    const val = map.a();
     const newVal = rotateLeftWithCarryAround(val, reg, false);
-    reg.reg(RegMap.a, newVal);
+    map.a(newVal);
 
     return createOpTime(1, 4);
   },
 
-  rrca: ({ reg }) => {
-    const val = reg.reg(RegMap.a);
+  rrca: ({ reg, map }) => {
+    const val = map.a();
     const newVal = rotateRightWithLsbAround(val, reg, false);
-    reg.reg(RegMap.a, newVal);
+    map.a(newVal);
 
     return createOpTime(1, 4);
   },
 
-  rra: ({ reg }) => {
-    const val = reg.reg(RegMap.a);
+  rra: ({ reg, map }) => {
+    const val = map.a();
     const newVal = rotateRightWithCarryAround(val, reg, false);
-    reg.reg(RegMap.a, newVal);
+    map.a(newVal);
 
     return createOpTime(1, 4);
   },
@@ -80,8 +80,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  rlcMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  rlcMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = rotateLeftWithMsbAround(val, reg, true);
     mmu.writeByte(addr, newVal);
@@ -95,8 +95,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  rlMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  rlMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = rotateLeftWithCarryAround(val, reg, true);
     mmu.writeByte(addr, newVal);
@@ -110,8 +110,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  rrcMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  rrcMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = rotateRightWithLsbAround(val, reg, true);
     mmu.writeByte(addr, newVal);
@@ -125,8 +125,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  rrMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  rrMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = rotateRightWithCarryAround(val, reg, true);
     mmu.writeByte(addr, newVal);

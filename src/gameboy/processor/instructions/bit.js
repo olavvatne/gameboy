@@ -28,12 +28,12 @@ const getTimeExpenditure = (regAddr) => {
 };
 
 export default {
-  bit: ({ reg, mmu }, regAddr, bitNr) => {
+  bit: ({ reg, mmu, map }, regAddr, bitNr) => {
     const val = getValFromRegOrMem(reg, mmu, regAddr);
     const mask = 1 << bitNr;
-    const flag = new CheckFlagFor(reg.flags()).notSubtraction()
+    const flag = new CheckFlagFor(map.f()).notSubtraction()
       .setHalfCarry(true).zero(val & mask).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
     return getTimeExpenditure(regAddr);
   },
 

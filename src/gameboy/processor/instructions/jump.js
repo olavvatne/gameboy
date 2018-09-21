@@ -25,22 +25,22 @@ export default {
     return createOpTime(3, 12);
   },
 
-  jpIfZ: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  jpIfZ: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) doJump({ reg, mmu });
-    else reg.pc(reg.pc() + 2);
+    else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  jpIfC: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  jpIfC: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) doJump({ reg, mmu });
-    else reg.pc(reg.pc() + 2);
+    else map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
-  jpHL: ({ reg }) => {
-    reg.pc(reg.reg(RegMap.hl));
+  jpHL: ({ reg, map }) => {
+    reg.pc(map.hl());
     return createOpTime(1, 4);
   },
 
@@ -49,17 +49,17 @@ export default {
     return createOpTime(2, 8);
   },
 
-  jrIfZ: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  jrIfZ: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) addImmediateToPc({ reg, mmu });
-    else reg.incrementPC();
+    else map.pc(map.pc() + 1);
     return createOpTime(3, 12);
   },
 
-  jrIfC: ({ reg, mmu }, condition) => {
-    const flag = new CheckFlagFor(reg.flags());
+  jrIfC: ({ reg, mmu, map }, condition) => {
+    const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) addImmediateToPc({ reg, mmu });
-    else reg.incrementPC();
+    else map.pc(map.pc() + 1);
     return createOpTime(3, 12);
   },
 };

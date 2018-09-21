@@ -6,14 +6,14 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 
 export default {
-  addRegHLReg: ({ reg }, addr) => {
-    const prevFlag = reg.flags();
+  addRegHLReg: ({ reg, map }, addr) => {
+    const prevFlag = map.f();
 
-    const val = reg.reg(RegMap.hl) + reg.reg(addr);
-    reg.reg(RegMap.hl, val);
+    const val = map.hl() + reg.reg(addr);
+    map.hl(val);
 
     const flag = new CheckFlagFor(prevFlag).notSubtraction().halfCarry16(val).carry16(val).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(2, 8);
   },
@@ -30,13 +30,14 @@ export default {
     return createOpTime(2, 8);
   },
 
-  addRegSPImmediate: ({ reg, mmu }) => {
-    const immediateSigned = Util.convertSignedByte(mmu.readByte(reg.pc()));
-    reg.incrementPC();
-    const val = reg.sp() + immediateSigned;
-    reg.sp(val);
+  addRegSPImmediate: ({ mmu, map }) => {
+    const pc = map.pc();
+    const immediateSigned = Util.convertSignedByte(mmu.readByte(pc));
+    map.pc(pc + 1);
+    const val = map.sp() + immediateSigned;
+    map.sp(val);
     const flag = new CheckFlagFor().carry16(val).halfCarry16(val).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
     return createOpTime(4, 16);
   },
 };

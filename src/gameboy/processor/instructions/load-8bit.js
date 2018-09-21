@@ -11,8 +11,8 @@ import { createOpTime } from '../clock-util';
 // Implementation based on explanations given by GBCPUman
 // Mention of immediate values treated as using program counter as value
 
-const ldMemHL = ({ reg, mmu }, regAddr) => {
-  const hl = reg.reg(RegMap.hl);
+const ldMemHL = ({ reg, mmu, map }, regAddr) => {
+  const hl = map.hl();
   const val = mmu.readByte(hl);
   reg.reg(regAddr, val);
 
@@ -33,18 +33,19 @@ export default {
     return createOpTime(1, 4);
   },
 
-  ldMemHLReg: ({ reg, mmu }, regAddr) => {
+  ldMemHLReg: ({ reg, mmu, map }, regAddr) => {
     const val = reg.reg(regAddr);
-    const memAddr = reg.reg(RegMap.hl);
+    const memAddr = map.hl();
     mmu.writeByte(memAddr, val);
     return createOpTime(2, 8);
   },
 
 
-  ldMemHLImmediate: ({ reg, mmu }) => {
-    const val = mmu.readByte(reg.pc());
-    reg.incrementPC();
-    const memAddr = reg.reg(RegMap.hl);
+  ldMemHLImmediate: ({ reg, mmu, map }) => {
+    const pc = map.pc();
+    const val = mmu.readByte(pc);
+    map.pc(pc + 1);
+    const memAddr = map.hl();
     mmu.writeByte(memAddr, val);
     return createOpTime(3, 12);
   },
@@ -58,22 +59,21 @@ export default {
     return createOpTime(2, 8);
   },
   // Put byte at memory location found in 16 bit registers into A
-  ldRegAMem: ({ reg, mmu }, regAddr) => {
+  ldRegAMem: ({ reg, mmu, map }, regAddr) => {
     const val = mmu.readByte(reg.reg(regAddr));
-    reg.reg(RegMap.a, val);
+    map.a(val);
     return createOpTime(2, 8);
   },
 
-  ldRegARegCPlusConst: ({ reg, mmu }) => {
-    const val = mmu.readByte(0xFF00 + reg.reg(RegMap.c));
-    reg.reg(RegMap.a, val);
-
+  ldRegARegCPlusConst: ({ reg, mmu, map }) => {
+    const val = mmu.readByte(0xFF00 + map.c());
+    map.a(val);
     return createOpTime(2, 8);
   },
 
-  ldRegCPlusConstRegA: ({ reg, mmu }) => {
-    const addr = 0xFF00 + reg.reg(RegMap.c);
-    const val = reg.reg(RegMap.a);
+  ldRegCPlusConstRegA: ({ reg, mmu, map }) => {
+    const addr = 0xFF00 + map.c();
+    const val = map.a();
     mmu.writeByte(addr, val);
 
     return createOpTime(2, 8);
@@ -107,44 +107,47 @@ export default {
   },
 
   // Read a byte from absolute location into A (LD A, addr)
-  ldRegAImmediateWord: ({ reg, mmu }) => {
-    const addr = mmu.readWord(reg.pc());
-    reg.incrementPC();
-    reg.incrementPC();
+  ldRegAImmediateWord: ({ mmu, map }) => {
+    const pc = map.pc();
+    const addr = mmu.readWord(pc);
+    map.pc(pc + 2);
     const val = mmu.readByte(addr);
-    reg.reg(RegMap.a, val);
+    map.a(val);
     return createOpTime(4, 16);
   },
 
-  ldAImmediate: ({ reg, mmu }) => {
-    const val = mmu.readByte(reg.pc());
-    reg.incrementPC();
-    reg.reg(RegMap.a, val);
+  ldAImmediate: ({ mmu, map }) => {
+    const pc = map.pc();
+    const val = mmu.readByte(pc);
+    map.pc(pc + 1);
+    map.a(val);
     return createOpTime(2, 8);
   },
 
-  ldImmediateA: ({ reg, mmu }) => {
-    const valInA = reg.reg(RegMap.a);
-    const addr = mmu.readWord(reg.pc());
-    reg.incrementPC();
-    reg.incrementPC();
+  ldImmediateA: ({ mmu, map }) => {
+    const valInA = map.a();
+    const pc = map.pc();
+    const addr = mmu.readWord(pc);
+    map.pc(pc + 2);
     mmu.writeByte(addr, valInA);
     return createOpTime(4, 16);
   },
 
-  ldhMemFF00PlusImmediateRegA: ({ reg, mmu }) => {
-    const valInA = reg.reg(RegMap.a);
-    const offset = mmu.readByte(reg.pc());
-    reg.incrementPC();
+  ldhMemFF00PlusImmediateRegA: ({ mmu, map }) => {
+    const valInA = map.a();
+    const pc = map.pc();
+    const offset = mmu.readByte(pc);
+    map.pc(pc + 1);
     mmu.writeByte(0xFF00 + offset, valInA);
     return createOpTime(3, 12);
   },
 
-  ldhRegAMemFF00PlusImmediate: ({ reg, mmu }) => {
-    const offset = mmu.readByte(reg.pc());
-    reg.incrementPC();
+  ldhRegAMemFF00PlusImmediate: ({ mmu, map }) => {
+    const pc = map.pc();
+    const offset = mmu.readByte(pc);
+    map.pc(pc + 1);
     const value = mmu.readByte(0xFF00 + offset);
-    reg.reg(RegMap.a, value);
+    map.a(value);
     return createOpTime(3, 12);
   },
 };

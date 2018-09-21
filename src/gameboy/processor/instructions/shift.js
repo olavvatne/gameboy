@@ -36,8 +36,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  slaMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  slaMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = shiftLeft(val, reg);
     mmu.writeByte(addr, newVal);
@@ -51,8 +51,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  sraMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  sraMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = shiftRight(val, reg, true);
     mmu.writeByte(addr, newVal);
@@ -66,8 +66,8 @@ export default {
     return createOpTime(2, 8);
   },
 
-  srlMemHL: ({ reg, mmu }) => {
-    const addr = reg.reg(RegMap.hl);
+  srlMemHL: ({ reg, mmu, map }) => {
+    const addr = map.hl();
     const val = mmu.readByte(addr);
     const newVal = shiftRight(val, reg);
     mmu.writeByte(addr, newVal);

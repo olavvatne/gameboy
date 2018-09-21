@@ -7,56 +7,59 @@ import { createOpTime } from '../clock-util';
 /* eslint newline-per-chained-call: 0 */
 
 export default {
-  ldImmediateIntoReg: ({ reg, mmu }, regAddr) => {
-    const imAddr = reg.pc();
-    reg.incrementPC();
-    reg.incrementPC();
+  ldImmediateIntoReg: ({ reg, mmu, map }, regAddr) => {
+    const pc = map.pc();
+    const imAddr = pc;
+    map.pc(pc + 2);
     const imVal = mmu.readWord(imAddr);
     reg.reg(regAddr, imVal);
     return createOpTime(3, 12);
   },
 
-  ldRegToReg: ({ reg, mmu }, fromReg, toReg) => {
+  ldRegToReg: ({ reg }, fromReg, toReg) => {
     const val = reg.reg(fromReg);
     reg.reg(toReg, val);
     return createOpTime(2, 8);
   },
 
-  ldHLFromSPPlusImmediate: ({ reg, mmu }) => {
-    const spVal = reg.reg(RegMap.sp);
-    const imAddr = reg.pc();
+  ldHLFromSPPlusImmediate: ({ mmu, map }) => {
+    const spVal = map.sp();
+    const pc = map.pc();
+    const imAddr = pc;
     const imSignedByte = Util.convertSignedByte(mmu.readByte(imAddr));
-    reg.incrementPC();
+    map.pc(pc + 1);
     const newVal = spVal + imSignedByte;
-    reg.reg(RegMap.hl, spVal + imSignedByte);
+    map.hl(spVal + imSignedByte);
 
     const flag = new CheckFlagFor().carry(newVal).halfCarry(newVal).get();
-    reg.reg(RegMap.f, flag);
+    map.f(flag);
 
     return createOpTime(3, 12);
   },
 
-  ldSPIntoImmediate: ({ reg, mmu }) => {
-    const spVal = reg.reg(RegMap.sp);
-    const imAddr = reg.pc();
+  ldSPIntoImmediate: ({ mmu, map }) => {
+    const spVal = map.sp();
+    const pc = map.pc();
+    const imAddr = pc;
     const imVal = mmu.readWord(imAddr);
-    reg.incrementPC();
-    reg.incrementPC();
+    map.pc(pc + 2);
     mmu.writeWord(imVal, spVal);
     return createOpTime(3, 12);
   },
 
   // Push register pair to the stack (PUSH HL)
-  push: ({ reg, mmu }, addr) => {
-    reg.sp(reg.sp() - 2);
-    mmu.writeWord(reg.reg(RegMap.sp), reg.reg(addr));
+  push: ({ reg, mmu, map }, addr) => {
+    const sp = map.sp();
+    map.sp(sp - 2);
+    mmu.writeWord(sp - 2, reg.reg(addr));
     return createOpTime(4, 16);
   },
 
   // Pop register pair off the stack (POP HL)
-  pop: ({ reg, mmu }, addr) => {
-    const regVal = mmu.readWord(reg.sp());
-    reg.sp(reg.sp() + 2);
+  pop: ({ reg, mmu, map }, addr) => {
+    const sp = map.sp();
+    const regVal = mmu.readWord(sp);
+    map.sp(sp + 2);
     reg.reg(addr, regVal);
     return createOpTime(3, 12);
   },
