@@ -21,6 +21,25 @@ export class Registers {
     this._initGeneralPurposeRegisters();
     this._sp = 0xFFFE; // Default on start up
     this._pc = 0x00;
+    this.map = this._createAccessorMap();
+  }
+  _createAccessorMap() {
+    this.map = {
+      a: val => this._reg8(RegMap.a, val),
+      b: val => this._reg8(RegMap.b, val),
+      c: val => this._reg8(RegMap.c, val),
+      d: val => this._reg8(RegMap.d, val),
+      e: val => this._reg8(RegMap.e, val),
+      f: val => this._reg8(RegMap.f, val),
+      h: val => this._reg8(RegMap.h, val),
+      l: val => this._reg8(RegMap.l, val),
+      af: val => this._reg16(RegMap.af, val),
+      bc: val => this._reg16(RegMap.bc, val),
+      de: val => this._reg16(RegMap.de, val),
+      hl: val => this._reg16(RegMap.hl, val),
+      sp: val => this.sp(val),
+      pc: val => this.pc(val),
+    };
   }
 
   _initGeneralPurposeRegisters() {
@@ -61,6 +80,10 @@ export class Registers {
     }
 
     return this._gpr.getUint16(regOffset, false);
+  }
+
+  a(value = null) {
+    return this._reg8(RegMap.a, value);
   }
 
   pc(value = null) {

@@ -54,5 +54,14 @@ describe('Gameboy', () => {
       const tile = gameboy.gpu._frameBuffer.getTile(1, 0);
       assert.deepEqual(tile[0], [1, 1, 0, 0, 1, 0, 1, 0]);
     });
+
+    it('should be able to run an entire loop', () => {
+      const gameboy = new Gameboy();
+      const frame = 70224;
+      gameboy.core.loop();
+      assert.isAtLeast(gameboy.core.clock.clockCycles, frame);
+      gameboy.core.loop();
+      assert.isAtLeast(gameboy.core.clock.clockCycles, frame * 2);
+    });
   });
 });

@@ -49,9 +49,10 @@ export default {
     return createOpTime(3, 12);
   },
 
-  ldImmediate: ({ reg, mmu }, addr) => {
-    const imAddr = reg.pc();
-    reg.incrementPC();
+  ldImmediate: ({ reg, mmu, map }, addr) => {
+    const pc = map.pc();
+    const imAddr = pc;
+    map.pc(pc + 1);
     const imVal = mmu.readByte(imAddr);
     reg.reg(addr, imVal);
     return createOpTime(2, 8);
