@@ -12,10 +12,9 @@ import Util from '../util';
   9800 - 9BFF : Tile map #0 (32x32 tile references)
   9C00 - 9FFF : Tile map #1 (32x32 tile references)
  */
-// TODO: create updateTile method which is called from vram
-// TODO: getImage should get
 // TODO: scroll x and scroll y. Wraps around as well
 
+/* eslint no-bitwise: 0 */
 /* eslint no-bitwise: 0 */
 
 const numTiles = 384;
@@ -30,7 +29,7 @@ const initTileset = () => {
 
 export default class FrameBuffer {
   constructor() {
-    this.tileset = initTileset();
+    this.tiles = initTileset();
   }
 
 
@@ -44,16 +43,20 @@ export default class FrameBuffer {
       const bit0 = Util.getBit(firstByte, 7 - i);
       const bit1 = Util.getBit(secondByte, 7 - i);
       const val = bit0 + (bit1 * 2);
-      this.tileset[tile][row][i] = val;
+      this.tiles[tile][row][i] = val;
     }
   }
 
   getTile(tileset, tile) {
     if (tileset > 1) throw new Error('Only two tilesets');
 
-    if (tileset === 1 && tile >= 0 && tile < 256) return this.tileset[tile];
+    let t = tile;
+    if (tileset === 0) {
+      t = Util.convertSignedByte(tile);
+    }
+    if (tileset === 1 && t >= 0 && t < 256) return this.tiles[t];
     const secondSetOffset = 128 * 2;
-    if (tileset === 0 && tile >= -128 && tile < 128) return this.tileset[tile + secondSetOffset];
+    if (tileset === 0 && t >= -128 && t < 128) return this.tiles[t + secondSetOffset];
     throw new Error('tile is out of bounds');
   }
 }

@@ -10,7 +10,6 @@ export default class Renderer {
     this._palette = palette;
   }
   _findCurrentPositionInMap(line) {
-    // TODO: what happens here?
     this._mapOffset = (((line + this._registers.y) & 0xFF) >> 3) << 5;
     this._tileOffset = (this._registers.x >> 3) & 0x1F;
   }

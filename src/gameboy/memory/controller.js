@@ -11,6 +11,7 @@ export default class MMU {
     this._wram = new Memory(2 ** 13);
     this._zram = new Memory(2 ** 7);
     this.io = io;
+    this._cartType = 0;
     this._oam = oam;
     this._inBios = true;
   }
@@ -136,19 +137,18 @@ export default class MMU {
     this.writeByte(address, leastSignificant);
   }
 
-  loadBank(data, pos) {
+  load(data) {
     const prevInBios = this._inBios;
     this._inBios = false;
     const maxIndex = Math.min(data.length, 2 ** 15);
-    for (let i = pos; i < maxIndex; i += 1) {
+    for (let i = 0; i < maxIndex; i += 1) {
       this.writeByte(i, data.charCodeAt(i));
     }
-
     this._inBios = prevInBios;
+    this._cartType = this.readByte(0x0147);
   }
 
   reset() {
     this._inBios = true;
-    // TODO: wipe stuff?
   }
 }

@@ -26,11 +26,12 @@ let gameboy = null;
 const initGameboy = () => {
   const c = document.getElementById('screen');
   gameboy = new Gameboy(c.getContext('2d'));
-  putLogoInMem(gameboy);
-  putChecksumInMem(gameboy);
+  // putLogoInMem(gameboy);
+  // putChecksumInMem(gameboy);
 };
 
 const handleRomSelect = (evt) => {
+  // TODO: Only called once for some reason?
   if (evt.target.files.length < 1) return;
   const localRom = evt.target.files[0];
   const rd = new FileReader();

@@ -28,7 +28,6 @@ export default class Gameboy {
   }
 
   loadRom(data) {
-    this.memory.loadBank(data, 0);
-    this.memory.loadBank(data, 2 ** 14);
+    this.memory.load(data);
   }
 }

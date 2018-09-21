@@ -9,7 +9,7 @@ describe('GPU', () => {
     buffer = new FrameBuffer();
     mem = new VideoMemory(buffer);
   });
-  const getTileset = () => buffer.tileset;
+  const getTileset = () => buffer.tiles;
 
   describe('Frame buffer tests', () => {
     it('initalize tileset', () => {
@@ -24,7 +24,7 @@ describe('GPU', () => {
     });
 
     it('can access correct tile in tileset 1', () => {
-      buffer.tileset[1][0][0] = 3;
+      buffer.tiles[1][0][0] = 3;
       const tile = buffer.getTile(1, 1);
       assert.isArray(tile);
       assert.lengthOf(tile, 8);
@@ -33,13 +33,13 @@ describe('GPU', () => {
     });
 
     it('can access tileset 0', () => {
-      buffer.tileset[128][0][0] = 4;
+      buffer.tiles[128][0][0] = 4;
       const tile = buffer.getTile(0, -128);
       assert.equal(tile[0][0], 4);
     });
 
     it('can access same tile in tileset 0 and 1', () => {
-      buffer.tileset[129][0][0] = 5;
+      buffer.tiles[129][0][0] = 5;
       const tile = buffer.getTile(1, 129);
       const sameTile = buffer.getTile(0, -127);
       assert.equal(tile[0][0], sameTile[0][0]);

@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Chrome : Launch with sourcemaps",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceRoot}",
+            "sourceMaps": true,
+            "runtimeArgs": [
+            "--remote-debugging-port=9222"
+            ]
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha All And Coverage",

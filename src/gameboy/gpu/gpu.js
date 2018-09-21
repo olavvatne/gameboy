@@ -9,7 +9,7 @@ export default class GPU {
   constructor(screen) {
     this.screen = screen;
     this.registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0,
+      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
     };
     this.palette = [
       [255, 255, 255, 255],
@@ -62,6 +62,8 @@ export default class GPU {
     this.registers.y = 0;
     this.registers.tilemap = 0;
     this.registers.tileset = 0;
+    this.registers.bg = 0;
+    this.registers.sprite = 0;
     this.screen.reset();
   }
 }

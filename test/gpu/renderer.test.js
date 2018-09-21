@@ -33,7 +33,7 @@ describe('GPU', () => {
       const tileset0Offset = 256;
       const tilemapAddr = 0x1800 + (32 * (registers.y / 8));
       mem.writeByte(tilemapAddr, tileNum);
-      buffer.tileset[tileset0Offset + tileNum][0] = [0, 2, 3, 1, 0, 3, 1, 3];
+      buffer.tiles[tileset0Offset + tileNum][0] = [0, 2, 3, 1, 0, 3, 1, 3];
 
       renderer.renderScanline(0);
 
@@ -51,7 +51,7 @@ describe('GPU', () => {
       const tileset0Offset = 256;
       const tilemapAddr = 0x1800 + (32 * (registers.y / 8));
       mem.writeByte(tilemapAddr, Util.twoComplementByte(128));
-      buffer.tileset[tileset0Offset + tileNum][1] = [1, 2, 3, 1, 0, 3, 1, 2];
+      buffer.tiles[tileset0Offset + tileNum][1] = [1, 2, 3, 1, 0, 3, 1, 2];
 
       renderer.renderScanline(1);
 
@@ -69,7 +69,7 @@ describe('GPU', () => {
       let tilemapAddr = 0x1800 + (32 * Math.floor((registers.y + line) / 8));
       tilemapAddr += Math.floor(160 / 8) - 1; // Find last tile in row
       mem.writeByte(tilemapAddr, tileNum);
-      buffer.tileset[tileNum][7] = [0, 2, 3, 1, 0, 3, 0, 2];
+      buffer.tiles[tileNum][7] = [0, 2, 3, 1, 0, 3, 0, 2];
 
       renderer.renderScanline(line);
 
