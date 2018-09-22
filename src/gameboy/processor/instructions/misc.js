@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '../';
+import { CheckFlagFor } from '../';
 import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */

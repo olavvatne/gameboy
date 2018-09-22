@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import { opcodes, RegMap } from '../../src/gameboy/processor';
+import { opcodes } from '../../src/gameboy/processor';
 import getEmptyState from '../helper/state-helper';
 
 /* eslint newline-per-chained-call: 0 */
@@ -9,8 +9,10 @@ import getEmptyState from '../helper/state-helper';
 // Tests opcode map and utilizes the GB CPU manual to verify behaviour.
 describe('Processor', () => {
   let state = null;
+  let reg = null;
   beforeEach(() => {
     state = getEmptyState();
+    reg = state.map;
   });
 
   describe('Opcode map tests', () => {
@@ -24,11 +26,11 @@ describe('Processor', () => {
     });
 
     it('should be able to execute 0x78 by putting B Into A', () => {
-      state.reg.reg(RegMap.b, 10);
+      reg.b(10);
       const op = 0x78;
       opcodes[op](state);
 
-      assert.equal(state.reg.reg(RegMap.a), 10);
+      assert.equal(reg.a(), 10);
     });
 
     it('contains only defined functions', () => {

@@ -1,4 +1,3 @@
-import { RegMap } from '../';
 import { alu16 } from './';
 import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */

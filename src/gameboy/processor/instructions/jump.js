@@ -1,4 +1,4 @@
-import { CheckFlagFor, RegMap } from '..';
+import { CheckFlagFor } from '..';
 import Util from './../../util';
 import { createOpTime } from '../clock-util';
 

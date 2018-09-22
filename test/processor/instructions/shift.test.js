@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import { Z80, RegMap, CheckFlagFor } from '../../../src/gameboy/processor';
+import { Z80, CheckFlagFor } from '../../../src/gameboy/processor';
 import getEmptyState from '../../helper/state-helper';
 
 // Tests follow instruction manual and opcode map at
@@ -8,89 +8,93 @@ import getEmptyState from '../../helper/state-helper';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
+/* eslint prefer-destructuring: 0 */
 describe('Processor', () => {
   let state = null;
+  let reg = null;
+  let mmu = null;
   beforeEach(() => {
     state = getEmptyState();
+    reg = state.map;
+    mmu = state.mmu;
   });
-  const getFlags = () => new CheckFlagFor(state.reg.flags());
+  const getFlags = () => new CheckFlagFor(reg.f());
 
   describe('Shift - instruction set tests', () => {
     it('shifts left reg L, msb to carry', () => {
       const beforeShift = 0b10101111;
       const afterShift = 0b01011110;
-      state.reg.reg(RegMap.l, beforeShift);
-      Z80.shift.sla(state, state.map.l);
+      reg.l(beforeShift);
+      Z80.shift.sla(state, reg.l);
 
-      assert.equal(state.reg.reg(RegMap.l), afterShift);
+      assert.equal(reg.l(), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
     it('shifts left reg L, msb to carry', () => {
       const beforeShift = 0b00101111;
       const afterShift = 0b01011110;
-      state.reg.reg(RegMap.l, beforeShift);
-      Z80.shift.sla(state, state.map.l);
+      reg.l(beforeShift);
+      Z80.shift.sla(state, reg.l);
 
-      assert.equal(state.reg.reg(RegMap.l), afterShift);
+      assert.equal(reg.l(), afterShift);
       assert.isFalse(getFlags().isCarry());
     });
 
     it('shifts val in mem Hl to left, msb to carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11100010;
-      state.mmu.writeByte(0x1235, beforeShift);
-      state.reg.reg(RegMap.hl, 0x1235);
+      mmu.writeByte(0x1235, beforeShift);
+      reg.hl(0x1235);
       Z80.shift.slaMemHL(state);
 
-      assert.isNumber(state.mmu.readByte(0x1235));
-      assert.equal(state.mmu.readByte(0x1235), afterShift);
+      assert.isNumber(mmu.readByte(0x1235));
+      assert.equal(mmu.readByte(0x1235), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
     it('shifts right Reg E, keeps msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11111000;
-      state.reg.reg(RegMap.e, beforeShift);
-      Z80.shift.sra(state, state.map.e);
+      reg.e(beforeShift);
+      Z80.shift.sra(state, reg.e);
 
-      const val = state.reg.reg(RegMap.e);
-      assert.equal(val, afterShift);
+      assert.equal(reg.e(), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
     it('shifts right mem HL val, keeps msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11111000;
-      state.mmu.writeByte(0x1235, beforeShift);
-      state.reg.reg(RegMap.hl, 0x1235);
+      mmu.writeByte(0x1235, beforeShift);
+      reg.hl(0x1235);
       Z80.shift.sraMemHL(state);
 
-      assert.isNumber(state.mmu.readByte(0x1235));
-      assert.equal(state.mmu.readByte(0x1235), afterShift);
+      assert.isNumber(mmu.readByte(0x1235));
+      assert.equal(mmu.readByte(0x1235), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
     it('shifts right Reg E, resets msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b01111000;
-      state.reg.reg(RegMap.e, beforeShift);
-      Z80.shift.srl(state, state.map.e);
+      reg.e(beforeShift);
+      Z80.shift.srl(state, reg.e);
 
-      const val = state.reg.reg(RegMap.e);
-      assert.equal(val, afterShift);
+      assert.equal(reg.e(), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
     it('shifts right mem HL val, resets msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b01111000;
-      state.mmu.writeByte(0x1235, beforeShift);
-      state.reg.reg(RegMap.hl, 0x1235);
+      const memAddr = 0x1235;
+      mmu.writeByte(memAddr, beforeShift);
+      reg.hl(memAddr);
       Z80.shift.srlMemHL(state);
 
-      assert.isNumber(state.mmu.readByte(0x1235));
-      assert.equal(state.mmu.readByte(0x1235), afterShift);
+      assert.isNumber(mmu.readByte(memAddr));
+      assert.equal(mmu.readByte(memAddr), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
   });

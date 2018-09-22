@@ -14,7 +14,7 @@ const Z80 = {
 };
 
 export { Z80 };
-export { Registers, RegMap, NameMap } from './registers';
+export { Registers, NameMap } from './registers';
 export { default as opcodes } from './opcodes-map';
 export { default as CPU } from './core';
 export { default as CheckFlagFor } from './flag-check';

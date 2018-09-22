@@ -1,4 +1,4 @@
-import { Z80, RegMap, NameMap } from './';
+import { Z80, NameMap } from './';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -454,7 +454,9 @@ const opcodes = {
 };
 
 const LoadOpcodesIntoMap = (start, end, op) => {
-  const regs = [NameMap.b, NameMap.c, NameMap.d, NameMap.e, NameMap.h, NameMap.l, NameMap.hl, NameMap.a];
+  const regs = [
+    NameMap.b, NameMap.c, NameMap.d, NameMap.e, NameMap.h, NameMap.l, NameMap.hl, NameMap.a,
+  ];
   for (let code = start; code <= end; code += 1) {
     const reg = regs[(code - start) % regs.length];
     const bit = Math.floor((code - start) / regs.length);
