@@ -88,10 +88,6 @@ export class Registers {
     return this._pc;
   }
 
-  incrementPC() {
-    this._pc = (this._pc + 1) & 0xFFFF;
-  }
-
   sp(value = null) {
     if (value !== null) {
       this._sp = value & 0xFFFF;
@@ -99,13 +95,13 @@ export class Registers {
     return this._sp;
   }
 
-  getState() {
-    const state = {};
-    Object.entries(RegMap).forEach(([name, addr]) => {
-      state[name] = this.reg(addr);
-    });
-    state.pc = this.pc();
-    state.f = this.flags();
-    return state;
-  }
+  // getState() {
+  //   const state = {};
+  //   Object.entries(RegMap).forEach(([name, addr]) => {
+  //     state[name] = this.reg(addr);
+  //   });
+  //   state.pc = this.pc();
+  //   state.f = this.flags();
+  //   return state;
+  // }
 }

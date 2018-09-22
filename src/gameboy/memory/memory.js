@@ -8,15 +8,7 @@ export default class Memory {
     return this._memory.getUint8(address);
   }
 
-  readWord(address) {
-    return this._memory.getUint16(address, true);
-  }
-
   writeByte(address, value) {
     this._memory.setUint8(address, value, true);
-  }
-
-  writeWord(address, value) {
-    this._memory.setUint16(address, value, true);
   }
 }

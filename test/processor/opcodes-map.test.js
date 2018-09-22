@@ -16,6 +16,12 @@ describe('Processor', () => {
   });
 
   describe('Opcode map tests', () => {
+    it('trigger error if core requests opcode modifier instruction', () => {
+      // opcode modifier not an instruction
+      const modCode = 0xCB;
+      assert.throws(() => opcodes[modCode]());
+    });
+
     it('map to a specific operation and execute it', () => {
       const nopCode = 0x00;
 
