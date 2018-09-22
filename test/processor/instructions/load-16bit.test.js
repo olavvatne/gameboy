@@ -61,7 +61,7 @@ describe('Processor', () => {
     });
 
     it('can push a register pair onto stack', () => {
-      const oldPointer = state.reg.sp();
+      const oldPointer = reg.sp();
       const correct = 0x8888;
       reg.af(correct);
 

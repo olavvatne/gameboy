@@ -39,8 +39,8 @@ export default {
     return createOpTime(3, 12);
   },
 
-  jpHL: ({ reg, map }) => {
-    reg.pc(map.hl());
+  jpHL: ({ map }) => {
+    map.pc(map.hl());
     return createOpTime(1, 4);
   },
 

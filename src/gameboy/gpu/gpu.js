@@ -6,6 +6,8 @@ import Renderer from './renderer';
 import Util from '../util';
 import Interrupts from '../input/interrupts';
 
+/* eslint no-bitwise: 0 */
+
 export default class GPU {
   constructor(screen, interrupts = new Interrupts()) {
     this.interrupts = interrupts;

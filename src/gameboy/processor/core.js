@@ -63,11 +63,11 @@ export default class ProcessorCore {
       // this.recorder.record(this.currentOp);
     }
   }
+
   handleInterrupts() {
-    const whatTriggered = this.interrupts.getTriggered();
-    if (whatTriggered & 0x01) {
-      this.interrupts._if &= ~0x01 & 0xFF;
-      // TODO: time
+    if (!this.interrupts.anyTriggered()) return;
+
+    if (this.interrupts.checkVblankTriggered()) {
       const timeSpent = Z80.subroutine.rst({ mmu: this.mmu, map: this.reg.map }, 0x40);
       this.clock.machineCycles += timeSpent.m;
       this.clock.clockCycles += timeSpent.t;

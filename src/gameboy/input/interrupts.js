@@ -15,7 +15,13 @@ export default class Interrupts {
     return this._if;
   }
 
-  getTriggered() {
-    return this._ie & this._if;
+  anyTriggered() {
+    return (this._ie & this._if) !== 0;
+  }
+
+  checkVblankTriggered() {
+    const isVblank = (this._ie & this._if) & 0x01;
+    if (isVblank) this._if &= ~0x01 & 0xFF;
+    return isVblank;
   }
 }

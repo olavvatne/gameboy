@@ -4,7 +4,7 @@ import { MMU } from '../../src/gameboy/memory';
 const getEmptyState = () => {
   const regs = new Registers();
   return {
-    reg: regs, mmu: new MMU(), interrupt: {}, map: regs.map,
+    mmu: new MMU(), interrupt: {}, map: regs.map,
   };
 };
 

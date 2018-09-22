@@ -122,7 +122,7 @@ describe('Processor', () => {
     });
 
     it('can put the immediate value into memory addr in HL', () => {
-      state.reg.pc(0x5000);
+      reg.pc(0x5000);
       mmu.writeByte(0x5000, 0x43);
       reg.hl(0x1234);
 
@@ -142,7 +142,7 @@ describe('Processor', () => {
     });
 
     it('put value in mem addr FF00 plus immediate into register A', () => {
-      state.reg.pc(0x1234);
+      reg.pc(0x1234);
       const immediateAddr = 0x1234;
       const immediateValue = 0x12;
       const corrValue = 0x89;

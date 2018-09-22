@@ -22,6 +22,8 @@ window.onload = () => {
   document.getElementById('start').onclick = () => gameboy.start();
   document.getElementById('pause').onclick = () => gameboy.pause();
   document.getElementById('reset').onclick = () => gameboy.reset();
+  document.addEventListener('keydown', e => gameboy.io.handleKeyDown(e));
+  document.addEventListener('keyup', e => gameboy.io.handleKeyUp(e));
   document.getElementById('load').addEventListener('change', handleRomSelect, false);
 };
 
