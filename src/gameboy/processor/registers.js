@@ -64,24 +64,6 @@ export class Registers {
     this._gpr = new DataView(this._gpr_buffer);
   }
 
-  static is16BitAccessAddress(num) {
-    return num > RegMap.l;
-  }
-
-  reg(num, val = null) {
-    if (num < 0 || num > RegMap.sp) {
-      throw Error('Trying to access unknown register');
-    }
-    if (num === RegMap.sp) {
-      return this.sp(val);
-    }
-    if (Registers.is16BitAccessAddress(num)) {
-      return this._reg16(num, val);
-    }
-
-    return this._reg8(num, val);
-  }
-
   _reg8(num, value = null) {
     if (value !== null) {
       this._gpr.setUint8(num, value);
@@ -97,10 +79,6 @@ export class Registers {
     }
 
     return this._gpr.getUint16(regOffset, false);
-  }
-
-  a(value = null) {
-    return this._reg8(RegMap.a, value);
   }
 
   pc(value = null) {
@@ -119,10 +97,6 @@ export class Registers {
       this._sp = value & 0xFFFF;
     }
     return this._sp;
-  }
-
-  flags() {
-    return this.reg(RegMap.f);
   }
 
   getState() {
