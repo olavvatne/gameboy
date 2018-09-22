@@ -198,7 +198,7 @@ describe('Processor', () => {
 
       assert.equal(reg.pc(), returnAddr);
       assert.notEqual(reg.sp(), sp);
-      assert.isTrue(state.interupt.enable);
+      assert.isTrue(state.interrupt.enabled);
     });
   });
 });

@@ -2,6 +2,7 @@ import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
 import { CPU } from '../../src/gameboy/processor';
 import { MMU } from '../../src/gameboy/memory';
+import Interrupts from '../../src/gameboy/input/interrupts';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
@@ -21,7 +22,7 @@ describe('Processor', () => {
       const gpuNotifier = () => {
         called += 1;
       };
-      const core = new CPU(new MMU(), gpuNotifier);
+      const core = new CPU(new MMU(), new Interrupts(), gpuNotifier);
       core.fetch();
       core.decode();
       assert.equal(called, 0);

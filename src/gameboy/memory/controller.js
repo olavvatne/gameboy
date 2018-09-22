@@ -1,12 +1,17 @@
 import bios from './bios';
 import Memory from './memory';
+import Interrupts from '../input/interrupts';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {
-  constructor(vram = new Memory(2 ** 13), oam = new Memory(2 ** 8), io = new Memory(2 ** 7)) {
+  constructor(
+    vram = new Memory(2 ** 13), oam = new Memory(2 ** 8),
+    io = new Memory(2 ** 7), interrupts = new Interrupts(),
+  ) {
     this._rom0 = new Memory(2 ** 14);
     this._rom1 = new Memory(2 ** 14);
     this._vram = vram;
+    this.interrupts = interrupts;
     this._eram = new Memory(2 ** 13);
     this._wram = new Memory(2 ** 13);
     this._zram = new Memory(2 ** 7);
@@ -60,8 +65,10 @@ export default class MMU {
           // TODO: GPU OAM
           return this._oam.readByte(address & 0xFF);
         } else if (address < 0xFF80) {
-          // TODO: IO handling
+          if (address === 0xFF0F) return this.interrupts._if;
           return this.io.readByte(address & 0xFF);
+        } else if (address === 0xFFFF) {
+          return this.interrupts._ie;
         }
         return this._zram.readByte(address & 0x7F);
       default:
@@ -120,7 +127,10 @@ export default class MMU {
           this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
+          if (address === 0xFF0F) this.interrupts._if = value;
           this.io.writeByte(address & 0xFF, value);
+        } else if (address === 0xFFFF) {
+          this.interrupts._ie = value;
         } else {
           this._zram.writeByte(address & 0x7F, value);
         }

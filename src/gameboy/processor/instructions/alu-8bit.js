@@ -25,7 +25,7 @@ const readValFromHLMem = (map, mmu) => {
 };
 
 const setLogicalAndFlag = (map, val) => {
-  const flag = new CheckFlagFor().zero(val).halfCarry(0b00010000).get();
+  const flag = new CheckFlagFor().zero(val).setHalfCarry(true).get();
   map.f(flag);
 };
 

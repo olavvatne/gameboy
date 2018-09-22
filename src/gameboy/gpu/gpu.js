@@ -4,9 +4,11 @@ import RenderTiming from './timing';
 import FrameBuffer from './frame-buffer';
 import Renderer from './renderer';
 import Util from '../util';
+import Interrupts from '../input/interrupts';
 
 export default class GPU {
-  constructor(screen) {
+  constructor(screen, interrupts = new Interrupts()) {
+    this.interrupts = interrupts;
     this.screen = screen;
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
@@ -54,7 +56,10 @@ export default class GPU {
   step(tick) {
     const result = this.renderTiming.step(tick);
     if (result.shouldScanline) this._renderer.renderScanline(this.renderTiming.getLine());
-    if (result.lastHblank) this._renderer.displayImage();
+    if (result.lastHblank) {
+      this._renderer.displayImage();
+      this.interrupts._if |= 1;
+    }
   }
 
   reset() {

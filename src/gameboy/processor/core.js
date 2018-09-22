@@ -1,16 +1,17 @@
-import { Registers, opcodes } from './';
-
+import { Registers, opcodes, Z80 } from './';
+import Recorder from '../../info/recorder';
 /* eslint no-bitwise: 0 */
 
 export default class ProcessorCore {
-  constructor(memoryController, notifyGpu) {
+  constructor(memoryController, interruptHandler, notifyGpu) {
     this.mmu = memoryController;
+    this.interrupts = interruptHandler;
     this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
     this.clock = { machineCycles: 0, clockCycles: 0 };
-    this.interupts = { enable: true };
     this.currentOp = 0x00;
     this.currentInstruction = null;
+    this.recorder = new Recorder();
   }
 
   fetch() {
@@ -31,10 +32,8 @@ export default class ProcessorCore {
   }
 
   execute() {
-    // TODO: interupt. Send in temp interup object
-    const state = { mmu: this.mmu, interupt: this.interupts, map: this.reg.map };
+    const state = { mmu: this.mmu, interrupt: this.interrupts, map: this.reg.map };
     const timeSpent = this.currentInstruction(state);
-
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
 
@@ -52,11 +51,26 @@ export default class ProcessorCore {
   }
 
   loop() {
+    // if (this.currentOp === 195) {
+    //   this.recorder.printHistory();
+    // }
     const oneFrame = this.clock.clockCycles + 70224;
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
       this.execute();
+      if (this.interrupts.enabled) this.handleInterrupts();
+      // this.recorder.record(this.currentOp);
+    }
+  }
+  handleInterrupts() {
+    const whatTriggered = this.interrupts.getTriggered();
+    if (whatTriggered & 0x01) {
+      this.interrupts._if &= ~0x01 & 0xFF;
+      // TODO: time
+      const timeSpent = Z80.subroutine.rst({ mmu: this.mmu, map: this.reg.map }, 0x40);
+      this.clock.machineCycles += timeSpent.m;
+      this.clock.clockCycles += timeSpent.t;
     }
   }
 

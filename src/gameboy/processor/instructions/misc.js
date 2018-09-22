@@ -97,14 +97,14 @@ export default {
   // TODO: See if further actions is neccessary for di, ei, stop and halt.
   stop: () => createOpTime(1, 4),
 
-  di: ({ interupt }) => {
+  di: ({ interrupt }) => {
     // TODO: maybe return clock info AND new state?
-    interupt.enable = false;
+    interrupt.enabled = false;
     return createOpTime(1, 4);
   },
 
-  ei: ({ interupt }) => {
-    interupt.enable = true;
+  ei: ({ interrupt }) => {
+    interrupt.enabled = true;
     return createOpTime(1, 4);
   },
 };

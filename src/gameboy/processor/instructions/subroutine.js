@@ -49,7 +49,7 @@ export default {
   rst: ({ mmu, map }, addr) => {
     addToStack(map, mmu, map.pc());
     map.pc(addr);
-    return createOpTime(8, 32);
+    return createOpTime(1, 16);
   },
 
   ret: ({ mmu, map }) => {
@@ -76,10 +76,10 @@ export default {
     return createOpTime(2, 8);
   },
 
-  reti: ({ mmu, map, interupt }) => {
+  reti: ({ mmu, map, interrupt }) => {
     const val = popFromStack(map, mmu);
     map.pc(val);
-    interupt.enable = true;
+    interrupt.enabled = true;
     return createOpTime(2, 8);
   },
 };

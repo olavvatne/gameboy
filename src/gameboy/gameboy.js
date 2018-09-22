@@ -2,13 +2,17 @@ import { CPU } from './processor';
 import { MMU } from './memory';
 import { GPU, Screen } from './gpu';
 import IORegister from './input/io-register';
+import Interrupts from './input/interrupts';
 
 export default class Gameboy {
   constructor(canvas) {
-    this.gpu = new GPU(new Screen(canvas));
+    this.interrupts = new Interrupts();
+    this.gpu = new GPU(new Screen(canvas), this.interrupts);
     this.io = new IORegister(this.gpu);
-    this.memory = new MMU(this.gpu.getVideoMemory(), this.gpu.getAttributeTable(), this.io);
-    this.core = new CPU(this.memory, tick => this.gpu.step(tick));
+    const vidMem = this.gpu.getVideoMemory();
+    const attTab = this.gpu.getAttributeTable();
+    this.memory = new MMU(vidMem, attTab, this.io, this.interrupts);
+    this.core = new CPU(this.memory, this.interrupts, tick => this.gpu.step(tick));
     this.interval = null;
   }
 
@@ -18,6 +22,7 @@ export default class Gameboy {
 
   pause() {
     if (this.interval != null) clearInterval(this.interval);
+    this.core.recorder.printHistory();
   }
 
   reset() {
