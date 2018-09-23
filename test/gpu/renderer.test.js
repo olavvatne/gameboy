@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import { VideoMemory, Renderer, FrameBuffer, Screen } from '../../src/gameboy/gpu/';
+import { VideoMemory, Renderer, FrameBuffer, Screen, OAM } from '../../src/gameboy/gpu/';
 import Util from '../../src/gameboy/util';
 
 describe('GPU', () => {
@@ -14,21 +14,24 @@ describe('GPU', () => {
     buffer = new FrameBuffer();
     screen = new Screen();
     registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0,
+      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
     };
-    palette = [
-      [230, 230, 230, 230],
-      [192, 192, 192, 192],
-      [96, 96, 96, 96],
-      [10, 10, 10, 10],
-    ];
+    palette = {
+      bg: [
+        [230, 230, 230, 230],
+        [192, 192, 192, 192],
+        [96, 96, 96, 96],
+        [10, 10, 10, 10],
+      ],
+    };
     mem = new VideoMemory(buffer);
-    renderer = new Renderer(buffer, screen, mem, registers, palette);
+    renderer = new Renderer(buffer, new OAM(), screen, mem, registers, palette);
   });
 
   describe('Renderer tests', () => {
     it('renders line where it hit tile in set 0 and map 0 with scroll y set', () => {
       registers.y = 16;
+      registers.bg = 1;
       const tileNum = 127; // last tile in tileset 0
       const tileset0Offset = 256;
       const tilemapAddr = 0x1800 + (32 * (registers.y / 8));
@@ -47,6 +50,7 @@ describe('GPU', () => {
 
     it('renders first line with tile with negative num', () => {
       registers.y = 16;
+      registers.bg = 1;
       const tileNum = -128; // last tile in tileset 0
       const tileset0Offset = 256;
       const tilemapAddr = 0x1800 + (32 * (registers.y / 8));
@@ -64,6 +68,7 @@ describe('GPU', () => {
     it('renders line 143 and pixel at the end of the line correctly', () => {
       registers.y = 8;
       registers.tileset = 1;
+      registers.bg = 1;
       const line = 143;
       const tileNum = 10; // last tile in tileset 0
       let tilemapAddr = 0x1800 + (32 * Math.floor((registers.y + line) / 8));

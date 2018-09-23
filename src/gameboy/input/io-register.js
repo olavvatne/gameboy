@@ -32,8 +32,11 @@ export default class IORegister extends Memory {
     else if (address === 0x40) this._handleLCDC(value);
     else if (address === 0x42) this._gpu.registers.y = value;
     else if (address === 0x43) this._gpu.registers.x = value;
-    else if (address === 0x47) this._gpu.setPalette(value);
+    else if (address === 0x47) this._gpu.setPalette(value, 'bg');
+    else if (address === 0x48) this._gpu.setPalette(value, 'obj0');
+    else if (address === 0x49) this._gpu.setPalette(value, 'obj1');
   }
+
   getKeys() {
     switch (this.currentColumn) {
       case 0x10: return toByte(this.keyColumns[0]);
@@ -44,7 +47,6 @@ export default class IORegister extends Memory {
 
   // TODO: custom mapping scheme
   handleKeyDown(event) {
-    console.log(event.key);
     switch (event.key) {
       case 'Enter': this.keyColumns[0][3] = 0; break;
       case 'Space': this.keyColumns[0][2] = 0; break;
@@ -60,7 +62,6 @@ export default class IORegister extends Memory {
       case 'ArrowRight': this.keyColumns[1][0] = 0; break;
       default: break;
     }
-    console.log(this.keyColumns);
   }
 
   handleKeyUp(event) {

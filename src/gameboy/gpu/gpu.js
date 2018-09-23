@@ -1,4 +1,4 @@
-import Memory from '../memory/memory';
+import OAM from './object-attribute-memory';
 import VideoMemory from './video-memory';
 import RenderTiming from './timing';
 import FrameBuffer from './frame-buffer';
@@ -15,27 +15,25 @@ export default class GPU {
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
     };
-    this.palette = [
-      [255, 255, 255, 255],
-      [192, 192, 192, 255],
-      [96, 96, 96, 255],
-      [0, 0, 0, 255],
-    ];
+    this.palette = { bg: [], obj0: [], obj1: [] };
+    this.setPalette(0b00011011, 'bg');
+    this.setPalette(0b00011011, 'obj0');
+    this.setPalette(0b00011011, 'obj1');
     this._frameBuffer = new FrameBuffer();
     this.renderTiming = new RenderTiming();
     this._vram = new VideoMemory(this._frameBuffer);
-    this._oam = new Memory(2 ** 8); // TODO: create special memory that trigger actions on gpu
+    this._oam = new OAM();
     this._renderer = new Renderer(
-      this._frameBuffer, screen, this._vram,
+      this._frameBuffer, this._oam, screen, this._vram,
       this.registers, this.palette,
     );
   }
 
-  setPalette(value) {
+  setPalette(value, type) {
     // 4 color palette. Each 2 bits in the byte decides palette color
     for (let i = 0; i < 4; i += 1) {
       const pal = Util.getHalfNibble(value, i);
-      this.palette[pal] = Util.getPaletteColor(pal);
+      this.palette[type][pal] = Util.getPaletteColor(pal);
     }
   }
 

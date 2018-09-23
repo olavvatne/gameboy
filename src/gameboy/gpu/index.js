@@ -5,3 +5,4 @@ export { default as RenderTiming } from './timing';
 export { default as FrameBuffer } from './frame-buffer';
 export { default as VideoMemory } from './video-memory';
 export { default as Renderer } from './renderer';
+export { default as OAM } from './object-attribute-memory';

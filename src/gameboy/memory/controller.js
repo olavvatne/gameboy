@@ -123,7 +123,6 @@ export default class MMU {
         if (address < 0xFE00) {
           this._wram.writeByte(address & 0x1FFF, value);
         } else if (address < 0xFF00) {
-          // TODO: GPU OAM
           this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
