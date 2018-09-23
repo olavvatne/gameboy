@@ -66,12 +66,17 @@ export default class ProcessorCore {
 
   handleInterrupts() {
     if (!this.interrupts.anyTriggered()) return;
+    if (this.interrupts.checkVblankTriggered()) this.callRst(0x40);
+    if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x48);
+    if (this.interrupts.checkTimerTriggered()) this.callRst(0x50);
+    if (this.interrupts.checkSerialTriggered()) this.callRst(0x58);
+    if (this.interrupts.checkJoypadTriggered()) this.callRst(0x60);
+  }
 
-    if (this.interrupts.checkVblankTriggered()) {
-      const timeSpent = Z80.subroutine.rst({ mmu: this.mmu, map: this.reg.map }, 0x40);
-      this.clock.machineCycles += timeSpent.m;
-      this.clock.clockCycles += timeSpent.t;
-    }
+  callRst(num) {
+    const timeSpent = Z80.subroutine.rst({ mmu: this.mmu, map: this.reg.map }, num);
+    this.clock.machineCycles += timeSpent.m;
+    this.clock.clockCycles += timeSpent.t;
   }
 
   reset() {
