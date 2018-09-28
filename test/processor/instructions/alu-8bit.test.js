@@ -559,5 +559,40 @@ describe('Processor', () => {
       assert.isTrue(flags.isHalfCarry());
       assert.isFalse(flags.isCarry());
     });
+
+    // TODO: does it take a positive number and subract or does it assume twos complement
+    // it('subtracts correctly with the type of register we use', () => {
+    //   reg.a(10);
+    //   reg.b(-5);
+
+    //   Z80.alu8.sub(state, reg.b);
+    //   assert.isTrue(reg.a(), 5);
+    // });
+
+    // it('can subtract immediate from A with negative number', () => {
+    //   const valInA = 10;
+    //   const pcMemAddr = 0x6662;
+    //   const memVal = -7;
+    //   reg.a(valInA);
+    //   reg.pc(pcMemAddr);
+    //   mmu.writeByte(pcMemAddr, memVal);
+
+    //   Z80.alu8.subImmediate(state);
+
+    //   assert.equal(reg.a(), 3);
+    // });
+
+    // it('can subtract val from mem with A with negative numbers', () => {
+    //   const valInA = 50;
+    //   const memAddr = 0x5555;
+    //   const memVal = -44;
+    //   reg.a(valInA);
+    //   reg.hl(memAddr);
+    //   mmu.writeByte(memAddr, memVal);
+
+    //   Z80.alu8.subMemHL(state);
+
+    //   assert.equal(reg.a(), 6);
+    // });
   });
 });

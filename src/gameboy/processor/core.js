@@ -10,12 +10,14 @@ export default class ProcessorCore {
     this.reg = new Registers();
     this.clock = { machineCycles: 0, clockCycles: 0 };
     this.currentOp = 0x00;
+    this.currentPc = 0;
     this.currentInstruction = null;
     this.recorder = new Recorder();
   }
 
   fetch() {
     const pc = this.reg.pc();
+    this.currentPc = pc;
     this.currentOp = this.mmu.readByte(pc);
     this.reg.pc(pc + 1);
   }
@@ -27,7 +29,13 @@ export default class ProcessorCore {
       this.currentOp = op;
     }
 
-    if (opcodes[op] === undefined) throw new Error(`opcode not impl: ${op.toString(16)}`);
+    if (opcodes[op] === undefined) {
+      this.recorder.printHistory();
+      throw new Error(`opcode not impl: ${op.toString(16)}`);
+    }
+    // if (this.currentOp === 0xc3) {
+    //   this.recorder.printHistory();
+    // }
     this.currentInstruction = opcodes[op];
   }
 
@@ -51,16 +59,16 @@ export default class ProcessorCore {
   }
 
   loop() {
-    // if (this.currentOp === 195) {
-    //   this.recorder.printHistory();
-    // }
     const oneFrame = this.clock.clockCycles + 70224;
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
       this.execute();
       if (this.interrupts.enabled) this.handleInterrupts();
-      // this.recorder.record(this.currentOp);
+      // if (this.currentOp === 0) {
+      //   this.recorder.printHistory();
+      // }
+      this.recorder.record(this.currentOp, this.currentPc);
     }
   }
 

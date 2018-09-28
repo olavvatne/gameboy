@@ -63,5 +63,25 @@ describe('Processor', () => {
       map.l(0xEF);
       assert.equal(map.hl(), 0x12EF);
     });
+
+    it('will wrap around if incrementing beyond max value', () => {
+      const val = 255;
+      map.e(val);
+      assert.equal(map.e(), val);
+      map.e(val + 1);
+      assert.equal(map.e(), 0);
+      map.e(val + 2);
+      assert.equal(map.e(), 1);
+    });
+
+    it('will wrap around for 16 bit registers as well', () => {
+      const val = 0xFFFF;
+      map.de(val);
+      assert.equal(map.de(), val);
+      map.de(val + 1);
+      assert.equal(map.de(), 0);
+      map.de(val + 2);
+      assert.equal(map.de(), 1);
+    });
   });
 });

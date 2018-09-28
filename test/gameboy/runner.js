@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { CPU } from '../../src/gameboy/processor';
 import { MMU } from '../../src/gameboy/memory';
 import OpcodeInfoManager from '../../src/info/info-manager';
@@ -20,8 +18,7 @@ export default class TestRunner {
   constructor() {
     this.memory = new MMU();
     this.core = new CPU(this.memory);
-    const opcodesInfoJson = fs.readFileSync(path.resolve(__dirname, '../../src/info/opcodes.json'));
-    this.info = new OpcodeInfoManager(opcodesInfoJson);
+    this.info = new OpcodeInfoManager();
     this.putLogoInMem();
     this.putChecksumInMem();
   }

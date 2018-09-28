@@ -4,11 +4,6 @@ export default class CheckFlagFor {
     this.flag = flag;
   }
 
-  underflow(val) {
-    this.setCarry(val < 0);
-    return this;
-  }
-
   subtraction() {
     this.setSubtraction(true);
     return this;

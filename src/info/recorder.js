@@ -1,22 +1,31 @@
-const getHex = op => `0x${(op & 0x00FF).toString(16)}`;
+import OpcodeInfoManager from './info-manager';
+
+/* eslint no-bitwise: 0 */
+/* eslint no-console: 0 */
+const getHex = pc => `${(pc & 0xFFFF).toString(16)}`;
 
 export default class Recorder {
   constructor() {
-    this.history = new Array(10000);
+    this.history = new Array(100);
     this.pos = 0;
+    this.opcodeInfo = new OpcodeInfoManager();
   }
 
-  record(op) {
-    this.history[this.pos] = op;
+  record(op, pc = -1) {
+    this.history[this.pos] = { op, pc };
     this.pos = (this.pos + 1) % this.history.length;
   }
 
   printHistory() {
-    const inOrder = new Array(10000);
     for (let i = 0; i < this.history.length; i += 1) {
-      const cur = (this.pos + 1 + i) % this.history.length;
-      inOrder[i] = getHex(this.history[cur]);
+      const cur = Math.abs((this.pos - 1 - i) % this.history.length);
+      if (this.history[cur]) {
+        const pc = getHex(this.history[cur].pc);
+        const op = this.opcodeInfo.getDescription(this.history[cur].op);
+        console.log(pc, op);
+      } else {
+        console.log('---');
+      }
     }
-    console.log(inOrder);
   }
 }

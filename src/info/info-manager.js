@@ -1,11 +1,12 @@
+import opcodes from './opcodes';
+
 /* eslint no-bitwise: 0 */
 
 const getHex = op => `0x${(op & 0x00FF).toString(16)}`;
 
 export default class OpcodeInfoManager {
-  constructor(opcodes) {
-    // TODO: if not supplied. Load with javascript.
-    this._opcodes = JSON.parse(opcodes);
+  constructor() {
+    this._opcodes = opcodes;
   }
 
   getDescription(op) {

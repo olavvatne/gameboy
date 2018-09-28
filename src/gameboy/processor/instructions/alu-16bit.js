@@ -7,26 +7,22 @@ import { createOpTime } from '../clock-util';
 
 export default {
   addRegHLReg: ({ map }, regX) => {
-    const prevFlag = map.f();
-
     const val = map.hl() + regX();
     map.hl(val);
 
-    const flag = new CheckFlagFor(prevFlag).notSubtraction().halfCarry16(val).carry16(val).get();
+    const flag = new CheckFlagFor(map.f()).notSubtraction().halfCarry16(val).carry16(val).get();
     map.f(flag);
 
     return createOpTime(2, 8);
   },
 
   inc: (_, regX) => {
-    const val = regX();
-    regX(val + 1);
+    regX(regX() + 1);
     return createOpTime(2, 8);
   },
 
   dec: (_, regX) => {
-    const val = regX();
-    regX(val - 1);
+    regX(regX() - 1);
     return createOpTime(2, 8);
   },
 

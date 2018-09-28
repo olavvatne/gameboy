@@ -37,7 +37,7 @@ const setLogicalOrFlag = (map, val) => {
 const setFlagsOnCompare = (map, val) => {
   const valInA = map.a();
   const flag = new CheckFlagFor().subtraction().zero(val)
-    .underflow(val).halfCarryBorrow(val, valInA).get();
+    .carryBorrow(val).halfCarryBorrow(val, valInA).get();
   map.f(flag);
 };
 
@@ -127,6 +127,7 @@ export default {
   // SUBTRACTION
   sub: ({ map }, regX) => {
     const regA = map.a();
+    // TODO: reads register. but value might be a twos complement!
     const val = regA - regX();
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, regA);
@@ -144,7 +145,7 @@ export default {
   subImmediate: ({ mmu, map }) => {
     const regA = map.a();
     const val = regA - readImmediateValueAndIncrementPC(map, mmu);
-    map.a(val);
+    map.a(val & 0xFF);
     setSubtractionFlag(map, val, regA);
     return createOpTime(2, 8);
   },
@@ -153,7 +154,7 @@ export default {
     const isCarry = new CheckFlagFor(map.f()).isCarry();
     const regA = map.a();
     const val = regA - regX() - isCarry;
-    map.a(val);
+    map.a(val & 0xFF);
     setSubtractionFlag(map, val, regA);
     return createOpTime(1, 4);
   },
@@ -250,17 +251,15 @@ export default {
   },
 
   inc: (cpu, regX) => {
-    alu16.inc(cpu, regX);
-    const val = regX();
-    setFlagsOnInc(cpu.map, val);
+    regX(regX() + 1);
+    setFlagsOnInc(cpu.map, regX());
     return createOpTime(1, 4);
   },
 
   // Seems like the offical manual says to set H if there was a borrow to bit 3.
   dec: (cpu, regX) => {
-    alu16.dec(cpu, regX);
-    const val = regX();
-    setFlagsOnDec(cpu.map, val);
+    regX(regX() - 1);
+    setFlagsOnDec(cpu.map, regX());
     return createOpTime(1, 4);
   },
 

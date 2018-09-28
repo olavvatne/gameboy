@@ -20,9 +20,9 @@ export default {
   swap: ({ map }, regX) => {
     const val = regX();
     const newVal = swapNibbles(val);
-    const flag = new CheckFlagFor().zero(newVal).get();
     regX(newVal);
-    map.f(flag);
+    const newFlag = new CheckFlagFor().zero(newVal).get();
+    map.f(newFlag);
     return createOpTime(2, 8);
   },
 
@@ -30,9 +30,9 @@ export default {
     const memAddr = map.hl();
     const val = mmu.readByte(memAddr);
     const newVal = swapNibbles(val);
-    const flag = new CheckFlagFor().zero(newVal).get();
     mmu.writeByte(memAddr, newVal);
-    map.f(flag);
+    const newFlag = new CheckFlagFor().zero(newVal).get();
+    map.f(newFlag);
     return createOpTime(4, 16);
   },
   // ensure content in A is in packed Binary coded decimal encoding
@@ -45,8 +45,11 @@ export default {
     const lowerNibble = val & 0b00001111;
     const isAboveMaxUpperNibbleDecimal = lowerNibble > 9 || prevFlag.isHalfCarry();
     if (isAboveMaxUpperNibbleDecimal) {
-      if (prevFlag.isSubtraction()) val = (val - 0x06) & 0xFF;
-      else val = (val + 0x06) & 0xFF;
+      if (prevFlag.isSubtraction()) {
+        val = (val - 0x06) & 0xFF;
+      } else {
+        val = (val + 0x06) & 0xFF;
+      }
     }
 
     const upperNibble = val >>> 4;
@@ -63,8 +66,8 @@ export default {
     }
     map.a(val);
 
-    const newFlag = new CheckFlagFor().setCarry(val > 0x99)
-      .zero(val).setSubtraction(prevFlag.isSubtraction);
+    const newFlag = new CheckFlagFor(prevFlag).setCarry(val > 0x99)
+      .zero(val).setHalfCarry(false).get();
     map.f(newFlag);
     return createOpTime(1, 4);
   },
@@ -73,7 +76,7 @@ export default {
     let val = map.a();
     val ^= 0xFF;
     map.a(val);
-    const flag = new CheckFlagFor(map.f()).halfCarry(0xFF).subtraction().get();
+    const flag = new CheckFlagFor(map.f()).setHalfCarry(true).subtraction().get();
     map.f(flag);
 
     return createOpTime(1, 4);

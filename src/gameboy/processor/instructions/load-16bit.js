@@ -25,11 +25,10 @@ export default {
   ldHLFromSPPlusImmediate: ({ mmu, map }) => {
     const spVal = map.sp();
     const pc = map.pc();
-    const imAddr = pc;
-    const imSignedByte = Util.convertSignedByte(mmu.readByte(imAddr));
+    const imSignedByte = Util.convertSignedByte(mmu.readByte(pc));
     map.pc(pc + 1);
     const newVal = spVal + imSignedByte;
-    map.hl(spVal + imSignedByte);
+    map.hl(newVal);
 
     const flag = new CheckFlagFor().carry(newVal).halfCarry(newVal).get();
     map.f(flag);
