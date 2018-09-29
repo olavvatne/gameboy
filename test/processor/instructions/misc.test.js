@@ -162,7 +162,7 @@ describe('Processor', () => {
     // 0001 1111 => 1 and 15. Not bcd 19
     const num = 0b00011111;
     const corrBcd = 0b00011001; // 1 - 9
-    const flag = new CheckFlagFor().setCarry(true).subtraction().get();
+    const flag = new CheckFlagFor().setHalfCarry(true).subtraction().get();
     reg.a(num);
     reg.f(flag);
 

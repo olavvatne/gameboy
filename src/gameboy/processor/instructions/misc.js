@@ -39,35 +39,36 @@ export default {
   // Intended to be run immediately after an a  dditon or subtraction operations,
   // where the values were BCD encoded.
   daa: ({ map }) => {
-    const prevFlag = new CheckFlagFor(map.f());
+    const flag = new CheckFlagFor(map.f());
     let val = map.a();
 
-    const lowerNibble = val & 0b00001111;
-    const isAboveMaxUpperNibbleDecimal = lowerNibble > 9 || prevFlag.isHalfCarry();
-    if (isAboveMaxUpperNibbleDecimal) {
-      if (prevFlag.isSubtraction()) {
-        val = (val - 0x06) & 0xFF;
-      } else {
-        val = (val + 0x06) & 0xFF;
+    if (!flag.isSubtraction()) {
+      const isLowerNibbleOverNine = (val & 0x0F) > 9;
+      if (flag.isHalfCarry() || isLowerNibbleOverNine) {
+        val += 6;
       }
-    }
 
-    const upperNibble = val >>> 4;
-    if (prevFlag.isSubtraction()) {
-      // subtraction disregards previous op carry flag.
-      if (upperNibble > 9) {
-        val = (val - 0x60) & 0xFF;
+      const isUpperNibbleOverNine = val > 0x9F;
+      if (flag.isCarry() || isUpperNibbleOverNine) {
+        val += 0x60;
       }
     } else {
-      const isAboveMaxDecimal = upperNibble > 9 || prevFlag.isCarry();
-      if (isAboveMaxDecimal) {
-        val = (val + 0x60) & 0xFF;
+      if (flag.isHalfCarry()) {
+        val -= 6;
+        if (!flag.isCarry()) {
+          val &= 0xFF;
+        }
+      }
+
+      if (flag.isCarry()) {
+        val -= 0x60;
       }
     }
-    map.a(val);
+    const a = val & 0xFF;
+    map.a(a);
 
-    const newFlag = new CheckFlagFor(prevFlag).setCarry(val > 0x99)
-      .zero(val).setHalfCarry(false).get();
+    const newFlag = new CheckFlagFor(map.f()).setCarry(val & 0x100)
+      .zero(a).setHalfCarry(false).get();
     map.f(newFlag);
     return createOpTime(1, 4);
   },
