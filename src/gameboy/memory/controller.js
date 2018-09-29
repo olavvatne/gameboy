@@ -8,8 +8,8 @@ export default class MMU {
     vram = new Memory(2 ** 13), oam = new Memory(2 ** 8),
     io = new Memory(2 ** 7), interrupts = new Interrupts(),
   ) {
-    this._rom0 = new Memory(2 ** 14);
-    this._rom1 = new Memory(2 ** 14);
+    this._rom0 = new Uint8Array(2 ** 14);
+    this._rom1 = new Uint8Array(2 ** 14);
     this._vram = vram;
     this.interrupts = interrupts;
     this._eram = new Memory(2 ** 13);
@@ -32,17 +32,17 @@ export default class MMU {
         if (address < 0x0100 && this._inBios) {
           return bios[address];
         }
-        return this._rom0.readByte(address);
+        return this._rom0[address];
       case 0x1000:
       case 0x2000:
       case 0x3000:
-        return this._rom0.readByte(address);
+        return this._rom0[address];
       // ROM1
       case 0x4000:
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        return this._rom1.readByte(address & 0x1FFF);
+        return this._rom1[address & 0x1FFF];
       // VRAM
       case 0x8000:
       case 0x9000:
@@ -87,19 +87,19 @@ export default class MMU {
         if (address < 0x0100 && this._inBios) {
           throw new Error('Trying to write to bios');
         }
-        this._rom0.writeByte(address, value);
+        this._rom0[address] = value;
         break;
       case 0x1000:
       case 0x2000:
       case 0x3000:
-        this._rom0.writeByte(address, value);
+        this._rom0[address] = value;
         break;
       // ROM1
       case 0x4000:
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        this._rom1.writeByte(address & 0x1FFF, value);
+        this._rom1[address & 0x1FFF] = value;
         break;
       // VRAM
       case 0x8000:
@@ -149,10 +149,9 @@ export default class MMU {
   load(data) {
     const prevInBios = this._inBios;
     this._inBios = false;
-    const maxIndex = Math.min(data.length, 2 ** 15);
-    for (let i = 0; i < maxIndex; i += 1) {
-      this.writeByte(i, data.charCodeAt(i));
-    }
+    // TODO: handle file to long or short
+    this._rom0 = new Uint8Array(data, 0, 2 ** 14);
+    this._rom1 = new Uint8Array(data, 2 ** 14, 2 ** 14);
     this._inBios = prevInBios;
     this._cartType = this.readByte(0x0147);
   }

@@ -16,7 +16,8 @@ export default class Gameboy {
     this.interval = null;
   }
 
-  start() {
+  start(data) {
+    this.loadRom(data);
     this.interval = setInterval(() => this.core.loop(), 1);
   }
 

@@ -95,13 +95,12 @@ export class Registers {
     return this._sp;
   }
 
-  // getState() {
-  //   const state = {};
-  //   Object.entries(RegMap).forEach(([name, addr]) => {
-  //     state[name] = this.reg(addr);
-  //   });
-  //   state.pc = this.pc();
-  //   state.f = this.flags();
-  //   return state;
-  // }
+  getState() {
+    const getHex = val => `${(val).toString(16)}`;
+    const state = {};
+    Object.entries(this.map).forEach(([name, func]) => {
+      state[name] = getHex(func());
+    });
+    return state;
+  }
 }

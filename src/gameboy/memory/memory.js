@@ -1,14 +1,13 @@
 export default class Memory {
   constructor(size) {
-    this._mem_buffer = new ArrayBuffer(size);
-    this._memory = new DataView(this._mem_buffer);
+    this._memory = new Uint8Array(size);
   }
 
   readByte(address) {
-    return this._memory.getUint8(address);
+    return this._memory[address];
   }
 
   writeByte(address, value) {
-    this._memory.setUint8(address, value, true);
+    this._memory[address] = value;
   }
 }

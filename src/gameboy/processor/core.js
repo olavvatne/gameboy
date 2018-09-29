@@ -63,12 +63,15 @@ export default class ProcessorCore {
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
+      // if (this.currentPc > 0x00FE) {
+      //   this.recorder.printCurrent(
+      //     this.currentOp, this.currentPc,
+      //     this.clock.clockCycles, this.reg.getState(),
+      //   );
+      // }
       this.execute();
       if (this.interrupts.enabled) this.handleInterrupts();
-      // if (this.currentOp === 0) {
-      //   this.recorder.printHistory();
-      // }
-      this.recorder.record(this.currentOp, this.currentPc);
+      //this.recorder.record(this.currentOp, this.currentPc);
     }
   }
 
