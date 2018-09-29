@@ -13,6 +13,7 @@ export default class ProcessorCore {
     this.currentPc = 0;
     this.currentInstruction = null;
     this.recorder = new Recorder();
+    this.startDebug = false;
   }
 
   fetch() {
@@ -33,9 +34,6 @@ export default class ProcessorCore {
       this.recorder.printHistory();
       throw new Error(`opcode not impl: ${op.toString(16)}`);
     }
-    // if (this.currentOp === 0xc3) {
-    //   this.recorder.printHistory();
-    // }
     this.currentInstruction = opcodes[op];
   }
 
@@ -63,7 +61,8 @@ export default class ProcessorCore {
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
-      // if (this.currentPc > 0x00FE) {
+      if (this.currentOp === 0xF5 && this.recorder.getPreviousRecord(0).op === 0xF1 && this.recorder.getPreviousRecord(1).op === 0xC5) this.startDebug = true;
+      // if (this.startDebug) {
       //   this.recorder.printCurrent(
       //     this.currentOp, this.currentPc,
       //     this.clock.clockCycles, this.reg.getState(),
@@ -71,7 +70,7 @@ export default class ProcessorCore {
       // }
       this.execute();
       if (this.interrupts.enabled) this.handleInterrupts();
-      //this.recorder.record(this.currentOp, this.currentPc);
+      this.recorder.record(this.currentOp, this.currentPc);
     }
   }
 

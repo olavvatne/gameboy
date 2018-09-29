@@ -11,6 +11,11 @@ export default class Recorder {
     this.opcodeInfo = new OpcodeInfoManager();
   }
 
+  getPreviousRecord(offset) {
+    const cur = Math.abs((this.pos - 1 - offset) % this.history.length);
+    return this.history[cur];
+  }
+
   record(op, pc = -1) {
     this.history[this.pos] = { op, pc };
     this.pos = (this.pos + 1) % this.history.length;

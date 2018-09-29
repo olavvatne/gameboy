@@ -63,12 +63,23 @@ describe('Processor', () => {
     it('can push a register pair onto stack', () => {
       const oldPointer = reg.sp();
       const correct = 0x8888;
-      reg.af(correct);
+      reg.de(correct);
 
-      Z80.load16.push(state, reg.af);
+      Z80.load16.push(state, reg.de);
 
       assert.equal(reg.sp(), oldPointer - 2);
       assert.equal(mmu.readWord(reg.sp()), correct);
+    });
+
+    it('works different with register pair AF', () => {
+      const pcAddr = 0x5565;
+      mmu.writeByte(pcAddr + 1, 0xAB);
+      mmu.writeByte(pcAddr, 0xCD);
+      reg.pc(pcAddr);
+
+      Z80.load16.ldImmediateIntoReg(state, reg.af);
+
+      assert.equal(reg.af(), 0xABC0);
     });
 
     it('can pop a pushed value on the stack', () => {

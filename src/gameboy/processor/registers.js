@@ -40,6 +40,7 @@ export class Registers {
     this.map = this._createAccessorMap();
   }
 
+  // lower nibble of f is always ignored (blargg test)
   _createAccessorMap() {
     return {
       a: val => this._reg8(RegMap.a, val),
@@ -47,10 +48,10 @@ export class Registers {
       c: val => this._reg8(RegMap.c, val),
       d: val => this._reg8(RegMap.d, val),
       e: val => this._reg8(RegMap.e, val),
-      f: val => this._reg8(RegMap.f, val),
+      f: val => this._specialRegF(RegMap.f, val),
       h: val => this._reg8(RegMap.h, val),
       l: val => this._reg8(RegMap.l, val),
-      af: val => this._reg16(RegMap.af, val),
+      af: val => this._specialRegAF(RegMap.af, val),
       bc: val => this._reg16(RegMap.bc, val),
       de: val => this._reg16(RegMap.de, val),
       hl: val => this._reg16(RegMap.hl, val),
@@ -62,6 +63,14 @@ export class Registers {
   _initGeneralPurposeRegisters() {
     this._gpr_buffer = new ArrayBuffer(numRegs);
     this._gpr = new DataView(this._gpr_buffer);
+  }
+
+  _specialRegF(num, value = null) {
+    return this._reg8(num, value === null ? value : value & 0xF0);
+  }
+
+  _specialRegAF(num, value = null) {
+    return this._reg16(num, value === null ? value : value & 0xFFF0);
   }
 
   _reg8(num, value = null) {

@@ -175,5 +175,13 @@ describe('Processor', () => {
 
       assert.equal(reg.a(), 0x19);
     });
+
+    it('works different with register f, since lower nibble is ignored', () => {
+      reg.f(0xAA);
+      reg.a(0x10);
+
+      Z80.load8.ld(state, reg.a, reg.f);
+      assert.equal(reg.a(), 0xA0);
+    });
   });
 });
