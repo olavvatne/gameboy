@@ -67,7 +67,7 @@ export default {
     const a = val & 0xFF;
     map.a(a);
 
-    const newFlag = new CheckFlagFor(map.f()).setCarry(val & 0x100)
+    const newFlag = new CheckFlagFor(map.f()).setC(val & 0x100)
       .zero(a).setHalfCarry(false).get();
     map.f(newFlag);
     return createOpTime(1, 4);
@@ -86,14 +86,14 @@ export default {
   ccf: ({ map }) => {
     const flagChecker = new CheckFlagFor(map.f());
     const isCarry = flagChecker.isCarry();
-    const flag = flagChecker.setHalfCarry(false).notSubtraction().setCarry(!isCarry).get();
+    const flag = flagChecker.setHalfCarry(false).notSubtraction().setC(!isCarry).get();
     map.f(flag);
     return createOpTime(1, 4);
   },
 
   scf: ({ map }) => {
     const flagChecker = new CheckFlagFor(map.f());
-    const flag = flagChecker.setHalfCarry(false).notSubtraction().setCarry(true).get();
+    const flag = flagChecker.setHalfCarry(false).notSubtraction().setC(true).get();
     map.f(flag);
     return createOpTime(1, 4);
   },

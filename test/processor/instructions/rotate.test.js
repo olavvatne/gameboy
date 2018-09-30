@@ -44,7 +44,7 @@ describe('Processor', () => {
     it('rotates left A plus carry around', () => {
       const beforeRotate = 0b00100001;
       const afterRotate = 0b01000011;
-      const prevFlag = new CheckFlagFor().setCarry(true).get();
+      const prevFlag = new CheckFlagFor().setC(true).get();
       reg.a(beforeRotate);
       reg.f(prevFlag);
 
@@ -79,7 +79,7 @@ describe('Processor', () => {
     it('rotates right with a set carry around', () => {
       const beforeRotate = 0b00100000;
       const afterRotate = 0b10010000; // prev carry is one
-      const prevFlag = new CheckFlagFor().setCarry(true).get();
+      const prevFlag = new CheckFlagFor().setC(true).get();
       reg.a(beforeRotate);
       reg.f(prevFlag);
 
@@ -114,7 +114,7 @@ describe('Processor', () => {
     it('rotates reg left with carry around', () => {
       const beforeRotate = 0b00100001;
       const afterRotate = 0b01000011;
-      const prevFlag = new CheckFlagFor().setCarry(true).get();
+      const prevFlag = new CheckFlagFor().setC(true).get();
       reg.c(beforeRotate);
       reg.f(prevFlag);
 
@@ -160,7 +160,7 @@ describe('Processor', () => {
     it('rotates right with a set carry around', () => {
       const beforeRotate = 0b00100000;
       const afterRotate = 0b10010000; // prev carry is one
-      const prevFlag = new CheckFlagFor().setCarry(true).get();
+      const prevFlag = new CheckFlagFor().setC(true).get();
       reg.h(beforeRotate);
       reg.f(prevFlag);
 

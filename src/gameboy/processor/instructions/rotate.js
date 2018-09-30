@@ -8,7 +8,7 @@ import { createOpTime } from '../clock-util';
 const rotateLeftWithMsbAround = (val, map, checkZero) => {
   const msb = (val & 0b10000000) === 0b10000000;
   const newVal = ((val << 1) + msb) & 0xFF;
-  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(msb).get();
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setC(msb).get();
   map.f(newFlag);
   return newVal;
 };
@@ -17,7 +17,7 @@ const rotateLeftWithCarryAround = (val, map, checkZero) => {
   const isCarry = new CheckFlagFor(map.f()).isCarry();
   const msb = (val & 0b10000000) === 0b10000000;
   const newVal = ((val << 1) + isCarry) & 0xFF;
-  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(msb).get();
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setC(msb).get();
   map.f(newFlag);
   return newVal;
 };
@@ -26,7 +26,7 @@ const rotateRightWithLsbAround = (val, map, checkZero) => {
   const lsb = val & 0b00000001;
   const isLsb = lsb === 0b00000001;
   const newVal = ((val >>> 1) + (lsb << 7)) & 0xFF;
-  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(isLsb).get();
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setC(isLsb).get();
   map.f(newFlag);
   return newVal;
 };
@@ -36,7 +36,7 @@ const rotateRightWithCarryAround = (val, map, checkZero) => {
   const lsb = val & 0b00000001;
   const isLsb = lsb === 0b00000001;
   const newVal = ((val >>> 1) + (isCarry << 7)) & 0xFF;
-  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setCarry(isLsb).get();
+  const newFlag = new CheckFlagFor().setZero(newVal === 0 && checkZero).setC(isLsb).get();
   map.f(newFlag);
   return newVal;
 };

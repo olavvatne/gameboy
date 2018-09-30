@@ -19,6 +19,7 @@ export default class CheckFlagFor {
     return this;
   }
 
+  // TODO: depricated
   carry(val) {
     this.setCarry(val > 255);
     return this;
@@ -46,6 +47,7 @@ export default class CheckFlagFor {
     return this;
   }
 
+  // TODO: depricated
   setCarry(isCarry) {
     if (isCarry) this.flag |= 0x10;
     else this.flag &= 0b11101111;
@@ -53,25 +55,18 @@ export default class CheckFlagFor {
   }
 
   // If carry occured from lower nibble (4 bit of reg) 3.2.2 GBCPUman
-  halfCarry(val) {
-    if ((val & 0x10) === 0x10) this.setHalfCarry(true);
+  setH(val, a, b) {
+    this.setHalfCarry(((val & 0xFF)^b^a) & 0x10);
+    return this;
+  }
+  
+  setC(isCarry) {
+    this.setCarry(isCarry);
     return this;
   }
 
-  halfCarry16(val) {
-    if ((val & 0x1000) === 0x1000) this.setHalfCarry(true);
-    return this;
-  }
-
-  // If the lower nibble from the subtraction is bigger than the lower nibble from original number,
-  //  we see that some kind of borrowing has taken place.
-  halfCarryBorrow(resultOfSub, minuend) {
-    this.setHalfCarry((minuend & 0x0F) < (resultOfSub & 0x0F));
-    return this;
-  }
-
-  carryBorrow(resultOfSub) {
-    this.setCarry(resultOfSub < 0);
+  setH16(val, a, b) {
+    this.setHalfCarry(((val & 0xFFFF)^b^a) & 0x1000);
     return this;
   }
 

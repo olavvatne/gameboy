@@ -30,7 +30,8 @@ export default {
     const newVal = spVal + imSignedByte;
     map.hl(newVal);
 
-    const flag = new CheckFlagFor().carry(newVal).halfCarry(newVal).get();
+    const isC = (spVal & 0xFF) + (imSignedByte & 0xFF) > 0xFF;
+    const flag = new CheckFlagFor().setC(isC).setH(newVal, spVal, imSignedByte).get();
     map.f(flag);
 
     return createOpTime(3, 12);

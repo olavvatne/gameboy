@@ -48,7 +48,7 @@ describe('Processor', () => {
     });
 
     it('will not affect carry, set half carry and reset negation flag', () => {
-      const flag = new CheckFlagFor().subtraction().setCarry(true).setHalfCarry(false).get();
+      const flag = new CheckFlagFor().subtraction().setC(true).setHalfCarry(false).get();
       reg.f(flag);
       Z80.bit.bit(state, NameMap.a, 1); // register is zero, so bit will test positive
 

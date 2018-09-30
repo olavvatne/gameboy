@@ -53,13 +53,13 @@ describe('Processor', () => {
       const jumpTo = 0x1500;
       const noJump = 0x1100;
       reg.pc(0x1100);
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       mmu.writeWord(0x1100, jumpTo);
       Z80.jump.jpIfC(state, false);
       assert.equal(reg.pc(), noJump + 2);
       reg.pc(0x1100);
 
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.jump.jpIfC(state, false);
       assert.equal(reg.pc(), jumpTo);
     });
@@ -68,13 +68,13 @@ describe('Processor', () => {
       const jumpTo = 0x1500;
       const noJump = 0x1100;
       reg.pc(0x1100);
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       mmu.writeWord(0x1100, jumpTo);
       Z80.jump.jpIfC(state, true);
       assert.equal(reg.pc(), noJump + 2);
       reg.pc(0x1100);
 
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.jump.jpIfC(state, true);
       assert.equal(reg.pc(), jumpTo);
     });
@@ -141,13 +141,13 @@ describe('Processor', () => {
       const jumpTo = 0xFF; // negative num -> -1
       const noJump = 0x1100;
       reg.pc(0x1100);
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfC(state, false);
       assert.equal(reg.pc(), noJump + 1);
       reg.pc(0x1100);
 
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.jump.jrIfC(state, false);
       assert.equal(reg.pc(), noJump); // jumps negative 1 but need to increment PC as well
     });
@@ -156,13 +156,13 @@ describe('Processor', () => {
       const jumpTo = 0x1F;
       const noJump = 0x1100;
       reg.pc(0x1100);
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfC(state, true);
       assert.equal(reg.pc(), noJump + 1);
       reg.pc(0x1100);
 
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.jump.jrIfC(state, true);
       assert.equal(reg.pc(), noJump + jumpTo + 1);
     });
@@ -182,7 +182,7 @@ describe('Processor', () => {
       const jumpTo = 0xFF;
       const noJump = 0x1100;
       reg.pc(0x1100);
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       mmu.writeByte(0x1100, jumpTo);
       Z80.jump.jrIfC(state, true);
       assert.equal(reg.pc(), noJump + 1);

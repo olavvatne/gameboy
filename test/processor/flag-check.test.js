@@ -34,7 +34,7 @@ describe('Processor', () => {
 
     it('can detect half carry on nibbles', () => {
       const num = 16; // 4 bit overflow
-      const flag = new CheckFlagFor().halfCarry(num).get();
+      const flag = new CheckFlagFor().setH(num, 15, 1).get();
       assert.equal(flag, 0b00100000);
     });
   });

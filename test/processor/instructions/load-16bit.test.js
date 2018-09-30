@@ -44,7 +44,7 @@ describe('Processor', () => {
       mmu.writeWord(imAddr, imVal);
       Z80.load16.ldHLFromSPPlusImmediate(state);
       assert.equal(reg.hl(), correct);
-      assert.equal(reg.f(), 0b00010000);
+      assert.equal(reg.f(), 0b00000000);
     });
 
     it('can put SP into address determined by immediate value', () => {

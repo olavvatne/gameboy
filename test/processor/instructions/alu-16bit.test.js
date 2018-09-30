@@ -69,8 +69,7 @@ describe('Processor', () => {
       Z80.alu16.addRegHLReg(state, reg.de);
 
       assert.equal(0, reg.hl());
-      // Is not a half carry because 0xFFFF and 0x0001 result in zeroes after a MSB of 1.
-      assert.isFalse(getFlags().isHalfCarry());
+      assert.isTrue(getFlags().isHalfCarry());
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -126,8 +125,7 @@ describe('Processor', () => {
       assert.equal(0, reg.sp());
       assert.isTrue(getFlags().isCarry());
 
-      // Sum does not lead to a half carry. Only carry.
-      assert.isFalse(getFlags().isHalfCarry());
+      assert.isTrue(getFlags().isHalfCarry());
     });
   });
 });

@@ -41,11 +41,11 @@ describe('Processor', () => {
       reg.c(0x01);
 
       Z80.alu8.add(state, reg.c);
-      assert.equal(reg.f(), 0b10010000);
+      assert.equal(reg.f(), 0b10110000);
 
       reg.c(0x10);
       Z80.alu8.add(state, reg.c);
-      assert.equal(reg.f(), 0b00100000);
+      assert.equal(reg.f(), 0b00000000);
     });
 
     it('adds value found at addr HL with reg A', () => {
@@ -67,7 +67,7 @@ describe('Processor', () => {
       Z80.alu8.addImmediate(state);
 
       assert.equal(reg.a(), 0xF1);
-      assert.isAbove(reg.f(), 0);
+      assert.equal(reg.f(), 0); // TODO: check flag here. Changed half carry method
       assert.isAbove(reg.pc(), 0x3200);
     });
 

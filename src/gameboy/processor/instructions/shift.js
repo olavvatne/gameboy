@@ -9,7 +9,7 @@ import { createOpTime } from '../clock-util';
 const shiftLeft = (val, map) => {
   const msb = (val & 0b10000000) === 0b10000000;
   const newVal = val << 1;
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(msb).get();
+  const newFlag = new CheckFlagFor().zero(newVal).setC(msb).get();
   map.f(newFlag);
   return newVal;
 };
@@ -23,7 +23,7 @@ const shiftRight = (val, map, keepMsb) => {
     newVal |= msbMask;
   }
 
-  const newFlag = new CheckFlagFor().zero(newVal).setCarry(isLsb).get();
+  const newFlag = new CheckFlagFor().zero(newVal).setC(isLsb).get();
   map.f(newFlag);
   return newVal;
 };

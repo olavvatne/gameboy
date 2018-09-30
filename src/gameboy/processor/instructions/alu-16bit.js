@@ -7,10 +7,12 @@ import { createOpTime } from '../clock-util';
 
 export default {
   addRegHLReg: ({ map }, regX) => {
-    const val = map.hl() + regX();
+    const hl = map.hl();
+    const x = regX();
+    const val = hl + x;
     map.hl(val);
 
-    const flag = new CheckFlagFor(map.f()).notSubtraction().halfCarry16(val).carry16(val).get();
+    const flag = new CheckFlagFor(map.f()).notSubtraction().setH16(val, hl, x).carry16(val).get();
     map.f(flag);
 
     return createOpTime(2, 8);
@@ -28,11 +30,14 @@ export default {
 
   addRegSPImmediate: ({ mmu, map }) => {
     const pc = map.pc();
+    const sp = map.sp();
     const immediateSigned = Util.convertSignedByte(mmu.readByte(pc));
     map.pc(pc + 1);
-    const val = map.sp() + immediateSigned;
-    map.sp(val);
-    const flag = new CheckFlagFor().carry16(val).halfCarry16(val).get();
+    const val = sp + immediateSigned;
+    map.sp(val  & 0xFFFF);
+
+    const isC = (sp & 0xFF) + (immediateSigned & 0xFF) > 0xFF;
+    const flag = new CheckFlagFor().setC(isC).setH(val, sp, immediateSigned).get();
     map.f(flag);
     return createOpTime(4, 16);
   },

@@ -68,13 +68,13 @@ describe('Processor', () => {
       const initPc = 0x1100;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAC);
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.subroutine.callIfC(state, false);
 
       assert.equal(reg.pc(), initPc + 2);
       reg.pc(initPc);
 
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.subroutine.callIfC(state, false);
 
       assert.equal(reg.pc(), 0xAAAC);
@@ -86,13 +86,13 @@ describe('Processor', () => {
       const initPc = 0x1200;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAB);
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.subroutine.callIfC(state, true);
 
       assert.equal(reg.pc(), initPc + 2);
       reg.pc(initPc);
 
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.subroutine.callIfC(state, true);
 
       assert.equal(reg.pc(), 0xAAAB);
@@ -125,12 +125,12 @@ describe('Processor', () => {
       reg.hl(returnAddr);
       Z80.load16.push(state, reg.hl);
       const sp = reg.sp();
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.subroutine.retIfC(state, false);
 
       assert.notEqual(reg.pc(), returnAddr);
 
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.subroutine.retIfC(state, false);
 
       assert.equal(reg.pc(), returnAddr);
@@ -142,12 +142,12 @@ describe('Processor', () => {
       reg.hl(returnAddr);
       Z80.load16.push(state, reg.hl);
       const sp = reg.sp();
-      reg.f(new CheckFlagFor().setCarry(false).get());
+      reg.f(new CheckFlagFor().setC(false).get());
       Z80.subroutine.retIfC(state, true);
 
       assert.notEqual(reg.pc(), returnAddr);
 
-      reg.f(new CheckFlagFor().setCarry(true).get());
+      reg.f(new CheckFlagFor().setC(true).get());
       Z80.subroutine.retIfC(state, true);
 
       assert.equal(reg.pc(), returnAddr);
