@@ -43,7 +43,7 @@ export default {
     let val = map.a();
 
     if (!flag.isSubtraction()) {
-      const isLowerNibbleOverNine = (val & 0x0F) > 9;
+      const isLowerNibbleOverNine = (val & 0xF) > 9;
       if (flag.isHalfCarry() || isLowerNibbleOverNine) {
         val += 6;
       }
@@ -54,21 +54,19 @@ export default {
       }
     } else {
       if (flag.isHalfCarry()) {
-        val -= 6;
-        if (!flag.isCarry()) {
-          val &= 0xFF;
-        }
+        val = ( val - 0x6 ) & 0xFF;
       }
 
       if (flag.isCarry()) {
         val -= 0x60;
       }
     }
-    const a = val & 0xFF;
-    map.a(a);
 
-    const newFlag = new CheckFlagFor(map.f()).setC(val & 0x100)
-      .zero(a).setHalfCarry(false).get();
+    const isC = val & 0x100;
+    map.a(val & 0xFF);
+
+    const newFlag = new CheckFlagFor(map.f()).setC(isC)
+      .zero(val).setHalfCarry(false).get();
     map.f(newFlag);
     return createOpTime(1, 4);
   },
