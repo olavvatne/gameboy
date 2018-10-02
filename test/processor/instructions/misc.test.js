@@ -124,52 +124,88 @@ describe('Processor', () => {
     assert.equal(bcdNum, corrBcd);
   });
 
-  it('can correct A containing bcd into correct bcd with other number', () => {
-    // Addition. 19 + 28 = 47
-    // 0001 1001 => 19
-    // 0010 1000 => 28
-    const num = 0b01000001; // 4 and 1. Not correctly adjusted
-    const corrBcd = 0b01000111; // 47 in bcd
-    // We have a half carry here from previous operation
-    const flag = new CheckFlagFor().setHalfCarry(true).get();
-    reg.a(num);
-    reg.f(flag);
+  // it('can correct A containing bcd into correct bcd with other number', () => {
+  //   // Addition. 19 + 28 = 47
+  //   // 0001 1001 => 19
+  //   // 0010 1000 => 28
+  //   const num = 0b01000001; // 4 and 1. Not correctly adjusted
+  //   const corrBcd = 0b01000111; // 47 in bcd
+  //   // We have a half carry here from previous operation
+  //   const flag = new CheckFlagFor().setHalfCarry(true).get();
+  //   reg.a(num);
+  //   reg.f(flag);
 
-    Z80.misc.daa(state);
+  //   Z80.misc.daa(state);
 
-    const bcdNum = reg.a();
+  //   const bcdNum = reg.a();
 
-    assert.equal(bcdNum, corrBcd);
-  });
+  //   assert.equal(bcdNum, corrBcd);
+  // });
 
-  it('can correct A containing bcd into correct bcd with third number', () => {
-    const num = 0b00001010; // 10
-    const corrBcd = 0b00010000; // 1 - 0
-    reg.a(num);
+  // it('can correct A containing bcd into correct bcd with third number', () => {
+  //   const num = 0b00001010; // 10
+  //   const corrBcd = 0b00010000; // 1 - 0
+  //   reg.a(num);
 
-    Z80.misc.daa(state);
+  //   Z80.misc.daa(state);
 
-    const bcdNum = reg.a();
+  //   const bcdNum = reg.a();
 
-    assert.equal(bcdNum, corrBcd);
-  });
+  //   assert.equal(bcdNum, corrBcd);
+  // });
 
-  it('handles correction of bcd reg A after subtraction', () => {
-    // 47 - 28 = 19
-    // 0010 1000 => 28
-    // 0100 0111 => 47
-    // 1101 1000 => two's complement of 28
-    // 0001 1111 => 1 and 15. Not bcd 19
-    const num = 0b00011111;
-    const corrBcd = 0b00011001; // 1 - 9
-    const flag = new CheckFlagFor().setHalfCarry(true).subtraction().get();
-    reg.a(num);
-    reg.f(flag);
+  // it('handles correction of bcd reg A after subtraction', () => {
+  //   // 47 - 28 = 19
+  //   // 0010 1000 => 28
+  //   // 0100 0111 => 47
+  //   // 1101 1000 => two's complement of 28
+  //   // 0001 1111 => 1 and 15. Not bcd 19
+  //   const num = 0b00011111;
+  //   const corrBcd = 0b00011001; // 1 - 9
+  //   const flag = new CheckFlagFor().setHalfCarry(true).subtraction().get();
+  //   reg.a(num);
+  //   reg.f(flag);
 
-    Z80.misc.daa(state);
+  //   Z80.misc.daa(state);
 
-    const bcdNum = reg.a();
+  //   const bcdNum = reg.a();
 
-    assert.equal(bcdNum, corrBcd);
-  });
+  //   assert.equal(bcdNum, corrBcd);
+  // });
+
+  // it('should handle this blargg DAA case', () => {
+  //   reg.a(0x60);
+  //   reg.b(0x12);
+  //   reg.c(0x00);
+  //   reg.d(0x60);
+  //   reg.e(0xd0);
+  //   reg.f(0xd0);
+  //   reg.h(0xff);
+  //   reg.l(0x50);
+
+  //   Z80.misc.daa(state);
+  //   assert.equal(reg.a(), 0x00);
+  //   assert.equal(reg.b(), 0x12);
+  //   assert.equal(reg.c(), 0x00);
+  //   assert.equal(reg.d(), 0x60);
+  //   assert.equal(reg.f(), 0xd0);
+  // });
+
+  // it('handles another blargg DAA edge case', () => {
+  //   reg.a(0x67);
+  //   reg.b(0x12);
+  //   reg.c(0x00);
+  //   reg.d(0x67);
+  //   reg.e(0xF0);
+  //   reg.f(0xF0);
+  //   reg.h(0x00);
+  //   reg.l(0xd0);
+
+  //   Z80.misc.daa(state);
+  //   assert.equal(reg.a(), 0x01);
+  //   assert.equal(reg.b(), 0x12);
+  //   assert.equal(reg.c(), 0x00);
+  //   assert.equal(reg.d(), 0x67);
+  //   assert.equal(reg.f(), 0x50);
+  // });
 });

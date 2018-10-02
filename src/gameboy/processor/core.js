@@ -61,13 +61,14 @@ export default class ProcessorCore {
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
-      if (this.currentOp === 0xF5 && this.recorder.getPreviousRecord(0).op === 0xF1 && this.recorder.getPreviousRecord(1).op === 0xC5) this.startDebug = true;
-      // if (this.startDebug) {
-      //   this.recorder.printCurrent(
-      //     this.currentOp, this.currentPc,
-      //     this.clock.clockCycles, this.reg.getState(),
-      //   );
-      // }
+      //if (this.currentOp === 0x27 && this.recorder.getPreviousRecord(0).op === 0xF1 && this.recorder.getPreviousRecord(1).op === 0xD5) this.startDebug = true;
+      if (this.currentOp === 0x27 && this.reg.map.a() === 0x67 && this.reg.map.e() === 0xf0 && this.reg.map.l() === 0xd0 && this.reg.map.h() === 0x00) this.startDebug = true;
+      if (this.startDebug) {
+        this.recorder.printCurrent(
+          this.currentOp, this.currentPc,
+          this.clock.clockCycles, this.reg.getState(),
+        );
+      }
       this.execute();
       if (this.interrupts.enabled) this.handleInterrupts();
       this.recorder.record(this.currentOp, this.currentPc);

@@ -54,7 +54,7 @@ export default {
       }
     } else {
       if (flag.isHalfCarry()) {
-        val = ( val - 0x6 ) & 0xFF;
+        val = (val - 0x6) & 0xFF;
       }
 
       if (flag.isCarry()) {
@@ -62,7 +62,7 @@ export default {
       }
     }
 
-    const isC = val & 0x100;
+    const isC = (val & 0x100) || val === 0x00;
     map.a(val & 0xFF);
 
     const newFlag = new CheckFlagFor(map.f()).setC(isC)
