@@ -184,6 +184,7 @@ const opcodes = {
   0x9C: cpu => Z80.alu8.sbc(cpu, cpu.map.h),
   0x9D: cpu => Z80.alu8.sbc(cpu, cpu.map.l),
   0x9E: cpu => Z80.alu8.sbcMemHL(cpu),
+  0xDE: cpu => Z80.alu8.sbcImmediate(cpu),
 
   // 5. AND n
   0xA7: cpu => Z80.alu8.and(cpu, cpu.map.a),

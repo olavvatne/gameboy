@@ -1,6 +1,6 @@
 import { CheckFlagFor } from '../';
-import { alu16 } from './';
 import { createOpTime } from '../clock-util';
+import Util from '../../util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -42,16 +42,14 @@ const setFlagsOnCompare = (map, val, subtrahend, minuend) => {
 
 const setFlagsOnInc = (map, val) => {
   const prevFlag = map.f();
-  const isH = (val & 0x0F) === 0; // inc by one. if lower nibble 0000, a half carry has occured.
-  const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().setHalfCarry(isH).get();
+  const flag = new CheckFlagFor(prevFlag).zero(val).notSubtraction().setH(val, val - 1, 1).get();
   map.f(flag);
 };
 
 const setFlagsOnDec = (map, val) => {
   const prevFlag = map.f();
   // Only way to borrow. -1 each time. From 0001 000 -> 0000 111
-  const isH = (val & 0x0F) === 0x0F;
-  const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().setHalfCarry(isH).get();
+  const flag = new CheckFlagFor(prevFlag).zero(val).subtraction().setH(val, val + 1, 1).get();
   map.f(flag);
 };
 
@@ -100,7 +98,8 @@ export default {
     const sum = immediateValue + a + isCarry;
     map.a(sum);
 
-    const flag = new CheckFlagFor().zero(sum).carry(sum).setH(sum, a, immediateValue + isCarry).get();
+    const flag = new CheckFlagFor().zero(sum)
+      .carry(sum).setH(sum, a, immediateValue).get();
     map.f(flag);
 
     return createOpTime(2, 8);
@@ -142,8 +141,8 @@ export default {
 
   subMemHL: ({ mmu, map }) => {
     const a = map.a();
-    const b =readValFromHLMem(map, mmu);
-    const val = a - b
+    const b = readValFromHLMem(map, mmu);
+    const val = a - b;
     map.a(val);
     setSubtractionFlag(map, val, a, b);
     return createOpTime(2, 8);
@@ -171,7 +170,17 @@ export default {
   sbcMemHL: ({ mmu, map }) => {
     const isCarry = new CheckFlagFor(map.f()).isCarry();
     const a = map.a();
-    const b = readValFromHLMem(map, mmu)
+    const b = readValFromHLMem(map, mmu);
+    const val = a - b - isCarry;
+    map.a(val & 0xFF);
+    setSubtractionFlag(map, val, a, b);
+    return createOpTime(2, 8);
+  },
+
+  sbcImmediate: ({ mmu, map }) => {
+    const isCarry = new CheckFlagFor(map.f()).isCarry();
+    const a = map.a();
+    const b = readImmediateValueAndIncrementPC(map, mmu);
     const val = a - b - isCarry;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, b);
@@ -244,7 +253,7 @@ export default {
   // Compare reg to A, setting flags (CP reg, B)
   cp: ({ map }, regX) => {
     const a = map.a();
-    const x =regX();
+    const x = regX();
     const res = a - x;
     setFlagsOnCompare(map, res, a, x);
     return createOpTime(1, 4);

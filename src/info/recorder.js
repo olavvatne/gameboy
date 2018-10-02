@@ -16,8 +16,8 @@ export default class Recorder {
     return this.history[cur];
   }
 
-  record(op, pc = -1) {
-    this.history[this.pos] = { op, pc };
+  record(op, pc = -1, state = null) {
+    this.history[this.pos] = { op, pc, state };
     this.pos = (this.pos + 1) % this.history.length;
   }
 
@@ -34,9 +34,8 @@ export default class Recorder {
     for (let i = 0; i < this.history.length; i += 1) {
       const cur = Math.abs((this.pos - 1 - i) % this.history.length);
       if (this.history[cur]) {
-        const pc = getHex(this.history[cur].pc);
-        const op = this.opcodeInfo.getDescription(this.history[cur].op);
-        console.log(pc, op);
+        const hist = this.history[cur];
+        this.printCurrent(hist.op, hist.pc, '', hist.state);
       } else {
         console.log('---');
       }
