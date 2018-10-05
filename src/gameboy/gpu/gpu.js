@@ -33,7 +33,7 @@ export default class GPU {
     // 4 color palette. Each 2 bits in the byte decides palette color
     for (let i = 0; i < 4; i += 1) {
       const pal = Util.getHalfNibble(value, i);
-      this.palette[type][pal] = Util.getPaletteColor(pal);
+      this.palette[type][i] = Util.getPaletteColor(pal);
     }
   }
 

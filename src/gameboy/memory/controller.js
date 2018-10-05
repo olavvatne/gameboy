@@ -1,11 +1,12 @@
 import bios from './bios';
 import Memory from './memory';
 import Interrupts from '../input/interrupts';
+import OAM from '../gpu/object-attribute-memory';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {
   constructor(
-    vram = new Memory(2 ** 13), oam = new Memory(2 ** 8),
+    vram = new Memory(2 ** 13), oam = new OAM(),
     io = new Memory(2 ** 7), interrupts = new Interrupts(),
   ) {
     this._rom0 = new Uint8Array(2 ** 14);
@@ -18,6 +19,7 @@ export default class MMU {
     this.io = io;
     this._cartType = 0;
     this._oam = oam;
+    this._oam.setMemoryReader(this);
     this._inBios = true;
   }
 
@@ -126,7 +128,7 @@ export default class MMU {
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
           else if (address === 0xFF46) {
-            this._oam.dmaTransfer(this, value);
+            this._oam.startDmaTransfer(value);
           } else if (address === 0xFF0F) { this.interrupts._if = value; }
           this.io.writeByte(address & 0xFF, value);
         } else if (address === 0xFFFF) {

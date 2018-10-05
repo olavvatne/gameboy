@@ -48,36 +48,36 @@ export default class IORegister extends Memory {
   // TODO: custom mapping scheme
   handleKeyDown(event) {
     switch (event.key) {
-      case 'Enter': this.keyColumns[0][3] = 0; break;
-      case 'Space': this.keyColumns[0][2] = 0; break;
-      case 'z': this.keyColumns[0][1] = 0; break;
-      case 'x': this.keyColumns[0][0] = 0; break;
+      case 'Enter': this.keyColumns[0][0] = 0; break;
+      case 'Space': this.keyColumns[0][1] = 0; break;
+      case 'z': this.keyColumns[0][2] = 0; break;
+      case 'x': this.keyColumns[0][3] = 0; break;
       case 'Down':
-      case 'ArrowDown': this.keyColumns[1][3] = 0; break;
+      case 'ArrowDown': this.keyColumns[1][0] = 0; break;
       case 'Up':
-      case 'ArrowUp': this.keyColumns[1][2] = 0; break;
+      case 'ArrowUp': this.keyColumns[1][1] = 0; break;
       case 'Left':
-      case 'ArrowLeft': this.keyColumns[1][1] = 0; break;
+      case 'ArrowLeft': this.keyColumns[1][2] = 0; break;
       case 'Right':
-      case 'ArrowRight': this.keyColumns[1][0] = 0; break;
+      case 'ArrowRight': this.keyColumns[1][3] = 0; break;
       default: break;
     }
   }
 
   handleKeyUp(event) {
     switch (event.key) {
-      case 'Enter': this.keyColumns[0][3] = 1; break;
-      case 'Space': this.keyColumns[0][2] = 1; break;
-      case 'z': this.keyColumns[0][1] = 1; break;
-      case 'x': this.keyColumns[0][0] = 1; break;
+      case 'Enter': this.keyColumns[0][0] = 1; break;
+      case 'Space': this.keyColumns[0][1] = 1; break;
+      case 'z': this.keyColumns[0][2] = 1; break;
+      case 'x': this.keyColumns[0][3] = 1; break;
       case 'Down':
-      case 'ArrowDown': this.keyColumns[1][3] = 1; break;
+      case 'ArrowDown': this.keyColumns[1][0] = 1; break;
       case 'Up':
-      case 'ArrowUp': this.keyColumns[1][2] = 1; break;
+      case 'ArrowUp': this.keyColumns[1][1] = 1; break;
       case 'Left':
-      case 'ArrowLeft': this.keyColumns[1][1] = 1; break;
+      case 'ArrowLeft': this.keyColumns[1][2] = 1; break;
       case 'Right':
-      case 'ArrowRight': this.keyColumns[1][0] = 1; break;
+      case 'ArrowRight': this.keyColumns[1][3] = 1; break;
       default: break;
     }
   }

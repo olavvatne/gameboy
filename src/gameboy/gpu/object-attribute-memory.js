@@ -6,11 +6,13 @@ import Util from '../util';
 export default class OAM extends Memory {
   constructor() {
     super(2 ** 8);
-    this.objects = new Array(40).fill({
+    this.objects = new Array(40).fill().map(() => ({
       y: -16, x: -8, tile: 0, palette: 0, priority: 0,
-    });
+    }));
   }
-
+  setMemoryReader(mmu) {
+    this._mmu = mmu;
+  }
   readByte(address) {
     return super.readByte(address);
   }
@@ -20,9 +22,9 @@ export default class OAM extends Memory {
     this.updateObject(address, value);
   }
 
-  dmaTransfer(mmu, value) {
+  startDmaTransfer(value) {
     for (let i = 0; i < 160; i += 1) {
-      const val = mmu.readByte((value << 8) + 1);
+      const val = this._mmu.readByte((value << 8) + i);
       this.writeByte(i, val);
     }
   }
