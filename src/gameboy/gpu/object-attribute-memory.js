@@ -20,6 +20,13 @@ export default class OAM extends Memory {
     this.updateObject(address, value);
   }
 
+  dmaTransfer(mmu, value) {
+    for (let i = 0; i < 160; i += 1) {
+      const val = mmu.readByte((value << 8) + 1);
+      this.writeByte(i, val);
+    }
+  }
+
   updateObject(address, value) {
     const index = address >> 2;
     if (index >= 40) return;

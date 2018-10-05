@@ -62,7 +62,6 @@ export default class MMU {
         if (address < 0xFE00) {
           return this._wram.readByte(address & 0x1FFF);
         } else if (address < 0xFF00) {
-          // TODO: GPU OAM
           return this._oam.readByte(address & 0xFF);
         } else if (address < 0xFF80) {
           if (address === 0xFF0F) return this.interrupts._if;
@@ -126,7 +125,9 @@ export default class MMU {
           this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
-          if (address === 0xFF0F) this.interrupts._if = value;
+          else if (address === 0xFF46) {
+            this._oam.dmaTransfer(this, value);
+          } else if (address === 0xFF0F) { this.interrupts._if = value; }
           this.io.writeByte(address & 0xFF, value);
         } else if (address === 0xFFFF) {
           this.interrupts._ie = value;

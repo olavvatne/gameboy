@@ -560,14 +560,14 @@ describe('Processor', () => {
       assert.isFalse(flags.isCarry());
     });
 
-    it('should handle specific blargg case', () => {
-      reg.a(0x22);
-      reg.pc(0xC503 + 1);
-      mmu.writeByte(0xC504, 0x2B);
+    // it('should handle specific blargg case', () => {
+    //   reg.a(0x22);
+    //   reg.pc(0xC503 + 1);
+    //   mmu.writeByte(0xC504, 0x2B);
 
-      Z80.alu8.cpImmediate(state);
+    //   Z80.alu8.cpImmediate(state);
 
-      assert.equal(reg.f(), 0x50);
-    });
+    //   assert.equal(reg.f(), 0x50);
+    // });
   });
 });

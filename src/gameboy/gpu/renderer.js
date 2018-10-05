@@ -56,9 +56,8 @@ export default class Renderer {
         const row = tile.flipY ? tile[7 - rowIndex] : tile[rowIndex];
 
         for (let x = 0; x < 8; x += 1) {
-          // TODO: simplify
-          if (sprite.x + x >= 0 && sprite.x + x < 160 && row[x] &&
-             (sprite.priority || !this._screen.getPixel(line, x))) {
+          // TODO: simplify (sprite.priority || !this._screen.getPixel(line, x))
+          if (sprite.x + x >= 0 && sprite.x + x < 160 && row[x]) {
             const correctedX = sprite.flipX ? 7 - x : x;
             const color = pal[row[correctedX]];
             this._screen.setPixel(line, sprite.x + correctedX, color);
