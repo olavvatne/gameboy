@@ -24,10 +24,14 @@ export default class Recorder {
   printCurrent(op, pc, clock, state) {
     const info = this.opcodeInfo.getDescription(op);
     const hexPc = getHex(pc);
-    console.log(
-      hexPc, getHex(op), info, `A:${state.a}`, `B:${state.b}`, `C:${state.c}`,
-      `D:${state.d}`, `E:${state.e}`, `F:${state.f}`, `H:${state.h}`, `L:${state.l}`, `SP:${state.sp}`, clock,
-    );
+    if (state === null) {
+      console.log(hexPc, getHex(op), info);
+    } else {
+      console.log(
+        hexPc, getHex(op), info, `A:${state.a}`, `B:${state.b}`, `C:${state.c}`,
+        `D:${state.d}`, `E:${state.e}`, `F:${state.f}`, `H:${state.h}`, `L:${state.l}`, `SP:${state.sp}`, clock,
+      );
+    }
   }
 
   printHistory() {

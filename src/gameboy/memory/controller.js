@@ -44,11 +44,10 @@ export default class MMU {
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        return this._rom1[address & 0x1FFF];
+        return this._rom1[address & 0x3FFF];
       // VRAM
       case 0x8000:
       case 0x9000:
-      // TODO: GPU VRAM
         return this._vram.readByte(address & 0x1FFF);
       // Cartridge RAM
       case 0xA000:
@@ -100,7 +99,7 @@ export default class MMU {
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        this._rom1[address & 0x1FFF] = value;
+        this._rom1[address & 0x3FFF] = value;
         break;
       // VRAM
       case 0x8000:
