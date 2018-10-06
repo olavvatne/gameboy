@@ -101,7 +101,7 @@ describe('Processor', () => {
     });
 
     it('adds immediate to stack pointer', () => {
-      const pcVal = 0x4342;
+      const pcVal = 0x9342;
       const valueInMem = 0x54;
       const spVal = 0x02;
       reg.pc(pcVal);
@@ -114,7 +114,7 @@ describe('Processor', () => {
     });
 
     it('checks carry and half carry on add immediate to SP', () => {
-      const pcVal = 0x4342;
+      const pcVal = 0x9342;
       const valueInMem = 0x7F;
       const spVal = 0xFF81;
       reg.pc(pcVal);

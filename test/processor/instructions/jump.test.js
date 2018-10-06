@@ -20,31 +20,31 @@ describe('Processor', () => {
 
   describe('Jumps - instruction set tests', () => {
     it('jumps using the two immediate bytes', () => {
-      const jumpTo = 0x4100;
-      reg.pc(0x2000);
-      mmu.writeWord(0x2000, jumpTo);
+      const jumpTo = 0x9100;
+      reg.pc(0xC000);
+      mmu.writeWord(0xC000, jumpTo);
       Z80.jump.jp(state);
 
       assert.equal(reg.pc(), jumpTo);
     });
 
     it('jumps if Z is reset', () => {
-      const jumpTo = 0x4100;
-      reg.pc(0x2000);
-      mmu.writeWord(0x2000, jumpTo);
+      const jumpTo = 0xC100;
+      reg.pc(0x9000);
+      mmu.writeWord(0x9000, jumpTo);
       Z80.jump.jpIfZ(state, false);
 
       assert.equal(reg.pc(), jumpTo);
     });
 
     it('jumps if Z is set', () => {
-      const jumpTo = 0x4500;
-      const noJump = 0x2100;
-      reg.pc(0x2100);
-      mmu.writeWord(0x2100, jumpTo);
+      const jumpTo = 0x9500;
+      const noJump = 0xA100;
+      reg.pc(noJump);
+      mmu.writeWord(noJump, jumpTo);
       Z80.jump.jpIfZ(state, true);
       assert.equal(reg.pc(), noJump + 2);
-      reg.pc(0x2100);
+      reg.pc(noJump);
 
       reg.f(new CheckFlagFor().zero(0).get());
       Z80.jump.jpIfZ(state, true);

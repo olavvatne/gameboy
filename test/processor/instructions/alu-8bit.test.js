@@ -61,14 +61,14 @@ describe('Processor', () => {
 
     it('can take immediate value and add with reg A', () => {
       reg.a(0xF0);
-      reg.pc(0x3200);
-      mmu.writeByte(0x3200, 0x01);
+      reg.pc(0xB200);
+      mmu.writeByte(0xB200, 0x01);
 
       Z80.alu8.addImmediate(state);
 
       assert.equal(reg.a(), 0xF1);
       assert.equal(reg.f(), 0);
-      assert.isAbove(reg.pc(), 0x3200);
+      assert.isAbove(reg.pc(), 0xB200);
     });
 
     it('can sum A and a reg + carry flag', () => {
@@ -88,8 +88,8 @@ describe('Processor', () => {
 
     it('can sum value in mem with reg + carry flag', () => {
       reg.a(0x1);
-      mmu.writeByte(0x2222, 0x01);
-      reg.hl(0x2222);
+      mmu.writeByte(0xA222, 0x01);
+      reg.hl(0xA222);
       reg.f(0b00010000);
 
       Z80.alu8.adcMemHLPlusCarry(state);
@@ -98,7 +98,7 @@ describe('Processor', () => {
     });
 
     it('can sum immediate value with A + carry flag', () => {
-      const nextInMem = 0x2223;
+      const nextInMem = 0xA223;
       const immediateVal = 0x23;
       const valInA = 0x10;
       reg.a(valInA);
@@ -143,7 +143,7 @@ describe('Processor', () => {
 
     it('can subtract val from mem with A', () => {
       const valInA = 0xDD;
-      const memAddr = 0x5555;
+      const memAddr = 0x9555;
       const memVal = 0x44;
       reg.a(valInA);
       reg.hl(memAddr);
@@ -159,7 +159,7 @@ describe('Processor', () => {
 
     it('can subtract immediate from A', () => {
       const valInA = 0xEE;
-      const pcMemAddr = 0x6662;
+      const pcMemAddr = 0x9662;
       const memVal = 0x59;
       reg.a(valInA);
       reg.pc(pcMemAddr);
@@ -188,7 +188,7 @@ describe('Processor', () => {
 
     it('can subtract Mem HL plus carry from A', () => {
       const valInA = 0xBE;
-      const memAddr = 0x5555;
+      const memAddr = 0x9555;
       const memVal = 0x44;
       reg.hl(memAddr);
       mmu.writeByte(memAddr, memVal);
@@ -216,7 +216,7 @@ describe('Processor', () => {
     it('takes logical and of mem HL and A', () => {
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
-      const memAddr = 0x7645;
+      const memAddr = 0xB645;
       reg.a(valInA);
       reg.hl(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -229,7 +229,7 @@ describe('Processor', () => {
     it('takes logical and of immediate and A', () => {
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
-      const memAddr = 0x7645;
+      const memAddr = 0xB645;
       reg.a(valInA);
       reg.pc(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -254,7 +254,7 @@ describe('Processor', () => {
     it('takes logical or of mem HL and A', () => {
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
-      const memAddr = 0x7645;
+      const memAddr = 0x9645;
       reg.a(valInA);
       reg.hl(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -267,7 +267,7 @@ describe('Processor', () => {
     it('takes logical or of immediate and A', () => {
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
-      const memAddr = 0x7645;
+      const memAddr = 0x9645;
       reg.a(valInA);
       reg.pc(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -291,7 +291,7 @@ describe('Processor', () => {
     it('takes logical xor of mem HL and A', () => {
       const valInA = 0b00011000;
       const valInMem = 0b00011100;
-      const memAddr = 0x7645;
+      const memAddr = 0x9645;
       reg.a(valInA);
       reg.hl(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -304,7 +304,7 @@ describe('Processor', () => {
     it('takes logical xor of immediate and A', () => {
       const valInA = 0b10000011;
       const valInMem = 0b00000010;
-      const memAddr = 0x7645;
+      const memAddr = 0xC645;
       reg.a(valInA);
       reg.pc(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -365,7 +365,7 @@ describe('Processor', () => {
     it('takes logical xor of immediate and A', () => {
       const valInA = 0x20;
       const valInMem = 0x80;
-      const memAddr = 0x7644;
+      const memAddr = 0xA644;
       reg.a(valInA);
       reg.pc(memAddr);
       mmu.writeByte(memAddr, valInMem);
@@ -427,7 +427,7 @@ describe('Processor', () => {
     });
 
     it('increments value in memAddr found in HL', () => {
-      const memAddrInHL = 0x4342;
+      const memAddrInHL = 0xD342;
       const valueInMem = 0x54;
       reg.hl(memAddrInHL);
       mmu.writeByte(memAddrInHL, valueInMem);
@@ -438,7 +438,7 @@ describe('Processor', () => {
     });
 
     it('decrements value in mem with addr found in HL', () => {
-      const memAddrInHL = 0x4342;
+      const memAddrInHL = 0xC342;
       const valueInMem = 0x55;
       reg.hl(memAddrInHL);
       mmu.writeByte(memAddrInHL, valueInMem);

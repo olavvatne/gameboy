@@ -6,6 +6,7 @@ import Interrupts from './input/interrupts';
 
 export default class Gameboy {
   constructor(canvas) {
+    this.canvas = canvas;
     this.interrupts = new Interrupts();
     this.gpu = new GPU(new Screen(canvas), this.interrupts);
     this.io = new IORegister(this.gpu);
@@ -19,7 +20,16 @@ export default class Gameboy {
 
   start(data) {
     this.loadRom(data);
-    this.interval = setInterval(() => this.core.loop(), 1);
+    this.interval = setInterval(() => this.runAFrame(), 1);
+  }
+
+  runAFrame() {
+    const t0 = new Date();
+    this.core.loop();
+    const t1 = new Date();
+    const fps = Math.round(10000 / (t1 - t0)) / 10;
+    this.canvas.fillStyle = 'blue';
+    this.canvas.fillText(fps, 10, 10);
   }
 
   pause() {

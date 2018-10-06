@@ -68,7 +68,7 @@ describe('Processor', () => {
 
     it('sets bit 7 of mem location found in HL', () => {
       const val = 0b00000010;
-      const valInHL = 0x5555;
+      const valInHL = 0xC555;
       reg.hl(valInHL);
       mmu.writeByte(valInHL, val);
       Z80.bit.set(state, NameMap.hl, 7);
@@ -85,7 +85,7 @@ describe('Processor', () => {
 
     it('resets bit 2 of mem location found in HL', () => {
       const val = 0b00000111;
-      const valInHL = 0x5555;
+      const valInHL = 0xB555;
       reg.hl(valInHL);
       mmu.writeByte(valInHL, val);
       Z80.bit.res(state, NameMap.hl, 2);

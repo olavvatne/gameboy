@@ -42,9 +42,9 @@ describe('Memory', () => {
 
     it('can write a word and read it correctly as bytes', () => {
       const memory = getMemory();
-      memory.writeWord(9000, 0xAB67);
-      const first = memory.readByte(9000);
-      const second = memory.readByte(9001);
+      memory.writeWord(0x9000, 0xAB67);
+      const first = memory.readByte(0x9000);
+      const second = memory.readByte(0x9001);
       assert.equal(first, 0x67);
       assert.equal(second, 0xAB);
     });

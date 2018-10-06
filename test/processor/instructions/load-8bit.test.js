@@ -102,7 +102,7 @@ describe('Processor', () => {
     });
 
     it('has an instruction which put value at addr HL into A and dec HL', () => {
-      const addr = 0x3458;
+      const addr = 0xC458;
       reg.hl(addr);
       mmu.writeByte(addr, 0x99);
 
@@ -124,8 +124,8 @@ describe('Processor', () => {
     });
 
     it('can put the immediate value into memory addr in HL', () => {
-      reg.pc(0x5000);
-      mmu.writeByte(0x5000, 0x43);
+      reg.pc(0x9000);
+      mmu.writeByte(0x9000, 0x43);
       reg.hl(0xA234);
 
       Z80.load8.ldMemHLImmediate(state);
@@ -134,13 +134,13 @@ describe('Processor', () => {
     });
 
     it('can put reg A val into memory addr found in the two immediate values', () => {
-      reg.pc(0x2000);
-      mmu.writeWord(0x2000, 0x6000);
+      reg.pc(0xA000);
+      mmu.writeWord(0xA000, 0x9000);
       reg.a(0x05);
 
       Z80.load8.ldImmediateA(state);
 
-      assert.equal(mmu.readWord(0x6000), 0x05);
+      assert.equal(mmu.readWord(0x9000), 0x05);
     });
 
     it('put value in mem addr FF00 plus immediate into register A', () => {
@@ -159,7 +159,7 @@ describe('Processor', () => {
     });
 
     it('can put mem val from address HL into reg c', () => {
-      const addr = 0x3458;
+      const addr = 0xB458;
       reg.hl(addr);
       mmu.writeByte(addr, 0x99);
 
@@ -169,7 +169,7 @@ describe('Processor', () => {
     });
 
     it('can load value from reg bc mem location into a', () => {
-      const addr = 0x3231;
+      const addr = 0xB231;
       reg.bc(addr);
       mmu.writeByte(addr, 0x19);
 

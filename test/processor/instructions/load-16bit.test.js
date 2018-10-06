@@ -18,8 +18,8 @@ describe('Processor', () => {
 
   describe('Load 16 bit - instruction set tests', () => {
     it('can put immediate value into a 16 bit register', () => {
-      reg.pc(0x4444);
-      mmu.writeWord(0x4444, 0x1000);
+      reg.pc(0xA444);
+      mmu.writeWord(0xA444, 0x1000);
       reg.de(0x9999);
 
       Z80.load16.ldImmediateIntoReg(state, reg.de);
@@ -34,12 +34,12 @@ describe('Processor', () => {
     });
 
     it('can put SP + immediate value into HL and affect flags', () => {
-      reg.sp(0x3333);
+      reg.sp(0xB333);
       reg.f(0x99);
-      const imAddr = 0x7654;
+      const imAddr = 0x9654;
       const imVal = 0x11;
       // Over 255. Will cause carry
-      const correct = 0x3333 + 0x11;
+      const correct = 0xB333 + 0x11;
       reg.pc(imAddr);
       mmu.writeWord(imAddr, imVal);
       Z80.load16.ldHLFromSPPlusImmediate(state);
@@ -73,7 +73,7 @@ describe('Processor', () => {
     });
 
     it('works different with register pair AF', () => {
-      const pcAddr = 0x5565;
+      const pcAddr = 0xA565;
       mmu.writeByte(pcAddr + 1, 0xAB);
       mmu.writeByte(pcAddr, 0xCD);
       reg.pc(pcAddr);
@@ -97,7 +97,7 @@ describe('Processor', () => {
 
     it('loads immediate into 16 bit register, with endian correct', () => {
       const val = 0xABCD;
-      const pcAddr = 0x5565;
+      const pcAddr = 0xA565;
       mmu.writeByte(pcAddr + 1, 0xAB);
       mmu.writeByte(pcAddr, 0xCD);
       reg.pc(pcAddr);
