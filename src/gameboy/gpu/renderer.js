@@ -59,7 +59,7 @@ export default class Renderer {
         for (let x = 0; x < 8; x += 1) {
           if (!(sprite.x + x >= 0 && sprite.x + x < 160 && row[x])) continue;
           const pixel = this._screen.getPixel(line, x);
-          if (sprite.priority || (pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0)) {
+          if (sprite.priority || pixel[0] !== 0 || pixel[1] !== 0 || pixel[2] !== 0) {
             const correctedX = sprite.flipX ? 7 - x : x;
             const color = pal[row[correctedX]];
             this._screen.setPixel(line, sprite.x + correctedX, color);

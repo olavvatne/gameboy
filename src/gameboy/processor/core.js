@@ -5,6 +5,7 @@ import Recorder from '../../info/recorder';
 export default class ProcessorCore {
   constructor(memoryController, interruptHandler, notifyGpu) {
     this.mmu = memoryController;
+    this.timer = memoryController.timer;
     this.interrupts = interruptHandler;
     this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
@@ -14,6 +15,7 @@ export default class ProcessorCore {
     this.currentPc = 0;
     this.currentInstruction = null;
     this.recorder = new Recorder();
+    this.numVSync = 0;
   }
 
   fetch() {
@@ -48,7 +50,7 @@ export default class ProcessorCore {
     const timeSpent = this.currentInstruction(state);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
-
+    this.timer.increment(timeSpent.m);
     this.notifyGpu(timeSpent.t);
   }
 
@@ -82,7 +84,10 @@ export default class ProcessorCore {
 
   handleInterrupts() {
     if (!this.interrupts.anyTriggered()) return;
-    if (this.interrupts.checkVblankTriggered()) this.callRst(0x0040);
+    if (this.interrupts.checkVblankTriggered()) {
+      this.numVSync += 1;
+      this.callRst(0x0040);
+    }
     if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x0048);
     if (this.interrupts.checkTimerTriggered()) this.callRst(0x0050);
     if (this.interrupts.checkSerialTriggered()) this.callRst(0x0058);
@@ -95,6 +100,7 @@ export default class ProcessorCore {
     const timeSpent = Z80.subroutine.rst(state, num);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
+    this.timer.increment(timeSpent.m);
   }
 
   reset() {

@@ -18,3 +18,4 @@ export { Registers, NameMap } from './registers';
 export { default as opcodes } from './opcodes-map';
 export { default as CPU } from './core';
 export { default as CheckFlagFor } from './flag-check';
+export { default as Interrupts } from './interrupts';

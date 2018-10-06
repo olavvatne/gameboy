@@ -1,8 +1,8 @@
 import { CPU } from './processor';
 import { MMU } from './memory';
 import { GPU, Screen } from './gpu';
-import IORegister from './input/io-register';
-import Interrupts from './input/interrupts';
+import IORegister from './io/io-register';
+import Interrupts from './processor/interrupts';
 
 export default class Gameboy {
   constructor(canvas) {
@@ -16,31 +16,44 @@ export default class Gameboy {
     this.core = new CPU(this.memory, this.interrupts, tick => this.gpu.step(tick));
     this.core.setActions(() => this.pause());
     this.interval = null;
-    this.numFrames = 0;
   }
 
   start(data) {
     if (this.interval) return;
 
     this.loadRom(data);
-    this.interval = setInterval(() => this.runAFrame(), 1);
+    this.interval = setInterval(() => this.runForAWhile(), 1);
   }
 
-  runAFrame() {
+  runForAWhile() {
+    this.timeBeforeFrame = new Date();
+    this.cyclesBeforeFrame = this.core.clock.clockCycles;
     this.core.loop();
+    this.syncTime();
     this.handleFpsCounter();
   }
 
-  handleFpsCounter() {
-    if (this.numFrames === 0) this.t0 = new Date();
-    this.numFrames += 1;
-    if (this.numFrames >= 50) {
-      this.numFrames = 0;
-      this.fps = Math.round(50 / ((new Date() - this.t0) / 1000));
+  syncTime() {
+    let diffTime = (new Date() - this.timeBeforeFrame) / 1000;
+    const diffCycles = this.core.clock.clockCycles - this.cyclesBeforeFrame;
+    const cyclesPerSec = 4194304;
+    const virtualTimeElapsed = diffCycles / cyclesPerSec;
+    while (virtualTimeElapsed > diffTime) {
+      diffTime = (new Date() - this.timeBeforeFrame) / 1000;
     }
-    // TODO: is fps correct?
-    this.canvas.fillStyle = 'blue';
-    this.canvas.fillText(this.fps, 10, 10);
+  }
+
+  handleFpsCounter() {
+    if (this.core.numVSync > 0 && this.core.numVSync % 60 === 0) {
+      const timeDiff = (new Date() - this.previousFpsTime) / 1000;
+      this.fps = Math.round(60 / timeDiff);
+      this.previousFpsTime = new Date();
+    }
+    if (this.previousFpsTime) {
+      this.canvas.fillStyle = 'blue';
+      this.canvas.font = '10px Arial';
+      this.canvas.fillText(this.fps, 10, 10);
+    }
   }
 
   pause() {

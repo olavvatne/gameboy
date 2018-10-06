@@ -1,14 +1,15 @@
 import bios from './bios';
 import Memory from './memory';
-import Interrupts from '../input/interrupts';
+import Interrupts from '../processor/interrupts';
 import OAM from '../gpu/object-attribute-memory';
 import Cartridge from './cartrigde';
+import Timer from '../timer/timer';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {
   constructor(
-    vram = new Memory(2 ** 13), oam = new OAM(),
-    io = new Memory(2 ** 7), interrupts = new Interrupts(),
+    vram = new Memory(2 ** 13), oam = new OAM(), io = new Memory(2 ** 7),
+    interrupts = new Interrupts(),
   ) {
     this.init();
     this._vram = vram;
@@ -16,6 +17,7 @@ export default class MMU {
     this.io = io;
     this._oam = oam;
     this._oam.setMemoryReader(this);
+    this.timer = new Timer(interrupts);
   }
 
   init() {
@@ -68,6 +70,10 @@ export default class MMU {
           return this._oam.readByte(address & 0xFF);
         } else if (address < 0xFF80) {
           if (address === 0xFF0F) return this.interrupts._if;
+          else if (address === 0xFF04) return this.timer.div;
+          else if (address === 0xFF05) return this.timer.tima;
+          else if (address === 0xFF06) return this.timer.tma;
+          else if (address === 0xFF07) return this.timer.tac;
           return this.io.readByte(address & 0xFF);
         } else if (address === 0xFFFF) {
           return this.interrupts._ie;
@@ -127,11 +133,13 @@ export default class MMU {
           this._oam.writeByte(address & 0xFF, value);
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
-          else if (address === 0xFF46) {
-            this._oam.startDmaTransfer(value);
-          } else if (address === 0xFF0F) {
-            this.interrupts._if = value;
-          }
+          else if (address === 0xFF0F) this.interrupts._if = value;
+          else if (address === 0xFF46) this._oam.startDmaTransfer(value);
+          else if (address === 0xFF04) this.timer.div = 0;
+          else if (address === 0xFF05) this.timer.tima = value;
+          else if (address === 0xFF06) this.timer.tma = value;
+          else if (address === 0xFF07) this.timer.tac = value & 7;
+
           this.io.writeByte(address & 0xFF, value);
         } else if (address === 0xFFFF) {
           this.interrupts._ie = value;

@@ -4,7 +4,7 @@ import RenderTiming from './timing';
 import FrameBuffer from './frame-buffer';
 import Renderer from './renderer';
 import Util from '../util';
-import Interrupts from '../input/interrupts';
+import Interrupts from '../processor/interrupts';
 
 /* eslint no-bitwise: 0 */
 

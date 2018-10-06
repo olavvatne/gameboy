@@ -37,6 +37,10 @@ export default class Interrupts {
     return isTimer;
   }
 
+  triggerTimer() {
+    this._if |= 0b00000100;
+  }
+
   checkSerialTriggered() {
     const isSerial = (this._ie & this._if) & 8;
     if (isSerial) this._if &= 0b11110111;

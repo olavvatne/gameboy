@@ -1,8 +1,7 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import { CPU } from '../../src/gameboy/processor';
+import { CPU, Interrupts } from '../../src/gameboy/processor';
 import { MMU } from '../../src/gameboy/memory';
-import Interrupts from '../../src/gameboy/input/interrupts';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
