@@ -20,31 +20,33 @@ describe('Processor', () => {
   describe('Load 8 bit - instruction set tests', () => {
     it('can load from register into memory address specfied by HL', () => {
       // Assumes that (HL) on page 67 of CPU manuel means put register into memory address HL
-      reg.hl(2005);
+      const memAddr = 0xB005;
+      reg.hl(memAddr);
       reg.b(230);
       reg.c(105);
 
       Z80.load8.ldMemHLReg(state, reg.b);
-      assert.equal(mmu.readByte(2005), 230);
+      assert.equal(mmu.readByte(memAddr), 230);
       Z80.load8.ldMemHLReg(state, reg.c);
-      assert.equal(mmu.readByte(2005), 105);
+      assert.equal(mmu.readByte(memAddr), 105);
     });
 
     it('can load immediate value into A', () => {
-      reg.pc(0x1220);
-      mmu.writeByte(0x1220, 0xAA);
+      const pcAddr = 0xAA20;
+      reg.pc(pcAddr);
+      mmu.writeByte(pcAddr, 0xAA);
 
       Z80.load8.ldAImmediate(state);
 
-      assert.equal(reg.pc(), 0x1221);
+      assert.equal(reg.pc(), pcAddr + 1);
       assert.equal(reg.a(), 0xAA);
     });
 
     it('can load into A the value from memory based on immediate word', () => {
-      const pcVal = 0x01AB;
+      const pcVal = 0xA1AB;
       reg.pc(pcVal);
-      mmu.writeWord(0x01AB, 0x1234);
-      mmu.writeByte(0x1234, 0xEF);
+      mmu.writeWord(pcVal, 0x9234);
+      mmu.writeByte(0x9234, 0xEF);
 
       Z80.load8.ldRegAImmediateWord(state);
 
@@ -53,7 +55,7 @@ describe('Processor', () => {
     });
 
     it('can put 8 bit immediate value into register', () => {
-      const pcAddr = 0x0AC;
+      const pcAddr = 0xA0AC;
       const pcVal = 0x11;
       mmu.exitBios();
       reg.pc(pcAddr);
@@ -69,7 +71,7 @@ describe('Processor', () => {
     });
 
     it('can put value from memory at address found in HL into a 8 bit register', () => {
-      const memAddr = 0x1234;
+      const memAddr = 0xA234;
       mmu.writeByte(memAddr, 0x59);
 
       assert.equal(reg.a(), 0x00);
@@ -124,11 +126,11 @@ describe('Processor', () => {
     it('can put the immediate value into memory addr in HL', () => {
       reg.pc(0x5000);
       mmu.writeByte(0x5000, 0x43);
-      reg.hl(0x1234);
+      reg.hl(0xA234);
 
       Z80.load8.ldMemHLImmediate(state);
 
-      assert.equal(mmu.readByte(0x1234), 0x43);
+      assert.equal(mmu.readByte(0xA234), 0x43);
     });
 
     it('can put reg A val into memory addr found in the two immediate values', () => {
@@ -142,8 +144,8 @@ describe('Processor', () => {
     });
 
     it('put value in mem addr FF00 plus immediate into register A', () => {
-      reg.pc(0x1234);
-      const immediateAddr = 0x1234;
+      reg.pc(0xA234);
+      const immediateAddr = 0xA234;
       const immediateValue = 0x12;
       const corrValue = 0x89;
       mmu.writeByte(immediateAddr, 0x12);
@@ -153,7 +155,7 @@ describe('Processor', () => {
       Z80.load8.ldhRegAMemFF00PlusImmediate(state);
 
       assert.equal(reg.a(), corrValue);
-      assert.equal(reg.pc(), 0x1235);
+      assert.equal(reg.pc(), 0xA235);
     });
 
     it('can put mem val from address HL into reg c', () => {

@@ -41,11 +41,11 @@ describe('Gameboy', () => {
       // write hl to buffer
       const val = 0b11001010;
       const addr = 0x8000; // Tile 0 row 0 byte 0
-      gameboy.memory.writeByte(0x00, 0x3E); // load immediate into A
-      gameboy.memory.writeByte(0x01, val);
-      gameboy.memory.writeByte(0x02, 0x21); // Load  immediate word in HL
-      gameboy.memory.writeWord(0x03, addr);
-      gameboy.memory.writeByte(0x05, 0x77); // put content of A into mem HL
+      gameboy.memory.cartridge.rom[0] = 0x3E; // load immediate into A
+      gameboy.memory.cartridge.rom[1] = val;
+      gameboy.memory.cartridge.rom[2] = 0x21; // Load  immediate word in HL
+      gameboy.memory.cartridge.rom[4] = 0x80; // little endian, uppder half of address
+      gameboy.memory.cartridge.rom[5] = 0x77; // put content of A into mem HL
 
       runFor(gameboy, 6);
       assert.equal(gameboy.core.currentOp, 0x00);

@@ -24,13 +24,13 @@ export default class TestRunner {
   }
   putLogoInMem() {
     for (let i = 0; i < logo.length; i += 1) {
-      this.memory.writeByte(0x104 + i, logo[i]);
+      this.memory.cartridge.rom[0x104 + i] = logo[i];
     }
   }
 
   putChecksumInMem() {
     for (let i = 0; i < checksum.length; i += 1) {
-      this.memory.writeByte(0x134 + i, checksum[i]);
+      this.memory.cartridge.rom[0x134 + i] = checksum[i];
     }
   }
 

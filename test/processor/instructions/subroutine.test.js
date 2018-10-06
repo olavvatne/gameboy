@@ -18,18 +18,18 @@ describe('Processor', () => {
 
   describe('Subroutine - instruction set tests', () => {
     it('pushes address of next instruction onto stack and jumps to immediate', () => {
-      reg.pc(0x1000);
-      mmu.writeWord(0x1000, 0xAAAA);
+      reg.pc(0x9000);
+      mmu.writeWord(0x9000, 0xAAAA);
 
       Z80.subroutine.call(state);
 
       assert.equal(reg.pc(), 0xAAAA);
       const immediateOffset = 2;
-      assert.equal(mmu.readWord(reg.sp()), 0x1000 + immediateOffset);
+      assert.equal(mmu.readWord(reg.sp()), 0x9000 + immediateOffset);
     });
 
     it('calls if Z flag is reset', () => {
-      const initPc = 0x1000;
+      const initPc = 0x9000;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAA);
       reg.f(new CheckFlagFor().zero(0).get());
@@ -43,11 +43,11 @@ describe('Processor', () => {
 
       assert.equal(reg.pc(), 0xAAAA);
       const immediateOffset = 2;
-      assert.equal(mmu.readWord(reg.sp()), 0x1000 + immediateOffset);
+      assert.equal(mmu.readWord(reg.sp()), initPc + immediateOffset);
     });
 
     it('calls if Z flag is set', () => {
-      const initPc = 0x1000;
+      const initPc = 0x9000;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAA);
       reg.f(new CheckFlagFor().zero(1).get());
@@ -61,11 +61,11 @@ describe('Processor', () => {
 
       assert.equal(reg.pc(), 0xAAAA);
       const immediateOffset = 2;
-      assert.equal(mmu.readWord(reg.sp()), 0x1000 + immediateOffset);
+      assert.equal(mmu.readWord(reg.sp()), initPc + immediateOffset);
     });
 
     it('calls if C flag is reset', () => {
-      const initPc = 0x1100;
+      const initPc = 0x9100;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAC);
       reg.f(new CheckFlagFor().setC(true).get());
@@ -79,11 +79,11 @@ describe('Processor', () => {
 
       assert.equal(reg.pc(), 0xAAAC);
       const immediateOffset = 2;
-      assert.equal(mmu.readWord(reg.sp()), 0x1100 + immediateOffset);
+      assert.equal(mmu.readWord(reg.sp()), initPc + immediateOffset);
     });
 
     it('calls if C flag is set', () => {
-      const initPc = 0x1200;
+      const initPc = 0x9200;
       reg.pc(initPc);
       mmu.writeWord(initPc, 0xAAAB);
       reg.f(new CheckFlagFor().setC(false).get());
@@ -97,7 +97,7 @@ describe('Processor', () => {
 
       assert.equal(reg.pc(), 0xAAAB);
       const immediateOffset = 2;
-      assert.equal(mmu.readWord(reg.sp()), 0x1200 + immediateOffset);
+      assert.equal(mmu.readWord(reg.sp()), initPc + immediateOffset);
     });
 
     it('restarts by push present address onto stack and jumping', () => {

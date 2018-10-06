@@ -44,12 +44,13 @@ describe('Processor', () => {
     it('shifts val in mem Hl to left, msb to carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11100010;
-      mmu.writeByte(0x1235, beforeShift);
-      reg.hl(0x1235);
+      const memAddr = 0x9435;
+      mmu.writeByte(memAddr, beforeShift);
+      reg.hl(memAddr);
       Z80.shift.slaMemHL(state);
 
-      assert.isNumber(mmu.readByte(0x1235));
-      assert.equal(mmu.readByte(0x1235), afterShift);
+      assert.isNumber(mmu.readByte(memAddr));
+      assert.equal(mmu.readByte(memAddr), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -66,12 +67,13 @@ describe('Processor', () => {
     it('shifts right mem HL val, keeps msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b11111000;
-      mmu.writeByte(0x1235, beforeShift);
-      reg.hl(0x1235);
+      const memAddr = 0x9235;
+      mmu.writeByte(memAddr, beforeShift);
+      reg.hl(memAddr);
       Z80.shift.sraMemHL(state);
 
-      assert.isNumber(mmu.readByte(0x1235));
-      assert.equal(mmu.readByte(0x1235), afterShift);
+      assert.isNumber(mmu.readByte(memAddr));
+      assert.equal(mmu.readByte(memAddr), afterShift);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -88,7 +90,7 @@ describe('Processor', () => {
     it('shifts right mem HL val, resets msb, and put lsb in carry', () => {
       const beforeShift = 0b11110001;
       const afterShift = 0b01111000;
-      const memAddr = 0x1235;
+      const memAddr = 0x9235;
       mmu.writeByte(memAddr, beforeShift);
       reg.hl(memAddr);
       Z80.shift.srlMemHL(state);

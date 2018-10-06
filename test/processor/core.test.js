@@ -36,15 +36,15 @@ describe('Processor', () => {
 
     it('throws error if it ecounters unknown op', () => {
       mmu.exitBios();
-      mmu.writeByte(0x00, 0xD3);
+      mmu.cartridge.rom[0x00] = 0xD3;
       cpu.fetch();
       assert.throws(() => cpu.decode());
     });
 
     it('executes instruction with modifier', () => {
       mmu.exitBios();
-      mmu.writeByte(0x00, 0xCB);
-      mmu.writeByte(0x01, 0xD3);
+      mmu.cartridge.rom[0x00] = 0xCB;
+      mmu.cartridge.rom[0x01] = 0xD3;
       cpu.fetch();
       cpu.decode();
       assert.equal(cpu.reg.map.e(), 0);
@@ -54,8 +54,8 @@ describe('Processor', () => {
 
     it('can reset state', () => {
       mmu.exitBios();
-      mmu.writeByte(0x00, 0xCB);
-      mmu.writeByte(0x01, 0xD3);
+      mmu.cartridge.rom[0x00] = 0xCB;
+      mmu.cartridge.rom[0x01] = 0xD3;
       cpu.fetch();
       cpu.decode();
       cpu.execute();

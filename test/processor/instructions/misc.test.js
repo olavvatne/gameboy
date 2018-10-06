@@ -30,7 +30,7 @@ describe('Processor', () => {
 
   it('swap nibbles in memory address found in HL', () => {
     const correctSwapped = 0b01111110;
-    const memAddr = 0x1000;
+    const memAddr = 0xA000;
     mmu.writeByte(memAddr, 0b11100111);
     reg.hl(memAddr);
 

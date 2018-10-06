@@ -103,11 +103,12 @@ describe('Processor', () => {
     it('rotates val in mem on addr HL left with msb around', () => {
       const beforeRotate = 0b11110000;
       const afterRotate = 0b11100001;
-      mmu.writeByte(0x1234, beforeRotate);
-      reg.hl(0x1234);
+      const memAddr = 0xAB16;
+      mmu.writeByte(memAddr, beforeRotate);
+      reg.hl(memAddr);
       Z80.rotate.rlcMemHL(state);
 
-      assert.equal(mmu.readByte(0x1234), afterRotate);
+      assert.equal(mmu.readByte(memAddr), afterRotate);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -127,11 +128,12 @@ describe('Processor', () => {
     it('rotates val in mem Hl to left with carry around', () => {
       const beforeRotate = 0b11110000;
       const afterRotate = 0b11100000; // no carry from prev
-      mmu.writeByte(0x1234, beforeRotate);
-      reg.hl(0x1234);
+      const memAddr = 0xAB13;
+      mmu.writeByte(memAddr, beforeRotate);
+      reg.hl(memAddr);
       Z80.rotate.rlMemHL(state);
 
-      assert.equal(mmu.readByte(0x1234), afterRotate);
+      assert.equal(mmu.readByte(memAddr), afterRotate);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -149,11 +151,12 @@ describe('Processor', () => {
     it('rotates val in mem Hl to right with lsb around', () => {
       const beforeRotate = 0b11110001;
       const afterRotate = 0b11111000;
-      mmu.writeByte(0x1234, beforeRotate);
-      reg.hl(0x1234);
+      const memAddr = 0xAB12;
+      mmu.writeByte(memAddr, beforeRotate);
+      reg.hl(memAddr);
       Z80.rotate.rrcMemHL(state);
 
-      assert.equal(mmu.readByte(0x1234), afterRotate);
+      assert.equal(mmu.readByte(memAddr), afterRotate);
       assert.isTrue(getFlags().isCarry());
     });
 
@@ -173,11 +176,12 @@ describe('Processor', () => {
     it('rotates val in mem Hl to right with lsb around', () => {
       const beforeRotate = 0b11110001;
       const afterRotate = 0b01111000;
-      mmu.writeByte(0x1234, beforeRotate);
-      reg.hl(0x1234);
+      const memAddr = 0x9564;
+      mmu.writeByte(memAddr, beforeRotate);
+      reg.hl(memAddr);
       Z80.rotate.rrMemHL(state);
 
-      assert.equal(mmu.readByte(0x1234), afterRotate);
+      assert.equal(mmu.readByte(memAddr), afterRotate);
       assert.isTrue(getFlags().isCarry());
     });
 

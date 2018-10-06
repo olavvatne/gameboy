@@ -48,15 +48,16 @@ describe('Processor', () => {
     });
 
     it('can put SP into address determined by immediate value', () => {
-      const correct = 0x1212;
-      const correctAddr = 0x1222;
+      const correct = 0xA212;
+      const correctAddr = 0xA222;
       reg.sp(correct);
-      reg.pc(0x4545);
-      mmu.writeWord(0x4545, 0x1222);
+      const regAddr = 0xA545;
+      reg.pc(regAddr);
+      mmu.writeWord(regAddr, 0xA222);
 
       Z80.load16.ldSPIntoImmediate(state);
 
-      assert.isAbove(reg.pc(), 0x4545);
+      assert.isAbove(reg.pc(), regAddr);
       assert.equal(mmu.readWord(correctAddr), correct);
     });
 

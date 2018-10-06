@@ -77,7 +77,7 @@ export default class ProcessorCore {
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
-      this.recorder.record(this.currentOp, this.currentPc);
+      // this.recorder.record(this.currentOp, this.currentPc);
       this.execute();
       if (this.actions.stop || this.actions.halt) {
         this.pause();

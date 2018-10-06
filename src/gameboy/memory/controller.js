@@ -2,6 +2,7 @@ import bios from './bios';
 import Memory from './memory';
 import Interrupts from '../input/interrupts';
 import OAM from '../gpu/object-attribute-memory';
+import Cartridge from './cartrigde';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {
@@ -13,11 +14,10 @@ export default class MMU {
     this._rom1 = new Uint8Array(2 ** 14);
     this._vram = vram;
     this.interrupts = interrupts;
-    this._eram = new Memory(2 ** 13);
     this._wram = new Memory(2 ** 13);
     this._zram = new Memory(2 ** 7);
     this.io = io;
-    this._cartType = 0;
+    this.cartridge = new Cartridge();
     this._oam = oam;
     this._oam.setMemoryReader(this);
     this._inBios = true;
@@ -34,25 +34,25 @@ export default class MMU {
         if (address < 0x0100 && this._inBios) {
           return bios[address];
         }
-        return this._rom0[address];
+        return this.cartridge.rom[address];
       case 0x1000:
       case 0x2000:
       case 0x3000:
-        return this._rom0[address];
+        return this.cartridge.rom[address];
       // ROM1
       case 0x4000:
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        return this._rom1[address & 0x3FFF];
+        return this.cartridge.rom[this.cartridge.romOffset + (address & 0x3FFF)];
       // VRAM
       case 0x8000:
       case 0x9000:
         return this._vram.readByte(address & 0x1FFF);
-      // Cartridge RAM
+      // Cartridge/external RAM
       case 0xA000:
       case 0xB000:
-        return this._eram.readByte(address & 0x1FFF);
+        return this.cartridge.ram[this.cartridge.ramOffset + (address & 0x1FFF)];
       case 0xC000:
       case 0xD000:
         return this._wram.readByte(address & 0x1FFF);
@@ -83,23 +83,21 @@ export default class MMU {
   writeByte(address, value) {
     switch (address & 0xF000) {
       // BIOS / ROM0
+      // Read only, but can write certain values at certain addresses to configure cartrige rom/ram
       case 0x0000:
-        if (address < 0x0100 && this._inBios) {
-          throw new Error('Trying to write to bios');
-        }
-        this._rom0[address] = value;
-        break;
       case 0x1000:
+        this.cartridge.enableExternal(value);
+        break;
       case 0x2000:
       case 0x3000:
-        this._rom0[address] = value;
+        this.cartridge.rom[address] = value;
         break;
       // ROM1
       case 0x4000:
       case 0x5000:
       case 0x6000:
       case 0x7000:
-        this._rom1[address & 0x3FFF] = value;
+        this.cartridge.rom[this.cartridge.romOffset + (address & 0x3FFF)] = value;
         break;
       // VRAM
       case 0x8000:
@@ -109,7 +107,7 @@ export default class MMU {
       // Cartridge RAM
       case 0xA000:
       case 0xB000:
-        this._eram.writeByte(address & 0x1FFF, value);
+        this.cartridge.ram[this.cartridge.ramOffset + (address & 0x1FFF)] = value;
         break;
       case 0xC000:
       case 0xD000:
@@ -152,14 +150,13 @@ export default class MMU {
   load(data) {
     const prevInBios = this._inBios;
     this._inBios = false;
-    // TODO: handle file to long or short
-    this._rom0 = new Uint8Array(data, 0, 2 ** 14);
-    this._rom1 = new Uint8Array(data, 2 ** 14, 2 ** 14);
+    this.cartridge.rom = new Uint8Array(data, 0, data.byteLength);
     this._inBios = prevInBios;
-    this._cartType = this.readByte(0x0147);
+    this.cartridge.type = this.readByte(0x0147);
   }
 
   reset() {
     this._inBios = true;
+    this.cartridge.reset();
   }
 }

@@ -34,7 +34,7 @@ export default {
     const immediateSigned = Util.convertSignedByte(mmu.readByte(pc));
     map.pc(pc + 1);
     const val = sp + immediateSigned;
-    map.sp(val  & 0xFFFF);
+    map.sp(val & 0xFFFF);
 
     const isC = (sp & 0xFF) + (immediateSigned & 0xFF) > 0xFF;
     const flag = new CheckFlagFor().setC(isC).setH(val, sp, immediateSigned).get();

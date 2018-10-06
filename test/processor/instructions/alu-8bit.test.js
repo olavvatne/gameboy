@@ -50,8 +50,8 @@ describe('Processor', () => {
 
     it('adds value found at addr HL with reg A', () => {
       reg.a(0x01);
-      mmu.writeByte(0x1220, 0x03);
-      reg.hl(0x1220);
+      mmu.writeByte(0xA220, 0x03);
+      reg.hl(0xA220);
 
       Z80.alu8.addMemHL(state);
 
@@ -67,7 +67,7 @@ describe('Processor', () => {
       Z80.alu8.addImmediate(state);
 
       assert.equal(reg.a(), 0xF1);
-      assert.equal(reg.f(), 0); // TODO: check flag here. Changed half carry method
+      assert.equal(reg.f(), 0);
       assert.isAbove(reg.pc(), 0x3200);
     });
 
