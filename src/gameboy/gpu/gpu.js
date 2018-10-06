@@ -15,10 +15,7 @@ export default class GPU {
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
     };
-    this.palette = { bg: [], obj0: [], obj1: [] };
-    this.setPalette(0b00011011, 'bg');
-    this.setPalette(0b00011011, 'obj0');
-    this.setPalette(0b00011011, 'obj1');
+    this.initPalette();
     this._frameBuffer = new FrameBuffer();
     this.renderTiming = new RenderTiming();
     this._vram = new VideoMemory(this._frameBuffer);
@@ -27,6 +24,13 @@ export default class GPU {
       this._frameBuffer, this._oam, screen, this._vram,
       this.registers, this.palette,
     );
+  }
+
+  initPalette(palette = { bg: [], obj0: [], obj1: [] }) {
+    this.palette = palette;
+    this.setPalette(0b00011011, 'bg');
+    this.setPalette(0b00011011, 'obj0');
+    this.setPalette(0b00011011, 'obj1');
   }
 
   setPalette(value, type) {
@@ -69,6 +73,10 @@ export default class GPU {
     this.registers.tileset = 0;
     this.registers.bg = 0;
     this.registers.sprite = 0;
+    this.initPalette(this.palette);
+    this._oam.reset();
+    this._frameBuffer.reset();
+    this.renderTiming.reset();
     this.screen.reset();
   }
 }

@@ -32,6 +32,9 @@ export default class FrameBuffer {
     this.tiles = initTileset();
   }
 
+  reset() {
+    this.tiles = initTileset();
+  }
 
   updateTile(address, firstByte, secondByte) {
     // 16 bytes per tile. A row is 2 bytes.

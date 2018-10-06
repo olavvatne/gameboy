@@ -10,16 +10,18 @@ export default class MMU {
     vram = new Memory(2 ** 13), oam = new OAM(),
     io = new Memory(2 ** 7), interrupts = new Interrupts(),
   ) {
-    this._rom0 = new Uint8Array(2 ** 14);
-    this._rom1 = new Uint8Array(2 ** 14);
+    this.init();
     this._vram = vram;
     this.interrupts = interrupts;
-    this._wram = new Memory(2 ** 13);
-    this._zram = new Memory(2 ** 7);
     this.io = io;
-    this.cartridge = new Cartridge();
     this._oam = oam;
     this._oam.setMemoryReader(this);
+  }
+
+  init() {
+    this._wram = new Memory(2 ** 13);
+    this._zram = new Memory(2 ** 7);
+    this.cartridge = new Cartridge();
     this._inBios = true;
   }
 
@@ -158,7 +160,6 @@ export default class MMU {
   }
 
   reset() {
-    this._inBios = true;
-    this.cartridge.reset();
+    this.init();
   }
 }

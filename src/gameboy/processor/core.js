@@ -1,6 +1,5 @@
 import { Registers, opcodes, Z80 } from './';
 import Recorder from '../../info/recorder';
-import { start } from 'repl';
 /* eslint no-bitwise: 0 */
 
 export default class ProcessorCore {
@@ -15,7 +14,6 @@ export default class ProcessorCore {
     this.currentPc = 0;
     this.currentInstruction = null;
     this.recorder = new Recorder();
-    this.startDebug = false;
   }
 
   fetch() {
@@ -46,11 +44,7 @@ export default class ProcessorCore {
       map: this.reg.map,
       actions: this.actions,
     };
-    // const m = this.reg.map;
-    // if (!this.mmu._inBios && m.a() === 0x2f && m.b() === 0 && m.c() === 0x01 && m.d() === 0 && m.l() === 0xff && m.h() === 0x97) this.startDebug = true;
-    // if (this.startDebug) {
-    //   this.recorder.printCurrent(this.currentOp, this.currentPc, this.clock.clockCycles, this.reg.getState());
-    // }
+
     const timeSpent = this.currentInstruction(state);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
@@ -77,7 +71,6 @@ export default class ProcessorCore {
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
-      // this.recorder.record(this.currentOp, this.currentPc);
       this.execute();
       if (this.actions.stop || this.actions.halt) {
         this.pause();
@@ -109,5 +102,6 @@ export default class ProcessorCore {
     this.clock.machineCycles = 0;
     this.clock.clockCycles = 0;
     this.currentOp = 0x00;
+    this.currentPc = 0;
   }
 }

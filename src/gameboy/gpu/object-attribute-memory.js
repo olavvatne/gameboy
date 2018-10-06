@@ -6,10 +6,19 @@ import Util from '../util';
 export default class OAM extends Memory {
   constructor() {
     super(2 ** 8);
+    this.init();
+  }
+
+  init() {
     this.objects = new Array(40).fill().map(() => ({
       y: -16, x: -8, tile: 0, palette: 0, priority: 0,
     }));
   }
+
+  reset() {
+    this.init();
+  }
+
   setMemoryReader(mmu) {
     this._mmu = mmu;
   }

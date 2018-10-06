@@ -1,10 +1,6 @@
 /* eslint no-bitwise: 0 */
 export default class Cartridge {
   constructor() {
-    this.init();
-  }
-
-  init() {
     this.type = 0;
     this.romOffset = 0x4000;
     this.ramOffset = 0x0000;
@@ -52,9 +48,5 @@ export default class Cartridge {
     if (this.type > 0 || this.type < 4) {
       this.mode = val & 1;
     }
-  }
-
-  reset() {
-    this.init();
   }
 }

@@ -16,29 +16,40 @@ export default class Gameboy {
     this.core = new CPU(this.memory, this.interrupts, tick => this.gpu.step(tick));
     this.core.setActions(() => this.pause());
     this.interval = null;
+    this.numFrames = 0;
   }
 
   start(data) {
+    if (this.interval) return;
+
     this.loadRom(data);
     this.interval = setInterval(() => this.runAFrame(), 1);
   }
 
   runAFrame() {
-    const t0 = new Date();
     this.core.loop();
-    const t1 = new Date();
-    const fps = Math.round(10000 / (t1 - t0)) / 10;
+    this.handleFpsCounter();
+  }
+
+  handleFpsCounter() {
+    if (this.numFrames === 0) this.t0 = new Date();
+    this.numFrames += 1;
+    if (this.numFrames >= 50) {
+      this.numFrames = 0;
+      this.fps = Math.round(50 / ((new Date() - this.t0) / 1000));
+    }
+    // TODO: is fps correct?
     this.canvas.fillStyle = 'blue';
-    this.canvas.fillText(fps, 10, 10);
+    this.canvas.fillText(this.fps, 10, 10);
   }
 
   pause() {
     if (this.interval != null) clearInterval(this.interval);
-    this.core.recorder.printHistory();
   }
 
   reset() {
     if (this.interval != null) clearInterval(this.interval);
+    this.interval = null;
     this.gpu.reset();
     this.core.reset();
     this.memory.reset();

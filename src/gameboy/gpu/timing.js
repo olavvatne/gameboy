@@ -14,6 +14,10 @@ const Mode = {
 
 class RenderTiming {
   constructor() {
+    this.reset();
+  }
+
+  reset() {
     this._modeClock = 0;
     this._line = 0;
     this._mode = RenderTiming.Mode.sprite;
