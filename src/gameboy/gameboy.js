@@ -13,6 +13,7 @@ export default class Gameboy {
     const attTab = this.gpu.getAttributeTable();
     this.memory = new MMU(vidMem, attTab, this.io, this.interrupts);
     this.core = new CPU(this.memory, this.interrupts, tick => this.gpu.step(tick));
+    this.core.setActions(() => this.pause());
     this.interval = null;
   }
 

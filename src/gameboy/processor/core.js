@@ -9,6 +9,7 @@ export default class ProcessorCore {
     this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
     this.clock = { machineCycles: 0, clockCycles: 0 };
+    this.actions = { stop: false, halt: false };
     this.currentOp = 0x00;
     this.currentPc = 0;
     this.currentInstruction = null;
@@ -38,7 +39,12 @@ export default class ProcessorCore {
   }
 
   execute() {
-    const state = { mmu: this.mmu, interrupt: this.interrupts, map: this.reg.map };
+    const state = {
+      mmu: this.mmu,
+      interrupt: this.interrupts,
+      map: this.reg.map,
+      actions: this.actions,
+    };
     const timeSpent = this.currentInstruction(state);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
@@ -47,7 +53,7 @@ export default class ProcessorCore {
   }
 
   isOpAModifier() {
-    return this.currentOp === 0xCB || this.currentOp === 0x10;
+    return this.currentOp === 0xCB;
   }
 
   readNextOpAfterModiferAndCombine(op) {
@@ -56,28 +62,38 @@ export default class ProcessorCore {
     return (op << 8) + nextOp;
   }
 
+  setActions(pauseAction) {
+    this.pause = pauseAction;
+  }
+
   loop() {
     const oneFrame = this.clock.clockCycles + 70224;
     while (this.clock.clockCycles < oneFrame) {
       this.fetch();
       this.decode();
-      //this.recorder.record(this.currentOp, this.currentPc);
+      this.recorder.record(this.currentOp, this.currentPc, this.reg.getState());
       this.execute();
+      if (this.actions.stop || this.actions.halt) {
+        this.pause();
+        break;
+      }
       if (this.interrupts.enabled) this.handleInterrupts();
     }
   }
 
   handleInterrupts() {
     if (!this.interrupts.anyTriggered()) return;
-    if (this.interrupts.checkVblankTriggered()) this.callRst(0x40);
-    if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x48);
-    if (this.interrupts.checkTimerTriggered()) this.callRst(0x50);
-    if (this.interrupts.checkSerialTriggered()) this.callRst(0x58);
-    if (this.interrupts.checkJoypadTriggered()) this.callRst(0x60);
+    if (this.interrupts.checkVblankTriggered()) this.callRst(0x0040);
+    if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x0048);
+    if (this.interrupts.checkTimerTriggered()) this.callRst(0x0050);
+    if (this.interrupts.checkSerialTriggered()) this.callRst(0x0058);
+    if (this.interrupts.checkJoypadTriggered()) this.callRst(0x0060);
   }
 
   callRst(num) {
-    const timeSpent = Z80.subroutine.rst({ mmu: this.mmu, map: this.reg.map }, num);
+    this.interrupts.enabled = false;
+    const state = { mmu: this.mmu, map: this.reg.map };
+    const timeSpent = Z80.subroutine.rst(state, num);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
   }

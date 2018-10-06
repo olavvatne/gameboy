@@ -300,10 +300,10 @@ const opcodes = {
   0x00: () => Z80.misc.nop(),
 
   // 7. HALT
-  0x76: () => Z80.misc.halt(),
+  0x76: cpu => Z80.misc.halt(cpu),
 
   // 8. STOP
-  0x1000: () => Z80.misc.stop(),
+  0x10: cpu => Z80.misc.stop(cpu),
 
   // 9. DI
   0xF3: cpu => Z80.misc.di(cpu),

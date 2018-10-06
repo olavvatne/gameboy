@@ -105,7 +105,6 @@ export default class MMU {
       // VRAM
       case 0x8000:
       case 0x9000:
-      // TODO: GPU VRAM
         this._vram.writeByte(address & 0x1FFF, value);
         break;
       // Cartridge RAM
@@ -129,7 +128,9 @@ export default class MMU {
           if (address === 0xFF50 && this._inBios) this.exitBios();
           else if (address === 0xFF46) {
             this._oam.startDmaTransfer(value);
-          } else if (address === 0xFF0F) { this.interrupts._if = value; }
+          } else if (address === 0xFF0F) {
+            this.interrupts._if = value;
+          }
           this.io.writeByte(address & 0xFF, value);
         } else if (address === 0xFFFF) {
           this.interrupts._ie = value;

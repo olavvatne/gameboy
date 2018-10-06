@@ -6,7 +6,7 @@ const getHex = pc => `${(pc & 0xFFFF).toString(16)}`;
 
 export default class Recorder {
   constructor() {
-    this.history = new Array(100);
+    this.history = new Array(10000);
     this.pos = 0;
     this.opcodeInfo = new OpcodeInfoManager();
   }
