@@ -9,3 +9,8 @@ before_script:
   - gulp -v
 script:
   - NODE_ENV=production gulp build
+
+after_success:
+  - npm run test
+  - npm run coveralls
+  
