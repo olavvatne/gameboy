@@ -4,9 +4,10 @@
   "description": "Gameboy Javascript Emulator Experiment",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require babel-core/register ./test/processor/flag-check.test.js",
+    "test": "mocha --require @babel/register ./test/**/*.test.js",
     "build": "gulp build",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "coverage": "nyc --reporter text-lcov _mocha --require @babel/register ./test/**/*.test.js"
   },
   "repository": {
     "type": "git",
