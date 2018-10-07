@@ -1,0 +1,8 @@
+language: node_js
+node_js: "8"
+
+before_script:
+  - npm install -g gulp-cli
+  - gulp -v
+script:
+  - NODE_ENV=production gulp build

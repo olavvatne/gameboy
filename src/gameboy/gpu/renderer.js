@@ -57,9 +57,12 @@ export default class Renderer {
         const row = tile.flipY ? tile[7 - rowIndex] : tile[rowIndex];
 
         for (let x = 0; x < 8; x += 1) {
-          if (!(sprite.x + x >= 0 && sprite.x + x < 160 && row[x])) continue;
+          if (!(sprite.x + x >= 0 && sprite.x + x < 160)) continue;
+          this.mapOffset = (((line + this._registers.y) & 0xFF) >> 3) << 5;
+          this.tileOffset = (this._registers.x >> 3) & 0x1F;
           const pixel = this._screen.getPixel(line, x);
-          if (sprite.priority || pixel[0] !== 0 || pixel[1] !== 0 || pixel[2] !== 0) {
+          // TODO: find actual tile, and the 0-3 value here. zero might be mapped to a color
+          if (row[x] && (sprite.priority || false)) {
             const correctedX = sprite.flipX ? 7 - x : x;
             const color = pal[row[correctedX]];
             this._screen.setPixel(line, sprite.x + correctedX, color);
