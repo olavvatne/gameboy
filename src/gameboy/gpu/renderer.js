@@ -58,8 +58,7 @@ export default class Renderer {
 
         for (let x = 0; x < 8; x += 1) {
           if (!(sprite.x + x >= 0 && sprite.x + x < 160)) continue;
-          this.mapOffset = (((line + this._registers.y) & 0xFF) >> 3) << 5;
-          this.tileOffset = (this._registers.x >> 3) & 0x1F;
+          
           const pixel = this._screen.getPixel(line, x);
           // TODO: find actual tile, and the 0-3 value here. zero might be mapped to a color
           if (row[x] && (sprite.priority || false)) {

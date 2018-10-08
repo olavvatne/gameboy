@@ -33,7 +33,7 @@ export default class ProcessorCore {
     }
 
     if (opcodes[op] === undefined) {
-      this.recorder.printHistory();
+      // this.recorder.printHistory();
       throw new Error(`opcode not impl: ${op.toString(16)}`);
     }
     this.currentInstruction = opcodes[op];
