@@ -4,10 +4,10 @@
   "description": "Gameboy Javascript Emulator Experiment",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter mocha-badge-generator --require @babel/register test/**/*.js",
+    "test": "mocha --reporter mocha-badge-generator --require @babel/register './test/**/*.js'",
     "build": "gulp build",
     "watch": "gulp watch",
-    "coverage": "nyc --reporter=text-lcov --cache _mocha --require @babel/register test/**/*.js",
+    "coverage": "nyc --reporter=text-lcov --cache _mocha --require @babel/register './test/**/*.js'",
     "coveralls": "npm run coverage | coveralls"
   },
   "repository": {
