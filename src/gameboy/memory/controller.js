@@ -103,11 +103,11 @@ export default class MMU {
       // ROM1
       case 0x4000:
       case 0x5000:
-        this.cartridge.setBankSetAndRamBank(value);
+        this.cartridge.setRomBankOrRamBank(value);
         break;
       case 0x6000:
       case 0x7000:
-        this.cartridge.setExpansionMode(value);
+        this.cartridge.setRamOrRomMode(value);
         break;
       // VRAM
       case 0x8000:

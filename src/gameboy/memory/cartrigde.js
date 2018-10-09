@@ -31,7 +31,7 @@ export default class Cartridge {
     }
   }
 
-  setBankSetAndRamBank(val) {
+  setRomBankOrRamBank(val) {
     if (this.type > 0 || this.type < 4) {
       if (this.mode) {
         this.ramBank = val & 3;
@@ -44,7 +44,7 @@ export default class Cartridge {
     }
   }
 
-  setExpansionMode(val) {
+  setRamOrRomMode(val) {
     if (this.type > 0 || this.type < 4) {
       this.mode = val & 1;
     }
