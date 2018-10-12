@@ -1,6 +1,5 @@
 import { CheckFlagFor } from '..';
 import { jump } from './';
-import { createOpTime } from '../clock-util';
 // Consists of Call, restart and return instructions which modify stack.
 
 /* eslint no-bitwise: 0 */
@@ -29,41 +28,41 @@ const doCall = (map, mmu) => {
 export default {
   call: ({ mmu, map }) => {
     doCall(map, mmu);
-    return createOpTime(6, 24);
+    return 24;
   },
 
   callIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) {
       doCall(map, mmu);
-      return createOpTime(6, 24);
+      return 24;
     }
 
     map.pc(map.pc() + 2);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   callIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) {
       doCall(map, mmu);
-      return createOpTime(6, 24);
+      return 24;
     }
 
     map.pc(map.pc() + 2);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   rst: ({ mmu, map }, addr) => {
     addToStack(map, mmu, map.pc());
     map.pc(addr);
-    return createOpTime(1, 16);
+    return 16;
   },
 
   ret: ({ mmu, map }) => {
     const val = popFromStack(map, mmu);
     map.pc(val);
-    return createOpTime(4, 16);
+    return 16;
   },
 
   retIfZ: ({ mmu, map }, condition) => {
@@ -71,9 +70,9 @@ export default {
     if (flag.isZero() === condition) {
       const val = popFromStack(map, mmu);
       map.pc(val);
-      return createOpTime(5, 20);
+      return 20;
     }
-    return createOpTime(2, 8);
+    return 8;
   },
 
   retIfC: ({ mmu, map }, condition) => {
@@ -81,15 +80,15 @@ export default {
     if (flag.isCarry() === condition) {
       const val = popFromStack(map, mmu);
       map.pc(val);
-      return createOpTime(5, 20);
+      return 20;
     }
-    return createOpTime(2, 8);
+    return 8;
   },
 
   reti: ({ mmu, map, interrupt }) => {
     const val = popFromStack(map, mmu);
     map.pc(val);
     interrupt.enabled = true;
-    return createOpTime(1, 16);
+    return 16;
   },
 };

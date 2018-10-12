@@ -1,6 +1,4 @@
 import { CheckFlagFor } from '../';
-import { createOpTime } from '../clock-util';
-import Util from '../../util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -63,7 +61,7 @@ export default {
     const flag = new CheckFlagFor().zero(val).carry(val).setH(val, a, x).get();
     map.f(flag);
     map.a(val);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   addMemHL: ({ mmu, map }) => {
@@ -75,7 +73,7 @@ export default {
     const flag = new CheckFlagFor().zero(sum).carry(sum).setH(sum, a, valFromMem).get();
     map.f(flag);
 
-    return createOpTime(2, 8);
+    return 8;
   },
 
   adcMemHLPlusCarry: ({ mmu, map }) => {
@@ -88,7 +86,7 @@ export default {
     const flag = new CheckFlagFor().zero(sum).carry(sum).setH(sum, a, valFromMem).get();
     map.f(flag);
 
-    return createOpTime(2, 8);
+    return 8;
   },
 
   adcImmediatePlusCarry: ({ mmu, map }) => {
@@ -102,7 +100,7 @@ export default {
       .carry(sum).setH(sum, a, immediateValue).get();
     map.f(flag);
 
-    return createOpTime(2, 8);
+    return 8;
   },
 
   addImmediate: ({ mmu, map }) => {
@@ -114,7 +112,7 @@ export default {
     const flag = new CheckFlagFor().zero(sum).carry(sum).setH(sum, a, imVal).get();
     map.f(flag);
 
-    return createOpTime(2, 8);
+    return 8;
   },
 
   adcPlusCarry: ({ map }, regX) => {
@@ -126,7 +124,7 @@ export default {
 
     const flag = new CheckFlagFor().zero(sum).carry(sum).setH(sum, a, x).get();
     map.f(flag);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   // SUBTRACTION
@@ -136,7 +134,7 @@ export default {
     const val = a - x;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, x);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   subMemHL: ({ mmu, map }) => {
@@ -145,7 +143,7 @@ export default {
     const val = a - b;
     map.a(val);
     setSubtractionFlag(map, val, a, b);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   subImmediate: ({ mmu, map }) => {
@@ -154,7 +152,7 @@ export default {
     const val = a - b;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, b);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   sbc: ({ map }, regX) => {
@@ -164,7 +162,7 @@ export default {
     const val = a - x - isCarry;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, x);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   sbcMemHL: ({ mmu, map }) => {
@@ -174,7 +172,7 @@ export default {
     const val = a - b - isCarry;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, b);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   sbcImmediate: ({ mmu, map }) => {
@@ -184,7 +182,7 @@ export default {
     const val = a - b - isCarry;
     map.a(val & 0xFF);
     setSubtractionFlag(map, val, a, b);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   // LOGICAL
@@ -192,63 +190,63 @@ export default {
     const val = map.a() & regX();
     map.a(val);
     setLogicalAndFlag(map, val);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   andMemHL: ({ mmu, map }) => {
     const val = map.a() & readValFromHLMem(map, mmu);
     map.a(val);
     setLogicalAndFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   andImmediate: ({ mmu, map }) => {
     const val = map.a() & readImmediateValueAndIncrementPC(map, mmu);
     map.a(val);
     setLogicalAndFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   or: ({ map }, regX) => {
     const val = map.a() | regX();
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   orMemHL: ({ mmu, map }) => {
     const val = map.a() | readValFromHLMem(map, mmu);
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   orImmediate: ({ mmu, map }) => {
     const val = map.a() | readImmediateValueAndIncrementPC(map, mmu);
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   xor: ({ map }, regX) => {
     const val = map.a() ^ regX();
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   xorMemHL: ({ mmu, map }) => {
     const val = map.a() ^ readValFromHLMem(map, mmu);
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   xorImmediate: ({ mmu, map }) => {
     const val = map.a() ^ readImmediateValueAndIncrementPC(map, mmu);
     map.a(val);
     setLogicalOrFlag(map, val);
-    return createOpTime(2, 8);
+    return 8;
   },
   // Compare reg to A, setting flags (CP reg, B)
   cp: ({ map }, regX) => {
@@ -256,7 +254,7 @@ export default {
     const x = regX();
     const res = a - x;
     setFlagsOnCompare(map, res, a, x);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   cpMemHL: ({ mmu, map }) => {
@@ -264,7 +262,7 @@ export default {
     const mem = readValFromHLMem(map, mmu);
     const res = a - mem;
     setFlagsOnCompare(map, res, a, mem);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   cpImmediate: ({ mmu, map }) => {
@@ -272,20 +270,20 @@ export default {
     const imm = readImmediateValueAndIncrementPC(map, mmu);
     const res = a - imm;
     setFlagsOnCompare(map, res, a, imm);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   inc: (cpu, regX) => {
     regX(regX() + 1);
     setFlagsOnInc(cpu.map, regX());
-    return createOpTime(1, 4);
+    return 4;
   },
 
   // Seems like the offical manual says to set H if there was a borrow to bit 3.
   dec: (cpu, regX) => {
     regX(regX() - 1);
     setFlagsOnDec(cpu.map, regX());
-    return createOpTime(1, 4);
+    return 4;
   },
 
   incMemHL: ({ mmu, map }) => {
@@ -293,7 +291,7 @@ export default {
     const val = mmu.readByte(memAddr) + 1;
     mmu.writeByte(memAddr, val);
     setFlagsOnInc(map, val);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   decMemHL: ({ mmu, map }) => {
@@ -301,6 +299,6 @@ export default {
     const val = mmu.readByte(memAddr) - 1;
     mmu.writeByte(memAddr, val);
     setFlagsOnDec(map, val);
-    return createOpTime(3, 12);
+    return 12;
   },
 };

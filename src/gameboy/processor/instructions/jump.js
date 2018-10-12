@@ -1,6 +1,5 @@
 import { CheckFlagFor } from '..';
 import Util from './../../util';
-import { createOpTime } from '../clock-util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -22,59 +21,59 @@ const addImmediateToPc = ({ map, mmu }) => {
 export default {
   jp: (cpu) => {
     doJump(cpu);
-    return createOpTime(3, 16);
+    return 16;
   },
 
   jpIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) {
       doJump({ map, mmu });
-      return createOpTime(4, 16);
+      return 16;
     }
     map.pc(map.pc() + 2);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   jpIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) {
       doJump({ map, mmu });
-      return createOpTime(4, 16);
+      return 16;
     }
 
     map.pc(map.pc() + 2);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   jpHL: ({ map }) => {
     map.pc(map.hl());
-    return createOpTime(1, 4);
+    return 4;
   },
 
   jr: (cpu) => {
     addImmediateToPc(cpu);
-    return createOpTime(2, 12);
+    return 12;
   },
 
   jrIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isZero() === condition) {
       addImmediateToPc({ map, mmu });
-      return createOpTime(3, 12);
+      return 12;
     }
 
     map.pc(map.pc() + 1);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   jrIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
     if (flag.isCarry() === condition) {
       addImmediateToPc({ map, mmu });
-      return createOpTime(3, 12);
+      return 12;
     }
 
     map.pc(map.pc() + 1);
-    return createOpTime(2, 8);
+    return 8;
   },
 };

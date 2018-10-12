@@ -1,6 +1,5 @@
 import { CheckFlagFor } from '../';
 import Util from './../../util';
-import { createOpTime } from '../clock-util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -13,13 +12,13 @@ export default {
     map.pc(pc + 2);
     const imVal = mmu.readWord(imAddr);
     regX(imVal);
-    return createOpTime(3, 12);
+    return 12;
   },
 
   ldRegToReg: (_, fromReg, toReg) => {
     const val = fromReg();
     toReg(val);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   ldHLFromSPPlusImmediate: ({ mmu, map }) => {
@@ -34,7 +33,7 @@ export default {
     const flag = new CheckFlagFor().setC(isC).setH(newVal, spVal, imSignedByte).get();
     map.f(flag);
 
-    return createOpTime(3, 12);
+    return 12;
   },
 
   ldSPIntoImmediate: ({ mmu, map }) => {
@@ -44,7 +43,7 @@ export default {
     const imVal = mmu.readWord(imAddr);
     map.pc(pc + 2);
     mmu.writeWord(imVal, spVal);
-    return createOpTime(5, 20);
+    return 20;
   },
 
   // Push register pair to the stack (PUSH HL)
@@ -52,7 +51,7 @@ export default {
     const sp = map.sp();
     map.sp(sp - 2);
     mmu.writeWord(sp - 2, regX());
-    return createOpTime(4, 16);
+    return 16;
   },
 
   // Pop register pair off the stack (POP HL)
@@ -61,7 +60,7 @@ export default {
     const regVal = mmu.readWord(sp);
     map.sp(sp + 2);
     regX(regVal);
-    return createOpTime(3, 12);
+    return 12;
   },
 
 };

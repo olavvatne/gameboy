@@ -22,9 +22,9 @@ const setValInRegOrMem = (map, mmu, regAddr, val) => {
 
 const getTimeExpenditure = (regAddr) => {
   if (regAddr === NameMap.hl) {
-    return createOpTime(2, 16);
+    return 16;
   }
-  return createOpTime(2, 8);
+  return 8;
 };
 
 export default {
@@ -34,7 +34,11 @@ export default {
     const flag = new CheckFlagFor(map.f()).notSubtraction()
       .setHalfCarry(true).zero(val & mask).get();
     map.f(flag);
-    return getTimeExpenditure(regAddr);
+
+    if (regAddr === NameMap.hl) {
+      return 12;
+    }
+    return 8;
   },
 
   set: ({ mmu, map }, regAddr, bitNr) => {

@@ -1,5 +1,4 @@
 import { CheckFlagFor } from '../';
-import { createOpTime } from '../clock-util';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
@@ -33,7 +32,7 @@ export default {
     const val = regX();
     const newVal = shiftLeft(val, map);
     regX(newVal);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   slaMemHL: ({ mmu, map }) => {
@@ -41,14 +40,14 @@ export default {
     const val = mmu.readByte(addr);
     const newVal = shiftLeft(val, map);
     mmu.writeByte(addr, newVal);
-    return createOpTime(4, 16);
+    return 16;
   },
 
   sra: ({ map }, regX) => {
     const val = regX();
     const newVal = shiftRight(val, map, true);
     regX(newVal);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   sraMemHL: ({ mmu, map }) => {
@@ -56,14 +55,14 @@ export default {
     const val = mmu.readByte(addr);
     const newVal = shiftRight(val, map, true);
     mmu.writeByte(addr, newVal);
-    return createOpTime(4, 16);
+    return 16;
   },
 
   srl: ({ map }, regX) => {
     const val = regX();
     const newVal = shiftRight(val, map);
     regX(newVal);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   srlMemHL: ({ mmu, map }) => {
@@ -71,6 +70,6 @@ export default {
     const val = mmu.readByte(addr);
     const newVal = shiftRight(val, map);
     mmu.writeByte(addr, newVal);
-    return createOpTime(4, 16);
+    return 16;
   },
 };

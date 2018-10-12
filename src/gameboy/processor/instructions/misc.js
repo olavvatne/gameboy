@@ -1,5 +1,4 @@
 import { CheckFlagFor } from '../';
-import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
@@ -12,11 +11,11 @@ const swapNibbles = (val) => {
 };
 
 export default {
-  nop: () => createOpTime(1, 4),
+  nop: () => 4,
 
   halt: ({ actions }) => {
     actions.halt = true;
-    return createOpTime(1, 4);
+    return 4;
   },
 
   swap: ({ map }, regX) => {
@@ -25,7 +24,7 @@ export default {
     regX(newVal);
     const newFlag = new CheckFlagFor().zero(newVal).get();
     map.f(newFlag);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   swapMemHL: ({ mmu, map }) => {
@@ -35,7 +34,7 @@ export default {
     mmu.writeByte(memAddr, newVal);
     const newFlag = new CheckFlagFor().zero(newVal).get();
     map.f(newFlag);
-    return createOpTime(4, 16);
+    return 16;
   },
   // ensure content in A is in packed Binary coded decimal encoding
   // Intended to be run immediately after an a  dditon or subtraction operations,
@@ -72,7 +71,7 @@ export default {
     flag.setZero(val === 0);
     map.f(flag.flag);
     map.a(val);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   cpl: ({ map }) => {
@@ -82,7 +81,7 @@ export default {
     const flag = new CheckFlagFor(map.f()).setHalfCarry(true).subtraction().get();
     map.f(flag);
 
-    return createOpTime(1, 4);
+    return 4;
   },
 
   ccf: ({ map }) => {
@@ -90,28 +89,28 @@ export default {
     const isCarry = flagChecker.isCarry();
     const flag = flagChecker.setHalfCarry(false).notSubtraction().setC(!isCarry).get();
     map.f(flag);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   scf: ({ map }) => {
     const flagChecker = new CheckFlagFor(map.f());
     const flag = flagChecker.setHalfCarry(false).notSubtraction().setC(true).get();
     map.f(flag);
-    return createOpTime(1, 4);
+    return 4;
   },
 
   stop: ({ actions }) => {
     actions.stop = true;
-    return createOpTime(1, 4);
+    return 4;
   },
 
   di: ({ interrupt }) => {
     interrupt.enabled = false;
-    return createOpTime(1, 4);
+    return 4;
   },
 
   ei: ({ interrupt }) => {
     interrupt.enabled = true;
-    return createOpTime(1, 4);
+    return 4;
   },
 };

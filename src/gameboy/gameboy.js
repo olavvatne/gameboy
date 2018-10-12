@@ -27,7 +27,7 @@ export default class Gameboy {
 
   runForAWhile() {
     this.timeBeforeFrame = new Date();
-    this.cyclesBeforeFrame = this.core.clock.clockCycles;
+    this.cyclesBeforeFrame = this.core.clockCycles;
     this.core.loop();
     this.syncTime();
     this.handleFpsCounter();
@@ -36,12 +36,12 @@ export default class Gameboy {
   syncTime() {
     if (this.memory._inBios) return;
     let diffTime = (new Date() - this.timeBeforeFrame) / 1000;
-    const diffCycles = this.core.clock.clockCycles - this.cyclesBeforeFrame;
+    const diffCycles = this.core.clockCycles - this.cyclesBeforeFrame;
     const cyclesPerSec = 4194304;
     const virtualTimeElapsed = diffCycles / cyclesPerSec;
-    // while (virtualTimeElapsed > diffTime) {
-    //   diffTime = (new Date() - this.timeBeforeFrame) / 1000;
-    // }
+    while (virtualTimeElapsed > diffTime) {
+      diffTime = (new Date() - this.timeBeforeFrame) / 1000;
+    }
   }
 
   /* istanbul ignore next */

@@ -1,5 +1,4 @@
 import { Registers, opcodes, Z80 } from './';
-import cycles from './instruction-timing';
 import Recorder from '../../info/recorder';
 /* eslint no-bitwise: 0 */
 
@@ -10,11 +9,10 @@ export default class ProcessorCore {
     this.interrupts = interruptHandler;
     this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
-    this.clock = { clockCycles: 0 };
+    this.clockCycles = 0;
     this.actions = { stop: false, halt: false };
     this.currentOp = 0x00;
     this.currentPc = 0;
-    this.isCB = false;
     this.currentInstruction = null;
     this.recorder = new Recorder();
     this.numVSync = 0;
@@ -23,7 +21,6 @@ export default class ProcessorCore {
   }
 
   fetch() {
-    this.oldCycleCount = this.clock.clockCycles;
     const pc = this.reg.pc();
     this.currentPc = pc;
     this.currentOp = this.mmu.readByte(pc);
@@ -32,12 +29,9 @@ export default class ProcessorCore {
 
   decode() {
     let op = this.currentOp;
-    this.isCB = false;
     if (this.isOpAModifier()) {
       op = this.readNextOpAfterModiferAndCombine(op);
       this.currentOp = op;
-      this.isCB = true;
-      this.clock.clockCycles += 4;
     }
 
     if (opcodes[op] === undefined) {
@@ -54,10 +48,10 @@ export default class ProcessorCore {
       map: this.reg.map,
       actions: this.actions,
     };
-
-    const timeSpent = this.currentInstruction(state);
-    this.clock.clockCycles += timeSpent.t;
-    const elapsed = this.clock.clockCycles - this.oldCycleCount;
+    this.oldCycleCount = this.clockCycles;
+    const cyclesSpent = this.currentInstruction(state);
+    this.clockCycles += cyclesSpent;
+    const elapsed = this.clockCycles - this.oldCycleCount;
     this.timer.increment(elapsed);
     this.notifyGpu(elapsed);
   }
@@ -77,8 +71,8 @@ export default class ProcessorCore {
   }
 
   loop() {
-    const oneFrame = this.clock.clockCycles + 70224;
-    while (this.clock.clockCycles < oneFrame) {
+    const oneFrame = this.clockCycles + 70224;
+    while (this.clockCycles < oneFrame) {
       if (this.actions.halt) {
         this.handleHalt();
       } else {
@@ -93,7 +87,7 @@ export default class ProcessorCore {
     if (this.interrupts.anyTriggered()) {
       this.actions.halt = false;
     }
-    this.clock.clockCycles += 4;
+    this.clockCycles += 4;
     this.timer.increment(4);
     this.notifyGpu(4);
   }
@@ -114,13 +108,13 @@ export default class ProcessorCore {
   callRst(num) {
     this.interrupts.enabled = false;
     const state = { mmu: this.mmu, map: this.reg.map };
-    const timeSpent = Z80.subroutine.rst(state, num);
-    this.clock.clockCycles += (4 * 4) + 4;
+    const cyclesSpent = Z80.subroutine.rst(state, num);
+    this.clockCycles += cyclesSpent + 4;
   }
 
   reset() {
     this.reg = new Registers();
-    this.clock.clockCycles = 0;
+    this.clockCycles = 0;
     this.currentOp = 0x00;
     this.currentPc = 0;
   }

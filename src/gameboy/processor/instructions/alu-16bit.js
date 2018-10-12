@@ -1,6 +1,5 @@
 import { CheckFlagFor } from '../';
 import Util from './../../util';
-import { createOpTime } from '../clock-util';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */
@@ -15,17 +14,17 @@ export default {
     const flag = new CheckFlagFor(map.f()).notSubtraction().setH16(val, hl, x).carry16(val).get();
     map.f(flag);
 
-    return createOpTime(2, 8);
+    return 8;
   },
 
   inc: (_, regX) => {
     regX(regX() + 1);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   dec: (_, regX) => {
     regX(regX() - 1);
-    return createOpTime(2, 8);
+    return 8;
   },
 
   addRegSPImmediate: ({ mmu, map }) => {
@@ -39,6 +38,6 @@ export default {
     const isC = (sp & 0xFF) + (immediateSigned & 0xFF) > 0xFF;
     const flag = new CheckFlagFor().setC(isC).setH(val, sp, immediateSigned).get();
     map.f(flag);
-    return createOpTime(4, 16);
+    return 16;
   },
 };
