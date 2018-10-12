@@ -1,19 +1,15 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
-import Timer from '../../src/gameboy/timer/timer';
 import MMU from '../../src/gameboy/memory/controller';
 
 /* eslint prefer-destructuring: 0 */
+/* eslint no-bitwise: 0 */
 describe('Misc', () => {
   let timer = null;
   let mmu = null;
-  let timerTriggered = false;
 
   beforeEach(() => {
-    timerTriggered = false;
-    const triggerTimer = () => { timerTriggered = true; };
-    const interrupts = { triggerTimer };
-    mmu = new MMU({ interrupts });
+    mmu = new MMU();
     timer = mmu.timer;
   });
 
@@ -66,7 +62,7 @@ describe('Misc', () => {
       assert.equal(mmu.readByte(0xFF05), 1);
     });
 
-    it('reset when it overflows to modulo value', () => {
+    it('reset when it overflows to modulo value and trigger timer', () => {
       // Enable tima and set 262144Hz speed
       mmu.writeByte(0xFF07, 0b00000101);
       const moduloVal = 5;
@@ -78,6 +74,8 @@ describe('Misc', () => {
       }
 
       assert.equal(mmu.readByte(0xFF05), moduloVal);
+      const timerFlag = mmu.interrupts.getInterruptFlags() & 4;
+      assert.isTrue(timerFlag > 0);
     });
   });
 });

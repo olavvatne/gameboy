@@ -1,4 +1,3 @@
-import Memory from '../memory/memory';
 import Util from '../util';
 
 /* eslint no-bitwise: 0 */
@@ -10,32 +9,41 @@ const toByte = (arr) => {
   return val;
 };
 
-export default class IORegister extends Memory {
+export default class IORegister {
   constructor(gpu) {
-    super(2 ** 7);
+    this._memory = new Uint8Array(2 ** 7);
     this.keyColumns = [new Array(4).fill(1), new Array(4).fill(1)];
     this.currentColumn = 0;
+    this.lyc = 0;
     this._gpu = gpu;
   }
 
   readByte(address) {
     if (address === 0x00) return this.getKeys();
-    if (address === 0x42) return this._gpu.registers.y;
-    if (address === 0x43) return this._gpu.registers.x;
-    if (address === 0x44) return this._gpu.renderTiming.getLine();
-    return super.readByte(address);
+    else if (address === 0x41) return this.getStat();
+    else if (address === 0x42) return this._gpu.registers.y;
+    else if (address === 0x43) return this._gpu.registers.x;
+    else if (address === 0x44) return this._gpu.renderTiming.getLine();
+    return this._memory[address];
   }
 
   writeByte(address, value) {
-    super.writeByte(address, value);
+    this._memory[address] = value;
+
     if (address === 0x00) this.currentColumn = value & 0x30;
     else if (address === 0x40) this._handleLCDC(value);
     else if (address === 0x42) this._gpu.registers.y = value;
     else if (address === 0x43) this._gpu.registers.x = value;
     else if (address === 0x44) this._gpu.renderTiming.resetLine();
+    else if (address === 0x45) this.lyc = value & 0xFF;
     else if (address === 0x47) this._gpu.setPalette(value, 'bg');
     else if (address === 0x48) this._gpu.setPalette(value, 'obj0');
     else if (address === 0x49) this._gpu.setPalette(value, 'obj1');
+  }
+
+  getStat() {
+    const line = this._gpu.renderTiming.getLine();
+    return (line === this.lyc ? 4 : 0) | this._gpu.renderTiming.getMode();
   }
 
   getKeys() {

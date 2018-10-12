@@ -10,7 +10,9 @@ export default class Renderer {
     this._frameBuffer = buffer;
     this._palette = palette;
     this._oam = oam;
+    this.backgroundValues = new Array(144).fill(new Array(160).fill(0));
   }
+
   _findCurrentPositionInMap(line) {
     this._mapOffset = (((line + this._registers.y) & 0xFF) >> 3) << 5;
     this._tileOffset = (this._registers.x >> 3) & 0x1F;
@@ -35,8 +37,10 @@ export default class Renderer {
 
     for (let i = 0; i < 160; i += 1) {
       const tile = this._frameBuffer.getTile(this._registers.tileset, this._tileAddress);
-      const pixel = this._palette.bg[tile[tileY][tileX]];
-      this._screen.setPixel(line, i, pixel);
+      const PixelVal = tile[tileY][tileX];
+      const pixelColor = this._palette.bg[PixelVal];
+      this._screen.setPixel(line, i, pixelColor);
+      this.backgroundValues[tileY][tileX] = PixelVal;
 
       tileX += 1;
       if (tileX === 8) {
@@ -55,17 +59,15 @@ export default class Renderer {
         const pal = sprite.palette ? this._palette.obj1 : this._palette.obj0;
         const tile = this._frameBuffer.getTile(1, sprite.tile);
         const rowIndex = line - sprite.y;
-        const row = tile.flipY ? tile[7 - rowIndex] : tile[rowIndex];
+        const row = sprite.flipY ? tile[7 - rowIndex] : tile[rowIndex];
 
         for (let x = 0; x < 8; x += 1) {
           if (!(sprite.x + x >= 0 && sprite.x + x < 160)) continue;
-          
-          const pixel = this._screen.getPixel(line, x);
-          // TODO: find actual tile, and the 0-3 value here. zero might be mapped to a color
-          if (row[x] && (sprite.priority || false)) {
-            const correctedX = sprite.flipX ? 7 - x : x;
+          const correctedX = sprite.flipX ? 7 - x : x;
+          const bgVal = this.backgroundValues[line][sprite.x + x];
+          if (row[correctedX] && (sprite.priority || !bgVal)) {
             const color = pal[row[correctedX]];
-            this._screen.setPixel(line, sprite.x + correctedX, color);
+            this._screen.setPixel(line, sprite.x + x, color);
           }
         }
       }

@@ -9,7 +9,7 @@ const numlines = 144;
 const numVertLines = 10;
 
 const Mode = {
-  hblank: 0, sprite: 1, background: 2, vblank: 3,
+  hblank: 0, vblank: 1, background: 2, sprite: 3,
 };
 
 class RenderTiming {
