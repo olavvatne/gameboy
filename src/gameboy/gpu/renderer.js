@@ -22,6 +22,7 @@ export default class Renderer {
   }
 
   renderScanline(line) {
+    if (!this._registers.lcd) return;
     if (this._registers.bg) this.renderBackground(line);
     if (this._registers.sprite) this.renderSprites(line);
   }

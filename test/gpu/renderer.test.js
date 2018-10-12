@@ -14,7 +14,7 @@ describe('GPU', () => {
     buffer = new FrameBuffer();
     screen = new Screen();
     registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
+      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0, lcd: 1,
     };
     palette = {
       bg: [

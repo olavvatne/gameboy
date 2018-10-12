@@ -13,7 +13,7 @@ export default class GPU {
     this.interrupts = interrupts;
     this.screen = screen;
     this.registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0,
+      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0, lcd: 1,
     };
     this.initPalette();
     this._frameBuffer = new FrameBuffer();
@@ -39,14 +39,6 @@ export default class GPU {
       const pal = Util.getHalfNibble(value, i);
       this.palette[type][i] = Util.getPaletteColor(pal);
     }
-  }
-
-  removeImage() {
-    this.screen.reset();
-  }
-
-  showImage() {
-    // TODO: lcd, what does it do?
   }
 
   getVideoMemory() {

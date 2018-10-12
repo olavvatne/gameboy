@@ -32,6 +32,9 @@ class RenderTiming {
     return this._line & 0xFF;
   }
 
+  resetLine() {
+    this._line = 0;
+  }
   // simple state machine that based on tick switches between hblank, vblank and line(s) states.
   step(tick) {
     this._modeClock += tick;
