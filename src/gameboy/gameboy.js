@@ -43,6 +43,7 @@ export default class Gameboy {
     }
   }
 
+  /* istanbul ignore next */
   handleFpsCounter() {
     if (this.core.numVSync > 0 && this.core.numVSync % 60 === 0) {
       const timeDiff = (new Date() - this.previousFpsTime) / 1000;
@@ -58,11 +59,11 @@ export default class Gameboy {
 
   pause() {
     if (this.interval != null) clearInterval(this.interval);
+    this.interval = null;
   }
 
   reset() {
-    if (this.interval != null) clearInterval(this.interval);
-    this.interval = null;
+    this.pause();
     this.gpu.reset();
     this.core.reset();
     this.memory.reset();

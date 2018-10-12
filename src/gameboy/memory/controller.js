@@ -160,6 +160,7 @@ export default class MMU {
   }
 
   load(data) {
+    if (!data) return;
     const prevInBios = this._inBios;
     this._inBios = false;
     this.cartridge.rom = new Uint8Array(data, 0, data.byteLength);

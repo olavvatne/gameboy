@@ -63,5 +63,20 @@ describe('Gameboy', () => {
       gameboy.core.loop();
       assert.isAtLeast(gameboy.core.clock.clockCycles, frame * 2);
     });
+
+    it('should run and be able to pause', () => {
+      const gameboy = new Gameboy();
+      gameboy.start();
+      assert.isNotNull(gameboy.interval);
+      gameboy.pause();
+      assert.isNull(gameboy.interval);
+    });
+
+    it('should be able to run a frame', () => {
+      const gameboy = new Gameboy();
+      const frame = 70224;
+      gameboy.runForAWhile();
+      assert.isAtLeast(gameboy.core.clock.clockCycles, frame);
+    });
   });
 });
