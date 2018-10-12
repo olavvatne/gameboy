@@ -41,6 +41,14 @@ export default class Interrupts {
     this._if |= 0b00000100;
   }
 
+  triggerStat() {
+    this._if |= 0b00000010;
+  }
+
+  triggerVblank() {
+    this._if |= 0b00000001;
+  }
+
   checkSerialTriggered() {
     const isSerial = (this._ie & this._if) & 8;
     if (isSerial) this._if &= 0b11110111;

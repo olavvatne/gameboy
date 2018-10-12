@@ -21,7 +21,7 @@ export default class MMU {
   }
 
   init() {
-    this._wram = new Memory(2 ** 13);
+    this._wram = new Memory(2 ** 13, true);
     this._zram = new Memory(2 ** 7);
     this.cartridge = new Cartridge();
     this._inBios = true;

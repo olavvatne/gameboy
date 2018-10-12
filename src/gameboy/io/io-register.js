@@ -8,19 +8,18 @@ const toByte = (arr) => {
   }
   return val;
 };
-
+// TODO: split into input and gpu state classes
 export default class IORegister {
   constructor(gpu) {
     this._memory = new Uint8Array(2 ** 7);
     this.keyColumns = [new Array(4).fill(1), new Array(4).fill(1)];
     this.currentColumn = 0;
-    this.lyc = 0;
     this._gpu = gpu;
   }
 
   readByte(address) {
     if (address === 0x00) return this.getKeys();
-    else if (address === 0x41) return this.getStat();
+    else if (address === 0x41) return this._gpu.renderTiming.getStat();
     else if (address === 0x42) return this._gpu.registers.y;
     else if (address === 0x43) return this._gpu.registers.x;
     else if (address === 0x44) return this._gpu.renderTiming.getLine();
@@ -32,18 +31,22 @@ export default class IORegister {
 
     if (address === 0x00) this.currentColumn = value & 0x30;
     else if (address === 0x40) this._handleLCDC(value);
+    else if (address === 0x41) this._gpu.renderTiming.setStatInterrupts(value);
     else if (address === 0x42) this._gpu.registers.y = value;
     else if (address === 0x43) this._gpu.registers.x = value;
     else if (address === 0x44) this._gpu.renderTiming.resetLine();
-    else if (address === 0x45) this.lyc = value & 0xFF;
+    else if (address === 0x45) this._gpu.renderTiming.lyc = value & 0xFF;
     else if (address === 0x47) this._gpu.setPalette(value, 'bg');
     else if (address === 0x48) this._gpu.setPalette(value, 'obj0');
     else if (address === 0x49) this._gpu.setPalette(value, 'obj1');
   }
 
-  getStat() {
-    const line = this._gpu.renderTiming.getLine();
-    return (line === this.lyc ? 4 : 0) | this._gpu.renderTiming.getMode();
+  setStatInterrupts(value) {
+    const isLyc = Util.getBit(value, 6) === 1;
+    const isOam = Util.getBit(value, 5) === 1;
+    const isVblank = Util.getBit(value, 4) === 1;
+    const isHblank = Util.getBit(value, 3) === 1;
+    this._gpu.renderTiming.setStatInterrupts(isLyc, isOam, isVblank, isHblank);
   }
 
   getKeys() {

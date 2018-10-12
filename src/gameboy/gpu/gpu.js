@@ -10,14 +10,13 @@ import Interrupts from '../processor/interrupts';
 
 export default class GPU {
   constructor(screen, interrupts = new Interrupts()) {
-    this.interrupts = interrupts;
     this.screen = screen;
     this.registers = {
       x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0, lcd: 1,
     };
     this.initPalette();
     this._frameBuffer = new FrameBuffer();
-    this.renderTiming = new RenderTiming();
+    this.renderTiming = new RenderTiming(interrupts);
     this._vram = new VideoMemory(this._frameBuffer);
     this._oam = new OAM();
     this._renderer = new Renderer(
@@ -52,9 +51,8 @@ export default class GPU {
   step(tick) {
     const result = this.renderTiming.step(tick);
     if (result.shouldScanline) this._renderer.renderScanline(this.renderTiming.getLine());
-    if (result.lastHblank) {
+    if (result.shouldDisplay) {
       this._renderer.displayImage();
-      this.interrupts._if |= 1;
     }
   }
 

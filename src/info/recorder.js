@@ -33,9 +33,8 @@ export default class Recorder {
       return `${hexPc}, ${getHex(op)}, ${info}`;
     }
 
-    return `${hexPc}, ${getHex(op)}, ${info} A:${state.a} B:${state.b} 
-      C:${state.c} D:${state.d} E:${state.e} F:${state.f} H:${state.h} 
-      L:${state.l} SP:${state.sp} ${clock}`;
+    return `${hexPc}, ${getHex(op)}, ${info} 
+      A:${state.a} B:${state.b} C:${state.c} D:${state.d} E:${state.e} F:${state.f} H:${state.h} L:${state.l} SP:${state.sp} ${clock}`;
   }
 
   /* istanbul ignore next */

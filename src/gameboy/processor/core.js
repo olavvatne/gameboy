@@ -16,6 +16,7 @@ export default class ProcessorCore {
     this.currentInstruction = null;
     this.recorder = new Recorder();
     this.numVSync = 0;
+    this.startDebug = false;
   }
 
   fetch() {
@@ -46,7 +47,11 @@ export default class ProcessorCore {
       map: this.reg.map,
       actions: this.actions,
     };
-
+    // if (!this.mmu._inBios && this.currentOp === 0xF0 && this.mmu.readByte(this.currentPc + 1)) this.startDebug = true;
+    // if (this.startDebug) {
+    //   console.log(`LY: ${this.mmu.readByte(0xFF44)}`);
+    //   this.recorder.printCurrent(this.currentOp, this.currentPc, this.clock.clockCycles, this.reg.getState());
+    // }
     const timeSpent = this.currentInstruction(state);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
@@ -101,6 +106,7 @@ export default class ProcessorCore {
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
     this.timer.increment(timeSpent.m);
+    this.notifyGpu(timeSpent.t);
   }
 
   reset() {

@@ -13,7 +13,8 @@ const Mode = {
 };
 
 class RenderTiming {
-  constructor() {
+  constructor(interrupts) {
+    this.inter = interrupts;
     this.reset();
   }
 
@@ -22,6 +23,21 @@ class RenderTiming {
     this._line = 0;
     this._mode = RenderTiming.Mode.sprite;
     this.state = { shouldScanline: false, lastHblank: false };
+    this.enteredOamMode = false;
+    this.enteredVblankMode = false;
+    this.enteredHblankMode = false;
+    this.stat = {};
+    this.lyc = 0;
+  }
+
+  setStatInterrupts(isLyc, isOam, isVblank, isHblank) {
+    this.stat = {
+      lyc: isLyc, oam: isOam, vblank: isVblank, hblank: isHblank,
+    };
+  }
+
+  getStat() {
+    return (this._line === this.lyc ? 4 : 0) | this._mode;
   }
 
   getMode() {
@@ -49,11 +65,16 @@ class RenderTiming {
   _getStateAndReset() {
     const result = Object.assign({}, this.state);
     this.state.shouldScanline = false;
-    this.state.lastHblank = false;
+    this.state.shouldDisplay = false;
     return result;
   }
 
   _visitHblankState() {
+    if (this.enteredHblankMode) {
+      if (this.inter && this.stat.hblank) this.inter.triggerStat();
+      this.enteredHblankMode = false;
+    }
+
     if (this._modeClock >= ticksHBlank) {
       this._modeClock = 0;
       this._mode = Mode.sprite;
@@ -62,12 +83,19 @@ class RenderTiming {
 
       if (this._line === numlines - 1) {
         this._mode = Mode.vblank;
-        this.state.lastHblank = true;
+        this.enteredVblankMode = true;
+        this.state.shouldDisplay = true;
       }
     }
   }
 
   _visitVblankState() {
+    if (this.enteredVblankMode) {
+      if (this.inter) this.inter.triggerVblank();
+      if (this.inter && this.stat.vblank) this.inter.triggerStat();
+      this.enteredVblankMode = false;
+    }
+
     if (this._modeClock >= ticksVBlank) {
       this._modeClock = 0;
       this._mode = Mode.vblank;
@@ -75,6 +103,7 @@ class RenderTiming {
 
       if (this._line >= numlines + numVertLines) {
         this._mode = Mode.sprite;
+        this.enteredOamMode = true;
         this._line = 0;
       } else {
         // TODO: perform last 10 vert lines here.
@@ -83,6 +112,10 @@ class RenderTiming {
   }
 
   _visitSpriteLineState() {
+    if (this.enteredOamMode) {
+      if (this.inter && this.stat.oam) this.inter.triggerStat();
+      this.enteredOamMode = false;
+    }
     if (this._modeClock >= ticksSpriteLine) {
       this._modeClock = 0;
       this._mode = Mode.background;
@@ -93,6 +126,7 @@ class RenderTiming {
     if (this._modeClock >= ticksBackgroundLine) {
       this._modeClock = 0;
       this._mode = Mode.hblank;
+      this.enteredHblankMode = true;
       this.state.shouldScanline = true;
     }
   }
