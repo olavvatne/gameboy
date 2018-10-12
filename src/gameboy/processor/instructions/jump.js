@@ -22,20 +22,27 @@ const addImmediateToPc = ({ map, mmu }) => {
 export default {
   jp: (cpu) => {
     doJump(cpu);
-    return createOpTime(3, 12);
+    return createOpTime(3, 16);
   },
 
   jpIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) doJump({ map, mmu });
-    else map.pc(map.pc() + 2);
+    if (flag.isZero() === condition) {
+      doJump({ map, mmu });
+      return createOpTime(4, 16);
+    }
+    map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
   jpIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) doJump({ map, mmu });
-    else map.pc(map.pc() + 2);
+    if (flag.isCarry() === condition) {
+      doJump({ map, mmu });
+      return createOpTime(4, 16);
+    }
+
+    map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
@@ -46,20 +53,28 @@ export default {
 
   jr: (cpu) => {
     addImmediateToPc(cpu);
-    return createOpTime(2, 8);
+    return createOpTime(2, 12);
   },
 
   jrIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) addImmediateToPc({ map, mmu });
-    else map.pc(map.pc() + 1);
-    return createOpTime(3, 12);
+    if (flag.isZero() === condition) {
+      addImmediateToPc({ map, mmu });
+      return createOpTime(3, 12);
+    }
+
+    map.pc(map.pc() + 1);
+    return createOpTime(2, 8);
   },
 
   jrIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) addImmediateToPc({ map, mmu });
-    else map.pc(map.pc() + 1);
-    return createOpTime(3, 12);
+    if (flag.isCarry() === condition) {
+      addImmediateToPc({ map, mmu });
+      return createOpTime(3, 12);
+    }
+
+    map.pc(map.pc() + 1);
+    return createOpTime(2, 8);
   },
 };

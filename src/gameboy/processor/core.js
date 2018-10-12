@@ -1,4 +1,5 @@
 import { Registers, opcodes, Z80 } from './';
+import cycles from './instruction-timing';
 import Recorder from '../../info/recorder';
 /* eslint no-bitwise: 0 */
 
@@ -9,17 +10,20 @@ export default class ProcessorCore {
     this.interrupts = interruptHandler;
     this.notifyGpu = !notifyGpu ? () => {} : notifyGpu;
     this.reg = new Registers();
-    this.clock = { machineCycles: 0, clockCycles: 0 };
+    this.clock = { clockCycles: 0 };
     this.actions = { stop: false, halt: false };
     this.currentOp = 0x00;
     this.currentPc = 0;
+    this.isCB = false;
     this.currentInstruction = null;
     this.recorder = new Recorder();
     this.numVSync = 0;
     this.startDebug = false;
+    this.oldCycleCount = 0;
   }
 
   fetch() {
+    this.oldCycleCount = this.clock.clockCycles;
     const pc = this.reg.pc();
     this.currentPc = pc;
     this.currentOp = this.mmu.readByte(pc);
@@ -28,9 +32,12 @@ export default class ProcessorCore {
 
   decode() {
     let op = this.currentOp;
+    this.isCB = false;
     if (this.isOpAModifier()) {
       op = this.readNextOpAfterModiferAndCombine(op);
       this.currentOp = op;
+      this.isCB = true;
+      this.clock.clockCycles += 4;
     }
 
     if (opcodes[op] === undefined) {
@@ -49,10 +56,10 @@ export default class ProcessorCore {
     };
 
     const timeSpent = this.currentInstruction(state);
-    this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
-    this.timer.increment(timeSpent.t);
-    this.notifyGpu(timeSpent.t);
+    const elapsed = this.clock.clockCycles - this.oldCycleCount;
+    this.timer.increment(elapsed);
+    this.notifyGpu(elapsed);
   }
 
   isOpAModifier() {
@@ -86,7 +93,6 @@ export default class ProcessorCore {
     if (this.interrupts.anyTriggered()) {
       this.actions.halt = false;
     }
-    this.clock.machineCycles += 1;
     this.clock.clockCycles += 4;
     this.timer.increment(4);
     this.notifyGpu(4);
@@ -94,6 +100,7 @@ export default class ProcessorCore {
 
   handleInterrupts() {
     if (!this.interrupts.anyTriggered()) return;
+    this.interrupts.enabled = false;
     if (this.interrupts.checkVblankTriggered()) {
       this.numVSync += 1;
       this.callRst(0x0040);
@@ -108,15 +115,11 @@ export default class ProcessorCore {
     this.interrupts.enabled = false;
     const state = { mmu: this.mmu, map: this.reg.map };
     const timeSpent = Z80.subroutine.rst(state, num);
-    this.clock.machineCycles += timeSpent.m;
-    this.clock.clockCycles += timeSpent.t;
-    this.timer.increment(timeSpent.t);
-    this.notifyGpu(timeSpent.t);
+    this.clock.clockCycles += (4 * 4) + 4;
   }
 
   reset() {
     this.reg = new Registers();
-    this.clock.machineCycles = 0;
     this.clock.clockCycles = 0;
     this.currentOp = 0x00;
     this.currentPc = 0;

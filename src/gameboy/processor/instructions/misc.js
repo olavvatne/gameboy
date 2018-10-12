@@ -100,7 +100,6 @@ export default {
     return createOpTime(1, 4);
   },
 
-  // TODO: stop and halt
   stop: ({ actions }) => {
     actions.stop = true;
     return createOpTime(1, 4);

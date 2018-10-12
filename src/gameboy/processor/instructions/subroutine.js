@@ -29,20 +29,28 @@ const doCall = (map, mmu) => {
 export default {
   call: ({ mmu, map }) => {
     doCall(map, mmu);
-    return createOpTime(3, 12);
+    return createOpTime(6, 24);
   },
 
   callIfZ: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isZero() === condition) doCall(map, mmu);
-    else map.pc(map.pc() + 2);
+    if (flag.isZero() === condition) {
+      doCall(map, mmu);
+      return createOpTime(6, 24);
+    }
+
+    map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
   callIfC: ({ mmu, map }, condition) => {
     const flag = new CheckFlagFor(map.f());
-    if (flag.isCarry() === condition) doCall(map, mmu);
-    else map.pc(map.pc() + 2);
+    if (flag.isCarry() === condition) {
+      doCall(map, mmu);
+      return createOpTime(6, 24);
+    }
+
+    map.pc(map.pc() + 2);
     return createOpTime(3, 12);
   },
 
@@ -55,7 +63,7 @@ export default {
   ret: ({ mmu, map }) => {
     const val = popFromStack(map, mmu);
     map.pc(val);
-    return createOpTime(2, 8);
+    return createOpTime(4, 16);
   },
 
   retIfZ: ({ mmu, map }, condition) => {
@@ -63,6 +71,7 @@ export default {
     if (flag.isZero() === condition) {
       const val = popFromStack(map, mmu);
       map.pc(val);
+      return createOpTime(5, 20);
     }
     return createOpTime(2, 8);
   },
@@ -72,6 +81,7 @@ export default {
     if (flag.isCarry() === condition) {
       const val = popFromStack(map, mmu);
       map.pc(val);
+      return createOpTime(5, 20);
     }
     return createOpTime(2, 8);
   },
@@ -80,6 +90,6 @@ export default {
     const val = popFromStack(map, mmu);
     map.pc(val);
     interrupt.enabled = true;
-    return createOpTime(2, 8);
+    return createOpTime(1, 16);
   },
 };

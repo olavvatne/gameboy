@@ -61,7 +61,6 @@ describe('Processor', () => {
 
       assert.isAbove(cpu.reg.map.e(), 0);
       assert.isAbove(cpu.clock.clockCycles, 0);
-      assert.isAbove(cpu.clock.machineCycles, 0);
       assert.isAbove(cpu.currentOp, 0);
       assert.isAbove(cpu.reg.pc(), 0);
 
@@ -69,7 +68,6 @@ describe('Processor', () => {
 
       assert.equal(cpu.reg.map.e(), 0);
       assert.equal(cpu.clock.clockCycles, 0);
-      assert.equal(cpu.clock.machineCycles, 0);
       assert.equal(cpu.currentOp, 0);
       assert.equal(cpu.reg.pc(), 0);
     });

@@ -39,9 +39,9 @@ export default class Gameboy {
     const diffCycles = this.core.clock.clockCycles - this.cyclesBeforeFrame;
     const cyclesPerSec = 4194304;
     const virtualTimeElapsed = diffCycles / cyclesPerSec;
-    while (virtualTimeElapsed > diffTime) {
-      diffTime = (new Date() - this.timeBeforeFrame) / 1000;
-    }
+    // while (virtualTimeElapsed > diffTime) {
+    //   diffTime = (new Date() - this.timeBeforeFrame) / 1000;
+    // }
   }
 
   /* istanbul ignore next */

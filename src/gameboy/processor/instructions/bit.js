@@ -22,7 +22,7 @@ const setValInRegOrMem = (map, mmu, regAddr, val) => {
 
 const getTimeExpenditure = (regAddr) => {
   if (regAddr === NameMap.hl) {
-    return createOpTime(4, 16);
+    return createOpTime(2, 16);
   }
   return createOpTime(2, 8);
 };

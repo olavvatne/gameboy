@@ -44,7 +44,7 @@ export default {
     const imVal = mmu.readWord(imAddr);
     map.pc(pc + 2);
     mmu.writeWord(imVal, spVal);
-    return createOpTime(3, 12);
+    return createOpTime(5, 20);
   },
 
   // Push register pair to the stack (PUSH HL)

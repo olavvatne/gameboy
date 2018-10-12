@@ -59,6 +59,8 @@ class RenderTiming {
     else if (this._mode === Mode.background) this._visitBackgroundLineState();
     else if (this._mode === Mode.vblank) this._visitVblankState();
     else { throw new Error('Not a a valid state'); }
+
+    if (this._line === this.lyc && this.inter) this.inter.triggerStat();
     return this._getStateAndReset();
   }
 
