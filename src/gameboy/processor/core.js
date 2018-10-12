@@ -47,15 +47,11 @@ export default class ProcessorCore {
       map: this.reg.map,
       actions: this.actions,
     };
-    // if (!this.mmu._inBios && this.currentOp === 0xF0 && this.mmu.readByte(this.currentPc + 1)) this.startDebug = true;
-    // if (this.startDebug) {
-    //   console.log(`LY: ${this.mmu.readByte(0xFF44)}`);
-    //   this.recorder.printCurrent(this.currentOp, this.currentPc, this.clock.clockCycles, this.reg.getState());
-    // }
+
     const timeSpent = this.currentInstruction(state);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
-    this.timer.increment(timeSpent.m);
+    this.timer.increment(timeSpent.t);
     this.notifyGpu(timeSpent.t);
   }
 
@@ -76,15 +72,24 @@ export default class ProcessorCore {
   loop() {
     const oneFrame = this.clock.clockCycles + 70224;
     while (this.clock.clockCycles < oneFrame) {
-      this.fetch();
-      this.decode();
-      this.execute();
-      if (this.actions.stop || this.actions.halt) {
-        this.pause();
-        break;
+      if (this.actions.halt) {
+        this.handleHalt();
+      } else {
+        this.fetch();
+        this.decode();
+        this.execute();
       }
       if (this.interrupts.enabled) this.handleInterrupts();
     }
+  }
+  handleHalt() {
+    if (this.interrupts.anyTriggered()) {
+      this.actions.halt = false;
+    }
+    this.clock.machineCycles += 1;
+    this.clock.clockCycles += 4;
+    this.timer.increment(4);
+    this.notifyGpu(4);
   }
 
   handleInterrupts() {
@@ -105,7 +110,7 @@ export default class ProcessorCore {
     const timeSpent = Z80.subroutine.rst(state, num);
     this.clock.machineCycles += timeSpent.m;
     this.clock.clockCycles += timeSpent.t;
-    this.timer.increment(timeSpent.m);
+    this.timer.increment(timeSpent.t);
     this.notifyGpu(timeSpent.t);
   }
 

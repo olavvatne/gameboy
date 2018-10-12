@@ -14,8 +14,10 @@ const swapNibbles = (val) => {
 export default {
   nop: () => createOpTime(1, 4),
 
-  // TODO: Halt until interupt somewhere. Not here
-  halt: () => createOpTime(1, 4),
+  halt: ({ actions }) => {
+    actions.halt = true;
+    return createOpTime(1, 4);
+  },
 
   swap: ({ map }, regX) => {
     const val = regX();
