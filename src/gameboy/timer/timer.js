@@ -41,7 +41,7 @@ export default class Timer {
 
   setTac(tac) {
     this.tac = tac;
-    this.timaEnabled = tac & 0b00000100 === 1;
+    this.timaEnabled = !!(tac & 0b00000100);
     this.timaSpeed = freq[tac & 3];
   }
 }

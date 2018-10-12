@@ -138,7 +138,7 @@ export default class MMU {
           else if (address === 0xFF04) this.timer.div = 0;
           else if (address === 0xFF05) this.timer.tima = value;
           else if (address === 0xFF06) this.timer.tma = value;
-          else if (address === 0xFF07) this.timer.tac = value & 7;
+          else if (address === 0xFF07) this.timer.setTac(value & 7);
 
           this.io.writeByte(address & 0xFF, value);
         } else if (address === 0xFFFF) {

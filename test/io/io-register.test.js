@@ -3,7 +3,7 @@ import { it, beforeEach } from 'mocha';
 import IORegister from '../../src/gameboy/io/io-register';
 
 
-describe('IO', () => {
+describe('Misc', () => {
   let io = null;
   let gpu = null;
   let line = 10;
