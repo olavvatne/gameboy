@@ -12,7 +12,18 @@ export default class GPU {
   constructor(screen, interrupts = new Interrupts()) {
     this.screen = screen;
     this.registers = {
-      x: 0, y: 0, tileset: 0, tilemap: 0, bg: 0, sprite: 0, lcd: 1,
+      x: 0,
+      y: 0,
+      tileset: 0,
+      tilemap: 0,
+      tilemapWindow: 0,
+      bg: 0,
+      sprite: 0,
+      lcd: 1,
+      spriteHeight: 8,
+      window: 0,
+      wx: 0,
+      wy: 0,
     };
     this.initPalette();
     this._frameBuffer = new FrameBuffer();

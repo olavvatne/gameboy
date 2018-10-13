@@ -25,14 +25,14 @@ describe('Gameboy', () => {
       assert.isFalse(gameboy.memory._inBios);
     });
 
-    // it('is called from gpu core', () => {
-    //   const gameboy = new Gameboy();
-    //   assert.equal(gameboy.gpu.renderTiming._line, 0);
-    //   // runs sufficient num of bios instructions so that timing cycle one scan line
-    //   runFor(gameboy, 59);
-    //   assert.notEqual(gameboy.gpu.renderTiming.getLine(), 0);
-    //   assert.notEqual(gameboy.gpu.renderTiming.getMode(), RenderTiming.Mode.sprite);
-    // });
+    it('is called from gpu core', () => {
+      const gameboy = new Gameboy();
+      assert.equal(gameboy.gpu.renderTiming._line, 0);
+      // runs sufficient num of bios instructions so that timing cycle one scan line
+      runFor(gameboy, 59);
+      assert.notEqual(gameboy.gpu.renderTiming.getLine(), 0);
+      assert.notEqual(gameboy.gpu.renderTiming.getMode(), RenderTiming.Mode.sprite);
+    });
 
     it('should be able through an instruction write to vram and update buffer cache', () => {
       const gameboy = new Gameboy();

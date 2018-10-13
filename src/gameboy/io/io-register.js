@@ -39,6 +39,8 @@ export default class IORegister {
     else if (address === 0x47) this._gpu.setPalette(value, 'bg');
     else if (address === 0x48) this._gpu.setPalette(value, 'obj0');
     else if (address === 0x49) this._gpu.setPalette(value, 'obj1');
+    else if (address === 0x4A) this._gpu.registers.wy = value;
+    else if (address === 0x4B) this._gpu.registers.wx = value;
   }
 
   setStatInterrupts(value) {
@@ -99,8 +101,10 @@ export default class IORegister {
     const spriteOn = Util.getBit(value, 1);
     this._gpu.registers.bg = bgOn;
     this._gpu.registers.sprite = spriteOn;
+    this._gpu.registers.spriteHeight = Util.getBit(value, 2) ? 16 : 8;
     this._gpu.registers.tilemap = Util.getBit(value, 3);
     this._gpu.registers.tileset = Util.getBit(value, 4);
+    this._gpu.registers.window = Util.getBit(value, 5);
     this._gpu.registers.tilemapWindow = Util.getBit(value, 6);
     this._gpu.registers.lcd = Util.getBit(value, 7);
   }

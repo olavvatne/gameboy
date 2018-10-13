@@ -31,6 +31,7 @@ export default class VideoMemory extends Memory {
   getTileAddressFromMap(tilemap, offset) {
     const mapAddr = tilemap ? 0x1C00 : 0x1800;
     const val = this.readByte(mapAddr + offset);
+
     return val;
   }
 }

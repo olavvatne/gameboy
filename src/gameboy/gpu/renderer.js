@@ -1,5 +1,6 @@
 /* eslint no-bitwise: 0 */
 /* eslint no-continue: 0 */
+/* eslint prefer-destructuring: 0 */
 // width: 160 - height: 144
 
 export default class Renderer {
@@ -10,7 +11,7 @@ export default class Renderer {
     this._frameBuffer = buffer;
     this._palette = palette;
     this._oam = oam;
-    this.backgroundValues = new Array(144).fill(new Array(160).fill(0));
+    this.backgroundValues = new Array(144).fill().map(() => new Array(160).fill(0));
   }
 
   _findCurrentPositionInMap(line) {
@@ -40,7 +41,7 @@ export default class Renderer {
       const PixelVal = tile[tileY][tileX];
       const pixelColor = this._palette.bg[PixelVal];
       this._screen.setPixel(line, i, pixelColor);
-      this.backgroundValues[tileY][tileX] = PixelVal;
+      this.backgroundValues[line][i] = PixelVal;
 
       tileX += 1;
       if (tileX === 8) {
@@ -54,7 +55,7 @@ export default class Renderer {
   renderSprites(line) {
     for (let i = 0; i < 40; i += 1) {
       const sprite = this._oam.objects[i];
-      const placedInLine = sprite.y <= line && (sprite.y + 8) > line;
+      const placedInLine = sprite.y <= line && (sprite.y + this._registers.spriteHeight) > line;
       if (placedInLine) {
         const pal = sprite.palette ? this._palette.obj1 : this._palette.obj0;
         const tile = this._frameBuffer.getTile(1, sprite.tile);
@@ -74,7 +75,40 @@ export default class Renderer {
     }
   }
 
+  renderWindow() {
+    const tilemapSize = 32 * 32;
+    const wx = this._registers.wx - 7; // wx= 7 and xy = 0 put window at upper left corner
+    const wy = this._registers.wy;
+
+    for (let i = 0; i < tilemapSize; i += 1) {
+      const x = (i % 32) * 8;
+      const y = ((i / 32) | 0) * 8;
+      // Entire tile must fit assumtion?
+      const isOnScreen = x + wx >= 0 && x + wx < 160 && y + wy >= 0 && y + wy < 144;
+      if (isOnScreen) {
+        const tileAddr = this._vram.getTileAddressFromMap(this._registers.tilemapWindow, i);
+        const tile = this._frameBuffer.getTile(this._registers.tileset, tileAddr);
+        this.drawTile(tile, x + wx, y + wy);
+      }
+    }
+  }
+
+  drawTile(tile, x, y) {
+    const maxWidth = Math.min(Math.max(166 - x, 0), 8);
+    const maxHeight = Math.min(Math.max(144 - y, 0), 8);
+    const pal = this._palette.bg;
+    for (let i = 0; i < maxHeight; i += 1) {
+      for (let j = 0; j < maxWidth; j += 1) {
+        const color = pal[tile[i][j]];
+        this._screen.setPixel(y + i, x + j, color);
+      }
+    }
+  }
+
   displayImage() {
+    if (this._registers.lcd && this._registers.window) {
+      this.renderWindow();
+    }
     this._screen.displayImage();
   }
 }

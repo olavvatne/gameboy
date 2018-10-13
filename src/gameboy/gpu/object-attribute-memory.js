@@ -11,7 +11,7 @@ export default class OAM extends Memory {
 
   init() {
     this.objects = new Array(40).fill().map(() => ({
-      y: -16, x: -8, tile: 0, palette: 0, priority: 0,
+      y: -16, x: -8, tile: 0, palette: 0, priority: false,
     }));
   }
 
@@ -53,7 +53,7 @@ export default class OAM extends Memory {
       sprite.palette = Util.getBit(value, 4);
       sprite.flipY = Util.getBit(value, 6);
       sprite.flipX = Util.getBit(value, 5);
-      sprite.priority = Util.getBit(value, 7);
+      sprite.priority = Util.getBit(value, 7) === 0;
     }
   }
 }
