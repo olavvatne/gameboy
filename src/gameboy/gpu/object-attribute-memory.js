@@ -44,9 +44,9 @@ export default class OAM extends Memory {
     const sprite = this.objects[index];
     const field = address & 0x03;
     if (field === 0) {
-      sprite.y = value - 16; // WHAT?
+      sprite.y = value - 16;
     } else if (field === 1) {
-      sprite.x = value - 8; // what??
+      sprite.x = value - 8;
     } else if (field === 2) {
       sprite.tile = value;
     } else {

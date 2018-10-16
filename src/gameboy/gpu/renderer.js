@@ -53,23 +53,33 @@ export default class Renderer {
   }
 
   renderSprites(line) {
+    const spriteHeight = this._registers.spriteHeight;
     for (let i = 0; i < 40; i += 1) {
       const sprite = this._oam.objects[i];
-      const placedInLine = sprite.y <= line && (sprite.y + this._registers.spriteHeight) > line;
-      if (placedInLine) {
-        const pal = sprite.palette ? this._palette.obj1 : this._palette.obj0;
-        const tile = this._frameBuffer.getTile(1, sprite.tile);
-        const rowIndex = line - sprite.y;
-        const row = sprite.flipY ? tile[7 - rowIndex] : tile[rowIndex];
+      if (sprite.y > line || sprite.y <= line - spriteHeight) {
+        continue;
+      }
 
-        for (let x = 0; x < 8; x += 1) {
-          if (!(sprite.x + x >= 0 && sprite.x + x < 160)) continue;
-          const correctedX = sprite.flipX ? 7 - x : x;
-          const bgVal = this.backgroundValues[line][sprite.x + x];
-          if (row[correctedX] && (sprite.priority || !bgVal)) {
-            const color = pal[row[correctedX]];
-            this._screen.setPixel(line, sprite.x + x, color);
-          }
+      const pal = sprite.palette ? this._palette.obj1 : this._palette.obj0;
+
+      let tile = this._frameBuffer.getTile(1, sprite.tile);
+      let flipYVal = 7;
+      if (spriteHeight === 16) {
+        flipYVal = 15;
+        const extra = this._frameBuffer.getTile(1, sprite.tile + 1);
+        tile = tile.concat(extra);
+      }
+      const rowIndex = line - sprite.y;
+
+      const row = sprite.flipY ? tile[flipYVal - rowIndex] : tile[rowIndex];
+
+      for (let x = 0; x < 8; x += 1) {
+        if (!(sprite.x + x >= 0 && sprite.x + x < 160)) continue;
+        const correctedX = sprite.flipX ? 7 - x : x;
+        const bgVal = this.backgroundValues[line][sprite.x + x];
+        if (row[correctedX] && (sprite.priority || !bgVal)) {
+          const color = pal[row[correctedX]];
+          this._screen.setPixel(line, sprite.x + x, color);
         }
       }
     }
@@ -99,6 +109,7 @@ export default class Renderer {
     const pal = this._palette.bg;
     for (let i = 0; i < maxHeight; i += 1) {
       for (let j = 0; j < maxWidth; j += 1) {
+        if (tile[i][j] === 0) continue;
         const color = pal[tile[i][j]];
         this._screen.setPixel(y + i, x + j, color);
       }

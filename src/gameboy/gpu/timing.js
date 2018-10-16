@@ -15,7 +15,7 @@ const Mode = {
 
 class RenderTiming {
   constructor(interrupts) {
-    this.inter = interrupts;
+    this.inter = interrupts || { triggerStat: () => {}, triggerVblank: () => {} };
     this.reset();
   }
 
@@ -71,7 +71,6 @@ class RenderTiming {
     else if (this._mode === Mode.vblank) this._visitVblankState();
     else { throw new Error('Not a a valid state'); }
 
-    if (this._line === this.lyc && this.inter) this.inter.triggerStat();
     return this._getStateAndReset();
   }
 
@@ -84,7 +83,8 @@ class RenderTiming {
 
   _visitHblankState() {
     if (this.enteredHblankMode) {
-      if (this.inter && this.lcdStat.hblank) this.inter.triggerStat();
+      if (this.lcdStat.hblank) this.inter.triggerStat();
+      
       this.enteredHblankMode = false;
     }
 
@@ -93,9 +93,11 @@ class RenderTiming {
       this._mode = Mode.sprite;
 
       this._line += 1;
+      if (this._line === this.lyc && this.lcdStat.lyc) this.inter.triggerStat();
 
-      if (this._line === numlines - 1) {
+      if (this._line === numlines) {
         this._mode = Mode.vblank;
+        this.inter.triggerVblank(); // TODO: not when lcd is off
         this.enteredVblankMode = true;
         this.state.shouldDisplay = true;
       }
@@ -104,8 +106,7 @@ class RenderTiming {
 
   _visitVblankState() {
     if (this.enteredVblankMode) {
-      if (this.inter) this.inter.triggerVblank();
-      if (this.inter && this.lcdStat.vblank) this.inter.triggerStat();
+      if (this.lcdStat.vblank) this.inter.triggerStat();
       this.enteredVblankMode = false;
     }
 
@@ -113,6 +114,7 @@ class RenderTiming {
       this._modeClock = 0;
       this._mode = Mode.vblank;
       this._line += 1;
+      if (this._line === this.lyc && this.lcdStat.lyc) this.inter.triggerStat();
 
       if (this._line >= numlines + numVertLines) {
         this._mode = Mode.sprite;
