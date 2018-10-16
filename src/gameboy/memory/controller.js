@@ -66,8 +66,10 @@ export default class MMU {
       case 0xF000:
         if (address < 0xFE00) {
           return this._wram.readByte(address & 0x1FFF);
-        } else if (address < 0xFF00) {
+        } else if (address < 0xFEA0) {
           return this._oam.readByte(address & 0xFF);
+        } else if (address < 0xFF00) {
+          return 0x0;
         } else if (address < 0xFF80) {
           if (address === 0xFF0F) return this.interrupts._if;
           else if (address === 0xFF04) return this.timer.div;
@@ -129,8 +131,10 @@ export default class MMU {
       case 0xF000:
         if (address < 0xFE00) {
           this._wram.writeByte(address & 0x1FFF, value);
-        } else if (address < 0xFF00) {
+        } else if (address < 0xFEA0) {
           this._oam.writeByte(address & 0xFF, value);
+        } else if (address < 0xFF00) {
+          // Writes are ignored on the original gb
         } else if (address < 0xFF80) {
           if (address === 0xFF50 && this._inBios) this.exitBios();
           else if (address === 0xFF0F) this.interrupts._if = value;
