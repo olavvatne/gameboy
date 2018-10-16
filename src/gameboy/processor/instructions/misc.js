@@ -13,8 +13,9 @@ const swapNibbles = (val) => {
 export default {
   nop: () => 4,
 
-  halt: ({ actions }) => {
+  halt: ({ actions, interrupt }) => {
     actions.halt = true;
+    if (!interrupt.enabled && interrupt.anyTriggered()) actions.halt = false;
     return 4;
   },
 

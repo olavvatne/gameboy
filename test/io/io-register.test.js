@@ -1,12 +1,12 @@
 import { assert } from 'chai';
 import { it, beforeEach } from 'mocha';
 import IORegister from '../../src/gameboy/io/io-register';
+import { RenderTiming } from '../../src/gameboy/gpu';
 
 
 describe('Misc', () => {
   let io = null;
   let gpu = null;
-  let line = 10;
   let palette = null;
   const getKeyEvent = key => ({ key });
 
@@ -14,11 +14,9 @@ describe('Misc', () => {
     gpu = {
       registers: {},
       setPalette: (_, p) => { palette = p; },
-      renderTiming: {
-        getLine: () => line,
-        resetLine: () => { line = 0; },
-      },
+      renderTiming: new RenderTiming(),
     };
+    gpu.renderTiming._line = 2;
     io = new IORegister(gpu);
   });
 
@@ -38,7 +36,6 @@ describe('Misc', () => {
     });
 
     it('returns gpu LCDC Y vertical if 0x44', () => {
-      line = 2;
       assert.equal(io.readByte(0x44), 2);
       io.writeByte(0x44, 0x12);
       // resets line
@@ -88,6 +85,13 @@ describe('Misc', () => {
       assert.equal(gpu.registers.tilemapWindow, 1);
       io.writeByte(0x40, 128);
       assert.equal(gpu.registers.lcd, 1);
+    });
+
+    it('can get lcd status', () => {
+      io.writeByte(0x41, 0b01001000);
+      io.writeByte(0x45, 2);
+      const stat = io.readByte(0x41);
+      assert.equal(stat, 0b11001111);
     });
 
     it('sets key column correctly from key down event', () => {

@@ -79,12 +79,14 @@ export default class ProcessorCore {
         this.fetch();
         this.decode();
         this.execute();
+        if (this.interrupts.enabled) this.handleInterrupts();
       }
-      if (this.interrupts.enabled) this.handleInterrupts();
     }
   }
   handleHalt() {
-    if (this.interrupts.anyTriggered()) {
+    if (this.interrupts.enabled) {
+      this.handleInterrupts();
+    } else if (this.interrupts.anyTriggered()) {
       this.actions.halt = false;
     }
     this.clockCycles += 4;
@@ -94,19 +96,19 @@ export default class ProcessorCore {
 
   handleInterrupts() {
     if (!this.interrupts.anyTriggered()) return;
-    this.interrupts.enabled = false;
+
     if (this.interrupts.checkVblankTriggered()) {
       this.numVSync += 1;
       this.callRst(0x0040);
-    }
-    if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x0048);
-    if (this.interrupts.checkTimerTriggered()) this.callRst(0x0050);
-    if (this.interrupts.checkSerialTriggered()) this.callRst(0x0058);
-    if (this.interrupts.checkJoypadTriggered()) this.callRst(0x0060);
+    } else if (this.interrupts.checkLcdStatTriggered()) this.callRst(0x0048);
+    else if (this.interrupts.checkTimerTriggered()) this.callRst(0x0050);
+    else if (this.interrupts.checkSerialTriggered()) this.callRst(0x0058);
+    else if (this.interrupts.checkJoypadTriggered()) this.callRst(0x0060);
   }
 
   callRst(num) {
     this.interrupts.enabled = false;
+    this.actions.halt = false;
     const state = { mmu: this.mmu, map: this.reg.map };
     const cyclesSpent = Z80.subroutine.rst(state, num);
     this.clockCycles += cyclesSpent + 4;

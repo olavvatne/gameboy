@@ -1,3 +1,4 @@
+import Util from '../util';
 /* eslint no-bitwise: 0 */
 
 const ticksBackgroundLine = 172;
@@ -26,18 +27,28 @@ class RenderTiming {
     this.enteredOamMode = false;
     this.enteredVblankMode = false;
     this.enteredHblankMode = false;
-    this.stat = {};
+    this.lcdStat = {};
     this.lyc = 0;
   }
 
-  setStatInterrupts(isLyc, isOam, isVblank, isHblank) {
-    this.stat = {
+  EnableOrDisableStatInterrupts(value) {
+    const isLyc = Util.getBit(value, 6) === 1;
+    const isOam = Util.getBit(value, 5) === 1;
+    const isVblank = Util.getBit(value, 4) === 1;
+    const isHblank = Util.getBit(value, 3) === 1;
+    this.lcdStat = {
       lyc: isLyc, oam: isOam, vblank: isVblank, hblank: isHblank,
     };
   }
 
   getStat() {
-    return (this._line === this.lyc ? 4 : 0) | this._mode;
+    let currentStat = (this._line === this.lyc ? 4 : 0) | this._mode;
+    currentStat |= this.lcdStat.hblank << 3;
+    currentStat |= this.lcdStat.vblank << 4;
+    currentStat |= this.lcdStat.oam << 5;
+    currentStat |= this.lcdStat.lyc << 6;
+    currentStat |= 0b10000000;
+    return currentStat;
   }
 
   getMode() {
@@ -73,7 +84,7 @@ class RenderTiming {
 
   _visitHblankState() {
     if (this.enteredHblankMode) {
-      if (this.inter && this.stat.hblank) this.inter.triggerStat();
+      if (this.inter && this.lcdStat.hblank) this.inter.triggerStat();
       this.enteredHblankMode = false;
     }
 
@@ -94,7 +105,7 @@ class RenderTiming {
   _visitVblankState() {
     if (this.enteredVblankMode) {
       if (this.inter) this.inter.triggerVblank();
-      if (this.inter && this.stat.vblank) this.inter.triggerStat();
+      if (this.inter && this.lcdStat.vblank) this.inter.triggerStat();
       this.enteredVblankMode = false;
     }
 
@@ -115,7 +126,7 @@ class RenderTiming {
 
   _visitSpriteLineState() {
     if (this.enteredOamMode) {
-      if (this.inter && this.stat.oam) this.inter.triggerStat();
+      if (this.inter && this.lcdStat.oam) this.inter.triggerStat();
       this.enteredOamMode = false;
     }
     if (this._modeClock >= ticksSpriteLine) {

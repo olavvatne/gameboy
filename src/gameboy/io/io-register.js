@@ -31,7 +31,7 @@ export default class IORegister {
 
     if (address === 0x00) this.currentColumn = value & 0x30;
     else if (address === 0x40) this._handleLCDC(value);
-    else if (address === 0x41) this._gpu.renderTiming.setStatInterrupts(value);
+    else if (address === 0x41) this._gpu.renderTiming.EnableOrDisableStatInterrupts(value);
     else if (address === 0x42) this._gpu.registers.y = value;
     else if (address === 0x43) this._gpu.registers.x = value;
     else if (address === 0x44) this._gpu.renderTiming.resetLine();
@@ -41,14 +41,6 @@ export default class IORegister {
     else if (address === 0x49) this._gpu.setPalette(value, 'obj1');
     else if (address === 0x4A) this._gpu.registers.wy = value;
     else if (address === 0x4B) this._gpu.registers.wx = value;
-  }
-
-  setStatInterrupts(value) {
-    const isLyc = Util.getBit(value, 6) === 1;
-    const isOam = Util.getBit(value, 5) === 1;
-    const isVblank = Util.getBit(value, 4) === 1;
-    const isHblank = Util.getBit(value, 3) === 1;
-    this._gpu.renderTiming.setStatInterrupts(isLyc, isOam, isVblank, isHblank);
   }
 
   getKeys() {
