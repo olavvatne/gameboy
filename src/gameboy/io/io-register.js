@@ -8,6 +8,13 @@ const toByte = (arr) => {
   }
   return val;
 };
+
+const isUnmapped = address => address === 0x03 || address === 0x08 ||
+  address === 0x09 || address === 0x0A || address === 0x0B || address === 0x0C ||
+  address === 0x0D || address === 0x0E || address === 0x15 || address === 0x1F ||
+  address === 0x27 || address === 0x28 || address === 0x29 || (address >= 0x4C && address <= 0x7F);
+
+
 // TODO: split into input and gpu state classes
 export default class IORegister {
   constructor(gpu) {
@@ -25,11 +32,12 @@ export default class IORegister {
     else if (address === 0x1C) return this._memory[address] | 0b10011111; // TODO: NR 32
     else if (address === 0x20) return this._memory[address] | 0b11000000; // TODO: NR 41
     else if (address === 0x23) return this._memory[address] | 0b00111111; // TODO: NR 44
-    else if (address === 0x23) return this._memory[address] | 0b01110000; // TODO: NR 52
+    else if (address === 0x26) return this._memory[address] | 0b01110000; // TODO: NR 52
     else if (address === 0x41) return this._gpu.renderTiming.getStat();
     else if (address === 0x42) return this._gpu.registers.y;
     else if (address === 0x43) return this._gpu.registers.x;
     else if (address === 0x44) return this._gpu.renderTiming.getLine();
+    else if (isUnmapped(address)) return 0xFF;
 
     return this._memory[address];
   }
