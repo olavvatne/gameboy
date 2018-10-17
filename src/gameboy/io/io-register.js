@@ -19,10 +19,18 @@ export default class IORegister {
 
   readByte(address) {
     if (address === 0x00) return this.getKeys();
+    else if (address === 0x02) return this._memory[address] | 0b01111110; // TODO: SC
+    else if (address === 0x10) return this._memory[address] | 0b10000000; // TODO: NR 10
+    else if (address === 0x1A) return this._memory[address] | 0b01111111; // TODO: NR 30
+    else if (address === 0x1C) return this._memory[address] | 0b10011111; // TODO: NR 32
+    else if (address === 0x20) return this._memory[address] | 0b11000000; // TODO: NR 41
+    else if (address === 0x23) return this._memory[address] | 0b00111111; // TODO: NR 44
+    else if (address === 0x23) return this._memory[address] | 0b01110000; // TODO: NR 52
     else if (address === 0x41) return this._gpu.renderTiming.getStat();
     else if (address === 0x42) return this._gpu.registers.y;
     else if (address === 0x43) return this._gpu.registers.x;
     else if (address === 0x44) return this._gpu.renderTiming.getLine();
+
     return this._memory[address];
   }
 
@@ -47,7 +55,7 @@ export default class IORegister {
     switch (this.currentColumn) {
       case 0x10: return toByte(this.keyColumns[0]);
       case 0x20: return toByte(this.keyColumns[1]);
-      default: return 0x00;
+      default: return 0xFF;
     }
   }
 

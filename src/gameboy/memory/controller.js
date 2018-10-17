@@ -71,11 +71,11 @@ export default class MMU {
         } else if (address < 0xFF00) {
           return 0x0;
         } else if (address < 0xFF80) {
-          if (address === 0xFF0F) return this.interrupts._if;
+          if (address === 0xFF0F) return this.interrupts._if | 0b11100000;
           else if (address === 0xFF04) return this.timer.div;
           else if (address === 0xFF05) return this.timer.tima;
           else if (address === 0xFF06) return this.timer.tma;
-          else if (address === 0xFF07) return this.timer.tac;
+          else if (address === 0xFF07) return this.timer.tac | 0b11111000;
           return this.io.readByte(address & 0xFF);
         } else if (address === 0xFFFF) {
           return this.interrupts._ie;

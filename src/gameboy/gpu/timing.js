@@ -10,7 +10,7 @@ const numlines = 144;
 const numVertLines = 10;
 
 const Mode = {
-  hblank: 0, vblank: 1, background: 2, sprite: 3,
+  hblank: 0, vblank: 1, sprite: 2, background: 3,
 };
 
 class RenderTiming {
@@ -22,11 +22,8 @@ class RenderTiming {
   reset() {
     this._modeClock = 0;
     this._line = 0;
-    this._mode = RenderTiming.Mode.sprite;
+    this._mode = Mode.sprite;
     this.state = { shouldScanline: false, lastHblank: false };
-    this.enteredOamMode = false;
-    this.enteredVblankMode = false;
-    this.enteredHblankMode = false;
     this.lcdStat = {};
     this.lyc = 0;
   }
@@ -66,12 +63,24 @@ class RenderTiming {
   step(tick) {
     this._modeClock += tick;
     if (this._mode === Mode.hblank) this._visitHblankState();
+    else if (this._mode === Mode.vblank) this._visitVblankState();
     else if (this._mode === Mode.sprite) this._visitSpriteLineState();
     else if (this._mode === Mode.background) this._visitBackgroundLineState();
-    else if (this._mode === Mode.vblank) this._visitVblankState();
     else { throw new Error('Not a a valid state'); }
 
     return this._getStateAndReset();
+  }
+  _updateLY() {
+    // TODO: create a new stat on every updateLY and setMode?
+    if (this._line === this.lyc && this.lcdStat.lyc) this.inter.triggerStat();
+  }
+  _setMode(mode) {
+    this._mode = mode;
+    if ((mode === Mode.vblank && this.lcdStat.vblank) ||
+      (mode === Mode.hblank && this.lcdStat.hblank) ||
+      (mode === Mode.sprite && this.lcdStat.oam)) {
+      this.inter.triggerStat();
+    }
   }
 
   _getStateAndReset() {
@@ -82,66 +91,48 @@ class RenderTiming {
   }
 
   _visitHblankState() {
-    if (this.enteredHblankMode) {
-      if (this.lcdStat.hblank) this.inter.triggerStat();
-      
-      this.enteredHblankMode = false;
-    }
-
     if (this._modeClock >= ticksHBlank) {
-      this._modeClock = 0;
-      this._mode = Mode.sprite;
+      this._modeClock -= ticksHBlank;
 
       this._line += 1;
-      if (this._line === this.lyc && this.lcdStat.lyc) this.inter.triggerStat();
+      this._updateLY();
 
       if (this._line === numlines) {
-        this._mode = Mode.vblank;
-        this.inter.triggerVblank(); // TODO: not when lcd is off
-        this.enteredVblankMode = true;
+        this._setMode(Mode.vblank);
+        this.inter.triggerVblank();
         this.state.shouldDisplay = true;
+      } else {
+        this._mode = Mode.sprite;
       }
     }
   }
 
   _visitVblankState() {
-    if (this.enteredVblankMode) {
-      if (this.lcdStat.vblank) this.inter.triggerStat();
-      this.enteredVblankMode = false;
-    }
-
     if (this._modeClock >= ticksVBlank) {
-      this._modeClock = 0;
-      this._mode = Mode.vblank;
+      this._modeClock -= ticksVBlank;
       this._line += 1;
-      if (this._line === this.lyc && this.lcdStat.lyc) this.inter.triggerStat();
 
       if (this._line >= numlines + numVertLines) {
-        this._mode = Mode.sprite;
-        this.enteredOamMode = true;
+        this._setMode(Mode.sprite);
         this._line = 0;
-      } else {
-        // TODO: perform last 10 vert lines here.
       }
+
+      this._updateLY();
     }
   }
 
+  // Scanline oam
   _visitSpriteLineState() {
-    if (this.enteredOamMode) {
-      if (this.inter && this.lcdStat.oam) this.inter.triggerStat();
-      this.enteredOamMode = false;
-    }
     if (this._modeClock >= ticksSpriteLine) {
-      this._modeClock = 0;
-      this._mode = Mode.background;
+      this._modeClock -= ticksSpriteLine;
+      this._setMode(Mode.background);
     }
   }
 
   _visitBackgroundLineState() {
     if (this._modeClock >= ticksBackgroundLine) {
-      this._modeClock = 0;
-      this._mode = Mode.hblank;
-      this.enteredHblankMode = true;
+      this._modeClock -= ticksBackgroundLine;
+      this._setMode(Mode.hblank);
       this.state.shouldScanline = true;
     }
   }

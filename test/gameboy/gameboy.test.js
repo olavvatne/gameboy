@@ -6,15 +6,19 @@ import Gameboy from '../../src/gameboy/gameboy';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */
+/* eslint no-param-reassign: 0 */
 
 // End to end test of cpu and memory.
 // Runs bootstrap binary and checks that emulator has all the instructions needed.
 describe('Gameboy', () => {
   const runFor = (gameboy, steps) => {
     for (let i = 0; i < steps; i += 1) {
+      gameboy.core.oldCycleCount = gameboy.core.clockCycles;
       gameboy.core.fetch();
       gameboy.core.decode();
       gameboy.core.execute();
+      gameboy.core.handleClock();
+      gameboy.core.handleInterrupts();
     }
   };
 
@@ -57,11 +61,11 @@ describe('Gameboy', () => {
 
     it('should be able to run an entire loop', () => {
       const gameboy = new Gameboy();
-      const frame = 70224;
       gameboy.core.loop();
-      assert.isAtLeast(gameboy.core.clockCycles, frame);
+      gameboy.core.interrupts.enabled = true;
+      assert.equal(gameboy.core.clockCycles, 0);
       gameboy.core.loop();
-      assert.isAtLeast(gameboy.core.clockCycles, frame * 2);
+      assert.equal(gameboy.core.clockCycles, 0);
     });
 
     it('should run and be able to pause', () => {
@@ -74,9 +78,8 @@ describe('Gameboy', () => {
 
     it('should be able to run a frame', () => {
       const gameboy = new Gameboy();
-      const frame = 70224;
       gameboy.runForAWhile();
-      assert.isAtLeast(gameboy.core.clockCycles, frame);
+      assert.equal(gameboy.core.clockCycles, 0);
     });
   });
 });

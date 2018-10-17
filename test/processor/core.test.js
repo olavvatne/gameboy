@@ -26,10 +26,12 @@ describe('Processor', () => {
       core.decode();
       assert.equal(called, 0);
       core.execute();
+      core.handleClock();
       assert.equal(called, 1);
       core.fetch();
       core.decode();
       core.execute();
+      core.handleClock();
       assert.equal(called, 2);
     });
 

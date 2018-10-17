@@ -48,12 +48,8 @@ export default class ProcessorCore {
       map: this.reg.map,
       actions: this.actions,
     };
-    this.oldCycleCount = this.clockCycles;
     const cyclesSpent = this.currentInstruction(state);
     this.clockCycles += cyclesSpent;
-    const elapsed = this.clockCycles - this.oldCycleCount;
-    this.timer.increment(elapsed);
-    this.notifyGpu(elapsed);
   }
 
   isOpAModifier() {
@@ -73,28 +69,36 @@ export default class ProcessorCore {
   loop() {
     const oneFrame = this.clockCycles + 70224;
     while (this.clockCycles < oneFrame) {
+      this.oldCycleCount = this.clockCycles;
       if (this.actions.halt) {
         this.handleHalt();
       } else {
         this.fetch();
         this.decode();
         this.execute();
-        if (this.interrupts.enabled) this.handleInterrupts();
       }
-    }
-  }
-  handleHalt() {
-    if (this.interrupts.enabled) {
+
+      this.handleClock();
       this.handleInterrupts();
-    } else if (this.interrupts.anyTriggered()) {
+    }
+    this.clockCycles = 0;
+  }
+
+  handleClock() {
+    const elapsed = this.clockCycles - this.oldCycleCount;
+    this.timer.increment(elapsed);
+    this.notifyGpu(elapsed);
+  }
+
+  handleHalt() {
+    if (this.interrupts.anyTriggered()) {
       this.actions.halt = false;
     }
     this.clockCycles += 4;
-    this.timer.increment(4);
-    this.notifyGpu(4);
   }
 
   handleInterrupts() {
+    if (!this.interrupts.enabled) return;
     if (!this.interrupts.anyTriggered()) return;
 
     if (this.interrupts.checkVblankTriggered()) {

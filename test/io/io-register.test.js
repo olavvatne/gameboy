@@ -75,8 +75,8 @@ describe('Misc', () => {
       assert.equal(gpu.registers.bg, 1);
       io.writeByte(0x40, 2);
       assert.equal(gpu.registers.sprite, 1);
-      // io.writeByte(0x40, 4);
-      // assert.equal(gpu.registers.spriteSize, 1);
+      io.writeByte(0x40, 4);
+      assert.equal(gpu.registers.spriteHeight, 16);
       io.writeByte(0x40, 8);
       assert.equal(gpu.registers.tilemap, 1);
       io.writeByte(0x40, 16);
@@ -88,10 +88,10 @@ describe('Misc', () => {
     });
 
     it('can get lcd status', () => {
-      io.writeByte(0x41, 0b01001000);
+      io.writeByte(0x41, 0b01001000); // oam and hblank enable
       io.writeByte(0x45, 2);
       const stat = io.readByte(0x41);
-      assert.equal(stat, 0b11001111);
+      assert.equal(stat, 0b11001110);
     });
 
     it('sets key column correctly from key down event', () => {
