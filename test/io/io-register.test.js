@@ -56,11 +56,6 @@ describe('Misc', () => {
       assert.equal(keySecondColumn, 0);
     });
 
-    it('reads and write to memory', () => {
-      io.writeByte(0x5F, 0xAA);
-      assert.equal(io.readByte(0x5F), 0xAA);
-    });
-
     it('calls to set palette of object and bg', () => {
       io.writeByte(0x47, 0x00);
       assert.equal(palette, 'bg');
