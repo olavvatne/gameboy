@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Gameboy emulator</title>
+    <link rel="stylesheet" type="text/css" href="style.css" /> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="controls">
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="reset">Stop</button>
+        <div class="upload-wrapper">
+          <button class="upload-button">Load</button>
+          <input type="file" id="load" accept=".gb" />
+        </div>
+      </div>
+
+      <canvas id="screen" width="160" height="144"></canvas>
+    </div>
+      <script type="text/javascript" src="gameboy.js"></script>
+      <script type="text/javascript" src="runner.js"></script>
+  </body>
+</html>
