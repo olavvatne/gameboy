@@ -22,13 +22,24 @@ jobs:
         run: npm ci
       - name: Test & coverage
         run: npm run coverage
-      - name: Test Report
+      - name: Test report
+        id: test_reporter
         uses: dorny/test-reporter@v1
         if: success() || failure() 
         with:
           name: Unit Tests
           path: reports/test-results.json
           reporter: mocha-json
+      - name: Create test passed badge gist
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 91601614a85590cfb8a2cc810653ca49
+          filename: test-badge.json
+          label: unit
+          message: ${{steps.test_reporter.outputs.passed}}
+          color: ${{ steps.test_reporter.outputs.conclusion == 'success' && 'green' || 'red' }}
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
