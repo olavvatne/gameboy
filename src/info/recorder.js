@@ -1,4 +1,4 @@
-import OpcodeInfoManager from './info-manager';
+import OpcodeInfoManager from './info-manager.js';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-console: 0 */

@@ -1,9 +1,9 @@
-import bios from './bios';
-import Memory from './memory';
-import Interrupts from '../processor/interrupts';
-import OAM from '../gpu/object-attribute-memory';
-import Cartridge from './cartrigde';
-import Timer from '../timer/timer';
+import bios from './bios.js';
+import Memory from './memory.js';
+import Interrupts from '../processor/interrupts.js';
+import OAM from '../gpu/object-attribute-memory.js';
+import Cartridge from './cartrigde.js';
+import Timer from '../timer/timer.js';
 /* eslint no-bitwise: 0 */
 
 export default class MMU {

@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { Z80, CheckFlagFor, opcodes, NameMap } from '../../../src/gameboy/processor';
-import getEmptyState from '../../helper/state-helper';
+import { it, beforeEach, describe } from 'mocha';
+import { Z80, CheckFlagFor, opcodes, NameMap } from '../../../src/gameboy/processor/index.js';
+import getEmptyState from '../../helper/state-helper.js';
 
 // Tests follow instruction manual and opcode map at
 // http://www.devrs.com/gb/files/opcodes.html

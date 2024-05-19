@@ -1,5 +1,6 @@
 import { assert } from 'chai';
-import { MMU } from '../../src/gameboy/memory';
+import { it, describe } from 'mocha';
+import { MMU } from '../../src/gameboy/memory/index.js';
 
 const getMemory = () => new MMU();
 

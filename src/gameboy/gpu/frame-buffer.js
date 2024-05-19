@@ -1,4 +1,4 @@
-import Util from '../util';
+import Util from '../util.js';
 /*
   tile based. 8x8 pixels. 256 unique tiles.
   Two maps of 32x32 tiles held in memory. One displayed at the time.
@@ -14,7 +14,6 @@ import Util from '../util';
  */
 // TODO: scroll x and scroll y. Wraps around as well
 
-/* eslint no-bitwise: 0 */
 /* eslint no-bitwise: 0 */
 
 const numTiles = 384;

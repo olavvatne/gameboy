@@ -1,5 +1,5 @@
-import Memory from '../memory/memory';
-import Util from '../util';
+import Memory from '../memory/memory.js';
+import Util from '../util.js';
 
 /* eslint no-bitwise: 0 */
 

@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import Cartridge from '../../src/gameboy/memory/cartrigde';
+import { it, beforeEach, describe } from 'mocha';
+import Cartridge from '../../src/gameboy/memory/cartrigde.js';
 
 
 describe('Memory', () => {

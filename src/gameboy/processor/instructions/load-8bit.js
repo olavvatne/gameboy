@@ -1,4 +1,4 @@
-import { alu16 } from './';
+import { alu16 } from './index.js';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */

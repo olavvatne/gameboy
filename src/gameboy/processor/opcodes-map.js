@@ -1,4 +1,4 @@
-import { Z80, NameMap } from './';
+import { Z80, NameMap } from './index.js';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */

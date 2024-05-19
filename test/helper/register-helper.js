@@ -1,4 +1,4 @@
-import { NameMap } from '../../src/gameboy/processor';
+import { NameMap } from '../../src/gameboy/processor/index.js';
 
 export const reg8bitList = [
   NameMap.a, NameMap.b, NameMap.c, NameMap.d, NameMap.e, NameMap.h, NameMap.l,

@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import OpcodeInfoManager from '../../src/info/info-manager';
-import opcodes from '../../src/info/opcodes';
+import { it, beforeEach, describe } from 'mocha';
+import OpcodeInfoManager from '../../src/info/info-manager.js';
+import opcodes from '../../src/info/opcodes.js';
 
 
 describe('Misc', () => {

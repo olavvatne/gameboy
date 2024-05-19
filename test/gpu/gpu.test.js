@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { MMU } from '../../src/gameboy/memory';
-import { GPU } from '../../src/gameboy/gpu';
+import { it, beforeEach, describe } from 'mocha';
+import { MMU } from '../../src/gameboy/memory/index.js';
+import { GPU } from '../../src/gameboy/gpu/index.js';
 
 describe('GPU', () => {
   let gpu = null;

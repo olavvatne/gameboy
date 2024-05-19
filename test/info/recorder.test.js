@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import Recorder from '../../src/info/recorder';
-import getEmptyState from '../helper/state-helper';
+import { it, beforeEach,describe } from 'mocha';
+import Recorder from '../../src/info/recorder.js';
+import getEmptyState from '../helper/state-helper.js';
 
 /* eslint no-console: 0 */
 

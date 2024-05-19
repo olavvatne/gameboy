@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { MMU } from '../../src/gameboy/memory';
+import { it, beforeEach, describe } from 'mocha';
+import { MMU } from '../../src/gameboy/memory/index.js';
 
 describe('Memory', () => {
   let mmu = null;

@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import MMU from '../../src/gameboy/memory/controller';
+import { it, beforeEach, describe } from 'mocha';
+import MMU from '../../src/gameboy/memory/controller.js';
 
 /* eslint prefer-destructuring: 0 */
 /* eslint no-bitwise: 0 */

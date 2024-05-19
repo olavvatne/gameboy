@@ -1,5 +1,5 @@
-import { CheckFlagFor } from '../';
-import Util from './../../util';
+import { CheckFlagFor } from '../index.js';
+import Util from './../../util.js';
 
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */

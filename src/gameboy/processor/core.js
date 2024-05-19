@@ -1,5 +1,5 @@
-import { Registers, opcodes, Z80 } from './';
-import Recorder from '../../info/recorder';
+import { Registers, opcodes, Z80 } from './index.js';
+import Recorder from '../../info/recorder.js';
 /* eslint no-bitwise: 0 */
 
 export default class ProcessorCore {

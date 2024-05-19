@@ -1,4 +1,4 @@
-import Memory from '../memory/memory';
+import Memory from '../memory/memory.js';
 
 /* eslint no-bitwise: 0 */
 

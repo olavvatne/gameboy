@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { Registers } from '../../src/gameboy/processor';
+import { it, beforeEach, describe } from 'mocha';
+import { Registers } from '../../src/gameboy/processor/index.js';
 
 /* eslint prefer-destructuring: 0 */
 describe('Processor', () => {
