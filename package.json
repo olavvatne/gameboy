@@ -5,10 +5,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "mocha './test/**/*.js'",
+    "test": "mocha './test/**/*.js'  --reporter json --reporter-options output=./reports/test-results.json",
     "start": "esbuild --bundle src/index.js --outfile=public/index.js --watch --servedir=public",
     "build": "esbuild --bundle src/index.js --outdir=public",
-    "coverage": "c8 -reporter=lcov npm test"
+    "coverage": "c8 --reporter=lcov npm test"
   },
   "repository": {
     "type": "git",
