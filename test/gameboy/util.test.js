@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it } from 'mocha';
-import Util from '../../src/gameboy/util';
+import { it, describe } from 'mocha';
+import Util from '../../src/gameboy/util.js';
 
 describe('Util', () => {
   describe('getBit tests', () => {

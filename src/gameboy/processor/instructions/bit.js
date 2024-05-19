@@ -1,5 +1,4 @@
-import { CheckFlagFor, NameMap } from '../';
-import { createOpTime } from '../clock-util';
+import { CheckFlagFor, NameMap } from '../index.js';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */

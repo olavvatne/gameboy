@@ -1,4 +1,4 @@
-import Util from '../util';
+import Util from '../util.js';
 
 /* eslint no-bitwise: 0 */
 const toByte = (arr) => {

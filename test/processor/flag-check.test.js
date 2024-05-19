@@ -1,5 +1,6 @@
 import { assert } from 'chai';
-import { CheckFlagFor } from '../../src/gameboy/processor';
+import { it, describe } from 'mocha';
+import { CheckFlagFor } from '../../src/gameboy/processor/index.js';
 
 /* eslint newline-per-chained-call: 0 */
 describe('Processor', () => {

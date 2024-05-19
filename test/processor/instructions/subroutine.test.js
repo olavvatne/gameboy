@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { Z80, CheckFlagFor } from '../../../src/gameboy/processor';
-import getEmptyState from '../../helper/state-helper';
+import { it, beforeEach, describe } from 'mocha';
+import { Z80, CheckFlagFor } from '../../../src/gameboy/processor/index.js';
+import getEmptyState from '../../helper/state-helper.js';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */

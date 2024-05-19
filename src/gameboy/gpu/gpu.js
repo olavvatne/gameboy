@@ -1,10 +1,10 @@
-import OAM from './object-attribute-memory';
-import VideoMemory from './video-memory';
-import RenderTiming from './timing';
-import FrameBuffer from './frame-buffer';
-import Renderer from './renderer';
-import Util from '../util';
-import Interrupts from '../processor/interrupts';
+import OAM from './object-attribute-memory.js';
+import VideoMemory from './video-memory.js';
+import RenderTiming from './timing.js';
+import FrameBuffer from './frame-buffer.js';
+import Renderer from './renderer.js';
+import Util from '../util.js';
+import Interrupts from '../processor/interrupts.js';
 
 /* eslint no-bitwise: 0 */
 

@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { RenderTiming } from '../../src/gameboy/gpu';
+import { it, beforeEach,describe } from 'mocha';
+import { RenderTiming } from '../../src/gameboy/gpu/index.js';
 
 describe('GPU', () => {
   const numFrameTicks = 70224;

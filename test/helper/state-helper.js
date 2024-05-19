@@ -1,5 +1,5 @@
-import { Registers } from '../../src/gameboy/processor';
-import { MMU } from '../../src/gameboy/memory';
+import { Registers } from '../../src/gameboy/processor/index.js';
+import { MMU } from '../../src/gameboy/memory/index.js';
 
 const getEmptyState = () => {
   const regs = new Registers();

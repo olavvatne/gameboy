@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import IORegister from '../../src/gameboy/io/io-register';
-import { RenderTiming } from '../../src/gameboy/gpu';
+import { it, beforeEach, describe } from 'mocha';
+import IORegister from '../../src/gameboy/io/io-register.js';
+import { RenderTiming } from '../../src/gameboy/gpu/index.js';
 
 
 describe('Misc', () => {

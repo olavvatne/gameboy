@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { it, beforeEach } from 'mocha';
-import { VideoMemory, Renderer, FrameBuffer, Screen, OAM } from '../../src/gameboy/gpu/';
-import Util from '../../src/gameboy/util';
+import { it, beforeEach, describe } from 'mocha';
+import { VideoMemory, Renderer, FrameBuffer, Screen, OAM } from '../../src/gameboy/gpu/index.js';
+import Util from '../../src/gameboy/util.js';
 
 describe('GPU', () => {
   let renderer = null;

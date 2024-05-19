@@ -1,4 +1,4 @@
-import { CheckFlagFor } from '../';
+import { CheckFlagFor } from '../index.js';
 /* eslint no-bitwise: 0 */
 /* eslint no-unused-vars: 0 */
 /* eslint newline-per-chained-call: 0 */

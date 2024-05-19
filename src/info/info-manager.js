@@ -1,4 +1,4 @@
-import opcodes from './opcodes';
+import opcodes from './opcodes.js';
 
 /* eslint no-bitwise: 0 */
 

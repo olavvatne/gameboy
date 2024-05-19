@@ -1,8 +1,8 @@
 import { assert } from 'chai';
-import { it } from 'mocha';
-import TestRunner from './runner';
-import { RenderTiming } from '../../src/gameboy/gpu';
-import Gameboy from '../../src/gameboy/gameboy';
+import { it, describe } from 'mocha';
+import TestRunner from './runner.js';
+import { RenderTiming } from '../../src/gameboy/gpu/index.js';
+import Gameboy from '../../src/gameboy/gameboy.js';
 
 /* eslint newline-per-chained-call: 0 */
 /* eslint object-curly-newline: 0 */

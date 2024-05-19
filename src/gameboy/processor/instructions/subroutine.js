@@ -1,5 +1,5 @@
-import { CheckFlagFor } from '..';
-import { jump } from './';
+import { CheckFlagFor } from '../index.js';
+import { jump } from './index.js';
 // Consists of Call, restart and return instructions which modify stack.
 
 /* eslint no-bitwise: 0 */

@@ -1,8 +1,8 @@
-import { CPU } from './processor';
-import { MMU } from './memory';
-import { GPU, Screen } from './gpu';
-import IORegister from './io/io-register';
-import Interrupts from './processor/interrupts';
+import { CPU } from './processor/index.js';
+import { MMU } from './memory/index.js';
+import { GPU, Screen } from './gpu/index.js';
+import IORegister from './io/io-register.js';
+import Interrupts from './processor/interrupts.js';
 
 export default class Gameboy {
   constructor(canvas) {

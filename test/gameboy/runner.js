@@ -1,6 +1,6 @@
-import { CPU } from '../../src/gameboy/processor';
-import { MMU } from '../../src/gameboy/memory';
-import OpcodeInfoManager from '../../src/info/info-manager';
+import { CPU } from '../../src/gameboy/processor/index.js';
+import { MMU } from '../../src/gameboy/memory/index.js';
+import OpcodeInfoManager from '../../src/info/info-manager.js';
 /* eslint no-console: 0 */
 
 const logo = [
