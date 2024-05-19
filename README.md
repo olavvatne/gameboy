@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/olavvatne/gameboy/graph/badge.svg?token=P5W11KAYQ8)](https://codecov.io/gh/olavvatne/gameboy)
+![unit](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/olavvatne/91601614a85590cfb8a2cc810653ca49/raw/test-badge.json)
 
 # Gameboy
 
