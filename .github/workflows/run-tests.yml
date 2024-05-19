@@ -2,6 +2,11 @@ name: Run tests
 
 on: [push]
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,6 +22,13 @@ jobs:
         run: npm ci
       - name: Test & coverage
         run: npm run coverage
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure() 
+        with:
+          name: Unit Tests
+          path: reports/test-results.json
+          reporter: mocha-json
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
