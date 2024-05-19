@@ -6,6 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha './test/**/*.js'",
+    "start": "esbuild --bundle src/index.js --outfile=public/index.js --watch --servedir=public",
+    "build": "esbuild --bundle src/index.js --outdir=public",
     "coverage": "nyc --reporter=text-lcov --cache _mocha  './test/**/*.js'"
   },
   "repository": {
@@ -22,6 +24,7 @@
     "@eslint/js": "^9.3.0",
     "@stylistic/eslint-plugin-js": "^2.1.0",
     "chai": "^5.1.1",
+    "esbuild": "0.21.3",
     "eslint": "^9.3.0",
     "globals": "^15.2.0",
     "mocha": "^10.4.0",

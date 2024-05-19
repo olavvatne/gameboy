@@ -1,4 +1,9 @@
-/* global document window Gameboy FileReader */
+import Gameboy from './gameboy/gameboy.js';
+
+if (!window.IS_PRODUCTION) {
+  new EventSource('/esbuild').addEventListener('change', () => location.reload())
+}
+
 let gameboy = null;
 let data = null;
 
