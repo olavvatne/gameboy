@@ -9,5 +9,8 @@
     },
     "eslint.validate": [
         "javascript"
-    ]
+    ],
+    "markdownlint.config": {
+        "MD041": false
+    }
 }
