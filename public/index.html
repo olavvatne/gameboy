@@ -5,8 +5,10 @@
     <title>Gameboy emulator</title>
     <meta name="description" content="Gameboy emulator">
     <meta name="keywords" content="Gameboy, Emulator, ES6">
+    <link rel="stylesheet" type="text/css" href="dark-mode.css" /> 
     <link rel="stylesheet" type="text/css" href="style.css" /> 
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="dark-mode.js"></script>
   </head>
   <body>
     <div id="container">
@@ -14,14 +16,15 @@
         <button id="start">Start</button>
         <button id="pause">Pause</button>
         <button id="reset">Stop</button>
-        <div class="upload-wrapper">
-          <button class="upload-button">Load</button>
-          <input type="file" id="load" accept=".gb" />
-        </div>
+        <button class="upload-button" onclick="load.click()">Load
+        </button>
+        <input type="file" id="load" accept=".gb" />
+        <button id="theme-toggle" aria-label="toggle theme"></button>
       </div>
 
       <canvas id="screen" width="160" height="144"></canvas>
     </div>
+
       <script  type="module" src="index.js"></script>
   </body>
 </html>
