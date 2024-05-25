@@ -1,3 +1,8 @@
+body {
+  color: var(--text-color);
+  background: var(--background-color);
+  box-sizing: border-box;
+}
 #container {
   margin: 0 auto;
   width: 80%;
@@ -11,41 +16,22 @@
 }
 
 #controls button {
-  box-shadow: none;
-  box-shadow: none;
-  appearance: none;
   padding: 0em 0.8em;
   margin: 0.2em;
-  background: white;
+  background: none;
   line-height: 1.8;
   font-size: 20px;
-  color: cornflowerblue;
-  border: 3px solid cornflowerblue;
+  border: none;
+  border-radius: 5px;
+  color: var(--text-color)
 }
 
-#controls > button:active {
-  background: floralwhite;
+#controls button:hover{
+  background: var(--background-hover-color);
 }
 
-#controls > button:hover {
-  border: 3px solid dodgerblue;
-  color: dodgerblue;
-}
-
-.upload-wrapper {
-  display: inline;
-  position: relative;
-  overflow: hidden;
-}
-
-.upload-wrapper input[type=file] {
-  width: 90px;
-  line-height: 1.8;
-  font-size: 20px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
+#controls  input[type=file] {
+  display: none;
 }
 
 canvas {
