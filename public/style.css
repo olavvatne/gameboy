@@ -68,6 +68,30 @@ body,html {
   justify-content: center;
   align-items: center;
 }
+
+.view-options-container {
+  position: relative;
+}
+.view-options-menu {
+  display: flex;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  background-color: var(--background-color-alt);
+  border-radius: 5px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Trick to offset popover more to left if narrow screen.
+Assumes view options placed at right hand side */
+@media (max-width: 500px) {
+  .view-options-menu {
+    right: 0;
+    left: unset;
+    transform: unset;
+  }
+}
 canvas {
   width: calc(640px*var(--zoom-factor));
   height: calc(567px*var(--zoom-factor));
