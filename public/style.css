@@ -1,3 +1,7 @@
+:root {
+  --zoom-factor: 1.0;
+}
+
 html {
   color: var(--text-color);
   background: var(--background-color);
@@ -9,12 +13,11 @@ body,html {
   margin: 0;
 }
 .container {
-  margin: 0 auto;
-  width: 80%;
-  max-width: 1000px;
   display: flex;
   height: 100vh;
   flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
 }
 
 .controls {
@@ -59,12 +62,16 @@ body,html {
   display: none;
 }
 
+#screen-wrapper {
+  display: flex;
+  flex: 0.75;
+  justify-content: center;
+  align-items: center;
+}
 canvas {
-  display: block;
-  width: 640px;
-  height: 567px;
-  margin: auto;
-  border: 1px solid black;
+  width: calc(640px*var(--zoom-factor));
+  height: calc(567px*var(--zoom-factor));
+  border: 2px solid var(--text-color);
   image-rendering: optimizeSpeed;             /* Older versions of FF          */
   image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
   image-rendering: -webkit-optimize-contrast; /* Safari                        */
