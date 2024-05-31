@@ -13,6 +13,8 @@ const pauseButton = document.querySelector('#pause');
 const resetButton = document.querySelector('#reset');
 const zoomInButton = document.querySelector('#zoom-in');
 const zoomOutButton = document.querySelector('#zoom-out');
+const viewOptionsButton = document.querySelector('#view-options');
+const viewOptionsMenu = document.querySelector('.view-options-menu');
 
 function hide(element) {
   element.style.display = 'none';
@@ -47,7 +49,12 @@ const handleRomSelect = (evt) => {
 window.onload = () => {
   const root = document.documentElement;
   root.style.setProperty('--zoom-factor', 1.0)
-  console.log(zoomFactor);
+  window.addEventListener('click', (e) => {
+    if (!viewOptionsMenu.contains(e.target) && !viewOptionsButton.contains(e.target) ) {
+      viewOptionsMenu.style.visibility = 'collapse';
+    };
+  });
+
   initGameboy();
   startButton.onclick = () => {gameboy.start(data); hide(startButton); show(pauseButton)};
   pauseButton.onclick = () => {gameboy.pause(); hide(pauseButton); show(startButton)};
@@ -60,6 +67,15 @@ window.onload = () => {
     zoomFactor = Math.max(zoomFactor - 0.2, 0.2); 
     root.style.setProperty('--zoom-factor', zoomFactor); 
   };
+  viewOptionsButton.onclick = () => {
+    if (viewOptionsMenu.style.visibility === 'collapse') {
+      viewOptionsMenu.style.visibility = 'unset';
+    }
+    else {
+      viewOptionsMenu.style.visibility = 'collapse';
+
+    }
+  }
   document.addEventListener('keydown', e => gameboy.io.handleKeyDown(e));
   document.addEventListener('keyup', e => gameboy.io.handleKeyUp(e));
   document.getElementById('load').addEventListener('change', e => handleRomSelect(e), false);
