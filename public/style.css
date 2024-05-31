@@ -1,36 +1,61 @@
-body {
+html {
   color: var(--text-color);
   background: var(--background-color);
   box-sizing: border-box;
 }
-#container {
+
+body,html {
+  height: 100%;
+  margin: 0;
+}
+.container {
   margin: 0 auto;
   width: 80%;
   max-width: 1000px;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
 }
 
-#controls {
-  margin: auto;
-  text-align: center;
-  align-content: center;
+.controls {
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
 }
 
-#controls button {
-  padding: 0em 0.8em;
-  margin: 0.2em;
+.controls #start {
+  display: none;
+}
+
+
+.controls #pause {
+  display: none;
+}
+
+.controls #reset {
+  display: none;
+}
+
+.controls button>* {
+  width: 40px;
+  height: 40px;
+  fill: var(--text-color);
+}
+.controls button {
+  margin: 0.5rem;
+  padding: 0 0.5rem;
+  padding-top: 5px;
   background: none;
-  line-height: 1.8;
-  font-size: 20px;
   border: none;
   border-radius: 5px;
   color: var(--text-color)
 }
 
-#controls button:hover{
+.controls button:hover{
   background: var(--background-hover-color);
 }
 
-#controls  input[type=file] {
+.controls  input[type=file] {
   display: none;
 }
 
