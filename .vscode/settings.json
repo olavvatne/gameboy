@@ -12,5 +12,11 @@
     ],
     "markdownlint.config": {
         "MD041": false
+    },
+    "[xml]": {
+        "editor.defaultFormatter": "redhat.vscode-xml"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
     }
 }
